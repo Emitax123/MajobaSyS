@@ -1,0 +1,127 @@
+{% load static %}
+<html lang="es-AR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon-16x16.png' %}" />
+    <link rel="" href="" />
+    <title>Majoba S.A.</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div id="logo">
+          <a href="#"><img src="{% static 'images/logo-majoba-nav.svg' %}" /></a>
+        </div>
+        <ul class="nav-menu">
+          <li>
+            <a href="#" class="nav-link">Inicio</a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">Herramientas</a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">Empresas</a>
+          </li>
+          <li>
+            <a href="#" class="nav-link">Acceso miembros</a>
+          </li>
+        </ul>
+
+        <button class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+    {% block content %}
+
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-content">
+          <!-- Sección Nosotros -->
+          <div class="footer-section about">
+            <h3 class="footer-title">Nosotros</h3>
+            <p class="footer-description">Somos una empresa especializada en la venta de materiales para la construcción que brinda, además, soluciones constructivas para obras de variada escala y complejidad, ofreciendo un servicio integral que busca satisfacer las necesidades de nuestros clientes.</p>
+          </div>
+
+          <!-- Casa Central -->
+          <div class="footer-section contact">
+            <h3 class="footer-title">Casa Central</h3>
+            <div class="contact-info">
+              <div class="contact-item">
+                <i class="icon-location"></i>
+                <div>
+                  <strong>Dirección:</strong><br />
+                  Sarmiento 162 - Castelli (7114)
+                </div>
+              </div>
+              <div class="contact-item">
+                <i class="icon-phone"></i>
+                <div>
+                  <strong>Teléfono:</strong><br />
+                  <span>(02245) 480-542</span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <i class="icon-email"></i>
+                <div>
+                  <strong>E-mail:</strong><br />
+                  <span>majobacastelli1999@gmail.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sucursal Lezama -->
+          <div class="footer-section contact">
+            <h3 class="footer-title">Sucursal Lezama</h3>
+            <div class="contact-info">
+              <div class="contact-item">
+                <i class="icon-location"></i>
+                <div>
+                  <strong>Dirección:</strong><br />
+                  San Martín 235 - Lezama (7116)
+                </div>
+              </div>
+              <div class="contact-item">
+                <i class="icon-phone"></i>
+                <div>
+                  <strong>Teléfono:</strong><br />
+                  <span>(02242) 432-327</span>
+                </div>
+              </div>
+              <div class="contact-item">
+                <i class="icon-email"></i>
+                <div>
+                  <strong>E-mail:</strong><br />
+                  <span>majobalezama@gmail.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+          <div class="footer-bottom-content">
+            <p>&copy; 2025 Majoba S.A. - Todos los derechos reservados</p>
+            <div class="footer-links">
+              <a href="#" class="footer-link">Política de Privacidad</a>
+              <a href="#" class="footer-link">Términos y Condiciones</a>
+              <a href="#" class="footer-link">Contacto</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{% static 'js/base.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+/* Placeholder para imágenes del carrusel - Reemplaza con tus propias imágenes */
+
+/* Alternativa: Si no tienes las imágenes, puedes usar gradientes como placeholder */
+.carousel-slide:nth-child(1) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.carousel-slide:nth-child(2) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.carousel-slide:nth-child(3) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.carousel-slide:nth-child(4) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.carousel-slide:nth-child(5) {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Si no tienes imágenes, oculta el img y usa el fondo */
+.carousel-slide img[src*="carousel-"] {
+    display: none;
+}
+
+/* Fallback para cuando las imágenes no existen */
+.carousel-slide img {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-slide img[src]:not([src=""]) {
+    opacity: 1;
+}

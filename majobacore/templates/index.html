@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/carousel-fallback.css' %}" />
+  <main class="main-content">
+    <section class="carousel-section">
+      <div class="carousel-container">
+        <div class="carousel-wrapper">
+          <div class="carousel-slide active">
+            <img src="{% static 'images/carousel-1.jpg' %}" alt="Slide 1" />
+            <div class="carousel-content">
+              <h2>Bienvenido a MajobaSyS</h2>
+              <p>Tu plataforma de gestión integral</p>
+              <a href="#" class="carousel-btn">Comenzar</a>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="{% static 'images/carousel-2.jpg' %}" alt="Slide 2" />
+            <div class="carousel-content">
+              <h2>Gestión Eficiente</h2>
+              <p>Optimiza tus procesos empresariales</p>
+              <a href="#" class="carousel-btn">Explorar</a>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="{% static 'images/carousel-3.jpg' %}" alt="Slide 3" />
+            <div class="carousel-content">
+              <h2>Análisis Avanzado</h2>
+              <p>Toma decisiones basadas en datos</p>
+              <a href="#" class="carousel-btn">Ver Más</a>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="{% static 'images/carousel-4.jpg' %}" alt="Slide 4" />
+            <div class="carousel-content">
+              <h2>Seguridad Garantizada</h2>
+              <p>Protege tu información empresarial</p>
+              <a href="#" class="carousel-btn">Conocer</a>
+            </div>
+          </div>
+
+          <div class="carousel-slide">
+            <img src="{% static 'images/carousel-5.jpg' %}" alt="Slide 5" />
+            <div class="carousel-content">
+              <h2>Soporte 24/7</h2>
+              <p>Estamos aquí para ayudarte siempre</p>
+              <a href="#" class="carousel-btn">Contactar</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles de navegación -->
+        <button class="carousel-nav prev" onclick="moveSlide(-1)"><span>‹</span></button>
+        <button class="carousel-nav next" onclick="moveSlide(1)"><span>›</span></button>
+
+        <!-- Indicadores -->
+        <div class="carousel-indicators">
+          <span class="indicator active" onclick="currentSlide(1)"></span>
+          <span class="indicator" onclick="currentSlide(2)"></span>
+          <span class="indicator" onclick="currentSlide(3)"></span>
+          <span class="indicator" onclick="currentSlide(4)"></span>
+          <span class="indicator" onclick="currentSlide(5)"></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="features-grid">
+      <h2>Nuestras empresas</h2>
+      <div class="features-container">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="{% static 'images/majoba-card-logo.png' %}" alt="Majoba" />
+          </div>
+
+          <p class="feature-description">Venta de materiales de construccion</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="{% static 'images/laconstructora-card-logo.png' %}" alt="La Constructora" />
+          </div>
+
+          <p class="feature-description">Gestión de proyectos de construcción</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="{% static 'images/hormicons-card-logo.png' %}" alt="Hormicons" />
+          </div>
+          <p class="feature-description">Hormigón Elaborado</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="slider-section">
+      <div class="slider-container">
+        <img src="{% static 'images/slider.jpg' %}" alt="Construimos tus sueños" class="slider-image" />
+        <div class="slider-overlay">
+          <h1 class="slider-title">Construimos tus sueños</h1>
+          <p class="slider-subtitle">Materiales de construcción de la más alta calidad</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Carrusel JavaScript
+    let currentSlideIndex = 0
+    const slides = document.querySelectorAll('.carousel-slide')
+    const indicators = document.querySelectorAll('.indicator')
+    const totalSlides = slides.length
+    
+    // Función para mostrar slide específico
+    function showSlide(index) {
+      // Asegurar que el índice esté en rango
+      if (index >= totalSlides) currentSlideIndex = 0
+      if (index < 0) currentSlideIndex = totalSlides - 1
+    
+      // Calcular la posición
+      const translateX = -currentSlideIndex * 20 // 20% por slide
+      document.querySelector('.carousel-wrapper').style.transform = `translateX(${translateX}%)`
+    
+      // Actualizar indicadores
+      indicators.forEach((indicator, i) => {
+        indicator.classList.toggle('active', i === currentSlideIndex)
+      })
+    
+      // Actualizar slides activos
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === currentSlideIndex)
+      })
+    }
+    
+    // Función para mover slide
+    function moveSlide(direction) {
+      currentSlideIndex += direction
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = 0
+      if (currentSlideIndex < 0) currentSlideIndex = totalSlides - 1
+      showSlide(currentSlideIndex)
+    }
+    
+    // Función para ir a slide específico
+    function currentSlide(index) {
+      currentSlideIndex = index - 1
+      showSlide(currentSlideIndex)
+    }
+    
+    // Auto-play del carrusel
+    let autoPlay = setInterval(() => {
+      moveSlide(1)
+    }, 5000) // Cambia cada 5 segundos
+    
+    // Pausar auto-play al hacer hover
+    const carouselContainer = document.querySelector('.carousel-container')
+    carouselContainer.addEventListener('mouseenter', () => {
+      clearInterval(autoPlay)
+    })
+    
+    carouselContainer.addEventListener('mouseleave', () => {
+      autoPlay = setInterval(() => {
+        moveSlide(1)
+      }, 5000)
+    })
+    
+    // Soporte para deslizar en móviles
+    let startX = 0
+    let endX = 0
+    
+    carouselContainer.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX
+    })
+    
+    carouselContainer.addEventListener('touchend', (e) => {
+      endX = e.changedTouches[0].clientX
+      if (startX - endX > 50) {
+        moveSlide(1) // Deslizar izquierda
+      } else if (endX - startX > 50) {
+        moveSlide(-1) // Deslizar derecha
+      }
+    })
+    
+    // Soporte para teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') moveSlide(-1)
+      if (e.key === 'ArrowRight') moveSlide(1)
+    })
+    
+    // Inicializar carrusel
+    showSlide(0)
+  </script>
+{% endblock %}
