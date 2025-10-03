@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+   <h2>La Constructora </h2>
+   <p>La constructora es el área especializada en la proyección, dirección y ejecución de obras.</p>
+   <div class="proyects-container">
+      <!-- Obras civiles -->  
+      <div class="proyects-item">
+         <img src="{% static 'img/constructora1.jpg' %}" alt="Constructora Image 1">
+            <span>Obras civiles</span>
+            <button>Ver mas</button>
+      </div>
+      <!-- Pavimentos y pisos industriales -->
+      <div class="proyects-item">
+         <img src="{% static 'img/constructora2.jpg' %}" alt="Constructora Image 2">
+         <span>Pavimentos y pisos industriales</span>
+         <button>Ver mas</button>
+      </div>
+      <!-- Redes y entubamientos -->
+      <div class="proyects-item">
+         <img src="{% static 'img/constructora3.jpg' %}" alt="Constructora Image 3">
+         <span>Redes y entubamientos</span>
+         <button>Ver mas</button>
+      </div>
+      <!-- Movimientos de suelo -->
+      <div class="proyects-item">
+         <img src="{% static 'img/constructora4.jpg' %}" alt="Constructora Image 4">
+         <span>Movimientos de suelo</span>
+         <button>Ver mas</button>
+      </div>
+    
+   </div>
+{% endblock %}

@@ -1,0 +1,846 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="account-dashboard">
+    <!-- Header del Dashboard -->
+    <div class="dashboard-header">
+        <div class="user-welcome">
+            <h1>Bienvenido, {{ user.get_full_name|default:user.username }}</h1>
+            <p>Gestiona tu cuenta y consulta tu progreso</p>
+        </div>
+        <div class="user-avatar">
+            <div class="avatar-circle">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sistema de Puntos y Nivel -->
+    <div class="points-section">
+        <div class="points-card">
+            <div class="points-header">
+                <h2>Sistema de Puntos</h2>
+                <div class="current-points">
+                    <span class="points-number">2,450</span>
+                    <span class="points-label">Puntos</span>
+                </div>
+            </div>
+            
+            <!-- Barra de Progreso de Nivel -->
+            <div class="level-progress">
+                <div class="level-info">
+                    <span class="current-level">Nivel 3 - Profesional</span>
+                    <span class="next-level">Siguiente: Nivel 4 (3,000 pts)</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 82%"></div>
+                </div>
+                <div class="progress-text">550 puntos para el siguiente nivel</div>
+            </div>
+
+            <!-- Acciones de Puntos -->
+            <div class="points-actions">
+                <button class="btn-redeem">
+                    <i class="fas fa-gift"></i>
+                    Canjear Puntos
+                </button>
+                <button class="btn-history">
+                    <i class="fas fa-history"></i>
+                    Historial de Puntos
+                </button>
+            </div>
+        </div>
+
+        <!-- Niveles Disponibles -->
+        <div class="levels-card">
+            <h3>Niveles del Sistema</h3>
+            <div class="levels-list">
+                <div class="level-item completed">
+                    <div class="level-badge">1</div>
+                    <div class="level-details">
+                        <span class="level-name">Principiante</span>
+                        <span class="level-points">0 - 500 pts</span>
+                    </div>
+                    <i class="fas fa-check-circle level-status"></i>
+                </div>
+                <div class="level-item completed">
+                    <div class="level-badge">2</div>
+                    <div class="level-details">
+                        <span class="level-name">Intermedio</span>
+                        <span class="level-points">501 - 1,500 pts</span>
+                    </div>
+                    <i class="fas fa-check-circle level-status"></i>
+                </div>
+                <div class="level-item current">
+                    <div class="level-badge">3</div>
+                    <div class="level-details">
+                        <span class="level-name">Profesional</span>
+                        <span class="level-points">1,501 - 3,000 pts</span>
+                    </div>
+                    <i class="fas fa-star level-status"></i>
+                </div>
+                <div class="level-item locked">
+                    <div class="level-badge">4</div>
+                    <div class="level-details">
+                        <span class="level-name">Experto</span>
+                        <span class="level-points">3,001 - 5,000 pts</span>
+                    </div>
+                    <i class="fas fa-lock level-status"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de Proyectos -->
+    <div class="projects-section">
+        <h2>Historial de Proyectos</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-header">
+                    <h4>Construcción Residencial Plaza Norte</h4>
+                    <span class="project-status completed">Completado</span>
+                </div>
+                <div class="project-details">
+                    <p><i class="fas fa-calendar"></i> Fecha: 15 Sep 2024 - 20 Oct 2024</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ubicación: Madrid, España</p>
+                    <p><i class="fas fa-coins"></i> Puntos obtenidos: +350</p>
+                </div>
+                <div class="project-actions">
+                    <button class="btn-details">Ver Detalles</button>
+                    <button class="btn-download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h4>Infraestructura Vial Sector Este</h4>
+                    <span class="project-status in-progress">En Progreso</span>
+                </div>
+                <div class="project-details">
+                    <p><i class="fas fa-calendar"></i> Fecha: 01 Oct 2024 - En curso</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ubicación: Valencia, España</p>
+                    <p><i class="fas fa-coins"></i> Puntos estimados: +500</p>
+                </div>
+                <div class="project-actions">
+                    <button class="btn-details">Ver Detalles</button>
+                    <button class="btn-progress">
+                        <i class="fas fa-chart-line"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h4>Complejo Industrial Los Pinos</h4>
+                    <span class="project-status completed">Completado</span>
+                </div>
+                <div class="project-details">
+                    <p><i class="fas fa-calendar"></i> Fecha: 10 Jul 2024 - 30 Ago 2024</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Ubicación: Barcelona, España</p>
+                    <p><i class="fas fa-coins"></i> Puntos obtenidos: +800</p>
+                </div>
+                <div class="project-actions">
+                    <button class="btn-details">Ver Detalles</button>
+                    <button class="btn-download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Área de Notificaciones -->
+    <div class="notifications-section">
+        <div class="notifications-header">
+            <h2>Notificaciones</h2>
+            <div class="notifications-controls">
+                <button class="btn-mark-all">Marcar todas como leídas</button>
+                <div class="notification-filter">
+                    <select>
+                        <option>Todas</option>
+                        <option>Proyectos</option>
+                        <option>Puntos</option>
+                        <option>Sistema</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-icon points">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>¡Has ganado 350 puntos!</h4>
+                    <p>Proyecto "Construcción Residencial Plaza Norte" completado exitosamente.</p>
+                    <span class="notification-time">Hace 2 horas</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="btn-mark-read">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icon project">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Nuevo proyecto asignado</h4>
+                    <p>Se te ha asignado el proyecto "Renovación Centro Comercial Sur".</p>
+                    <span class="notification-time">Hace 1 día</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="btn-view">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icon level">
+                    <i class="fas fa-level-up-alt"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>¡Subiste de nivel!</h4>
+                    <p>Has alcanzado el Nivel 3 - Profesional. ¡Felicitaciones!</p>
+                    <span class="notification-time">Hace 3 días</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="btn-celebrate">
+                        <i class="fas fa-trophy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="notification-item">
+                <div class="notification-icon system">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Actualización del sistema</h4>
+                    <p>Se han agregado nuevas funcionalidades al sistema de puntos.</p>
+                    <span class="notification-time">Hace 1 semana</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="btn-info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos del Dashboard */
+    .account-dashboard {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 20px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Header del Dashboard */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #dc3545 0%, #000000 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+    }
+
+    .user-welcome h1 {
+        margin: 0 0 10px 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+
+    .user-welcome p {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+
+    .user-avatar .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 3px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    /* Sistema de Puntos */
+    .points-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .points-card, .levels-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border: 2px solid #f8f9fa;
+    }
+
+    .points-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .points-header h2 {
+        color: #dc3545;
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .current-points {
+        text-align: center;
+    }
+
+    .points-number {
+        display: block;
+        font-size: 3rem;
+        font-weight: 700;
+        color: #dc3545;
+        line-height: 1;
+    }
+
+    .points-label {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    /* Progreso de Nivel */
+    .level-progress {
+        margin-bottom: 30px;
+    }
+
+    .level-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .current-level {
+        font-weight: 600;
+        color: #dc3545;
+    }
+
+    .next-level {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .progress-bar {
+        height: 12px;
+        background: #e9ecef;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #dc3545 0%, #ff4757 100%);
+        border-radius: 6px;
+        transition: width 0.5s ease;
+    }
+
+    .progress-text {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Acciones de Puntos */
+    .points-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-redeem, .btn-history {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-redeem {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-history {
+        background: #000;
+        color: white;
+    }
+
+    .btn-redeem:hover, .btn-history:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Niveles */
+    .levels-card h3 {
+        color: #dc3545;
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+    }
+
+    .level-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .level-item.completed {
+        background: rgba(40, 167, 69, 0.1);
+        border-left: 4px solid #28a745;
+    }
+
+    .level-item.current {
+        background: rgba(220, 53, 69, 0.1);
+        border-left: 4px solid #dc3545;
+    }
+
+    .level-item.locked {
+        background: rgba(108, 117, 125, 0.1);
+        border-left: 4px solid #6c757d;
+        opacity: 0.6;
+    }
+
+    .level-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-right: 15px;
+    }
+
+    .level-details {
+        flex: 1;
+    }
+
+    .level-name {
+        display: block;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .level-points {
+        display: block;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .level-status {
+        font-size: 1.2rem;
+    }
+
+    .completed .level-status {
+        color: #28a745;
+    }
+
+    .current .level-status {
+        color: #dc3545;
+    }
+
+    .locked .level-status {
+        color: #6c757d;
+    }
+
+    /* Historial de Proyectos */
+    .projects-section {
+        margin-bottom: 40px;
+    }
+
+    .projects-section h2 {
+        color: #dc3545;
+        margin-bottom: 25px;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+    }
+
+    .project-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border: 2px solid #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+    }
+
+    .project-header h4 {
+        margin: 0;
+        color: #333;
+        font-size: 1.3rem;
+        flex: 1;
+    }
+
+    .project-status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .project-status.completed {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .project-status.in-progress {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+    }
+
+    .project-details p {
+        margin: 10px 0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .project-details i {
+        color: #dc3545;
+        width: 15px;
+    }
+
+    .project-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-details {
+        flex: 1;
+        padding: 10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-download, .btn-progress {
+        width: 40px;
+        height: 40px;
+        background: #000;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-details:hover, .btn-download:hover, .btn-progress:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Notificaciones */
+    .notifications-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .notifications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .notifications-header h2 {
+        color: #dc3545;
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .notifications-controls {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-mark-all {
+        padding: 10px 20px;
+        background: #000;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .notification-filter select {
+        padding: 10px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: start;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+
+    .notification-item.unread {
+        background: rgba(220, 53, 69, 0.05);
+        border-left-color: #dc3545;
+    }
+
+    .notification-item:not(.unread) {
+        background: #f8f9fa;
+    }
+
+    .notification-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        font-size: 1.2rem;
+        color: white;
+    }
+
+    .notification-icon.points {
+        background: #dc3545;
+    }
+
+    .notification-icon.project {
+        background: #000;
+    }
+
+    .notification-icon.level {
+        background: #ffc107;
+    }
+
+    .notification-icon.system {
+        background: #6c757d;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-content h4 {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .notification-content p {
+        margin: 0 0 8px 0;
+        color: #666;
+        line-height: 1.4;
+    }
+
+    .notification-time {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .notification-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .notification-actions button {
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-mark-read {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-view {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-celebrate {
+        background: #ffc107;
+        color: white;
+    }
+
+    .btn-info {
+        background: #6c757d;
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .points-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .account-dashboard {
+            padding: 15px;
+        }
+
+        .dashboard-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .user-welcome h1 {
+            font-size: 2rem;
+        }
+
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .notifications-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .notifications-controls {
+            justify-content: space-between;
+        }
+
+        .notification-item {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .notification-icon {
+            align-self: center;
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+    }
+</style>
+
+<script>
+    // JavaScript para interactividad
+    document.addEventListener('DOMContentLoaded', function() {
+        // Marcar notificación como leída
+        document.querySelectorAll('.btn-mark-read').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const notification = this.closest('.notification-item');
+                notification.classList.remove('unread');
+                this.style.display = 'none';
+            });
+        });
+
+        // Marcar todas las notificaciones como leídas
+        document.querySelector('.btn-mark-all').addEventListener('click', function() {
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+            });
+            document.querySelectorAll('.btn-mark-read').forEach(btn => {
+                btn.style.display = 'none';
+            });
+        });
+
+        // Filtro de notificaciones
+        document.querySelector('.notification-filter select').addEventListener('change', function() {
+            const filter = this.value;
+            document.querySelectorAll('.notification-item').forEach(item => {
+                if (filter === 'Todas') {
+                    item.style.display = 'flex';
+                } else {
+                    const type = item.querySelector('.notification-icon').classList.contains(filter.toLowerCase());
+                    item.style.display = type ? 'flex' : 'none';
+                }
+            });
+        });
+
+        // Animación de progreso de nivel
+        setTimeout(() => {
+            document.querySelector('.progress-fill').style.width = '82%';
+        }, 500);
+    });
+</script>
+
+{% endblock content %}
