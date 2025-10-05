@@ -1,0 +1,465 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="admin-dashboard">
+    <!-- Header del Dashboard Admin -->
+    <div class="admin-header">
+      <div class="admin-welcome">
+        <h1>Panel de Administración</h1>
+        <p>Bienvenido {{ user.get_full_name|default:user.username }} - Dashboard Administrativo</p>
+      </div>
+      <div class="admin-actions">
+        <a href="{% url 'admin:index' %}" class="btn btn-primary">
+          <i class="fas fa-cog"></i>
+          Django Admin
+        </a>
+        <a href="{% url 'logout' %}" class="btn btn-secondary">
+          <i class="fas fa-sign-out-alt"></i>
+          Cerrar Sesión
+        </a>
+      </div>
+    </div>
+    <div class="search-container">
+      <span>Buscar usuario</span>
+      <div class="search-section">
+        <input type="text" id="search-input" placeholder="Nombre de usuario" />
+      </div>
+
+      <div id="search-results" class="search-results">
+        <div id="search-results-list" class="search-results-list">
+          <!-- Resultados de búsqueda aparecerán aquí -->
+        </div>
+        <div id="search-pagination" class="search-pagination">
+          <!-- Controles de paginación aparecerán aquí -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas Generales -->
+    <div class="stats-grid">
+      <div class="stat-card users">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ total_users }}</h3>
+          <p>Total de Usuarios</p>
+          <small>{{ active_users }} activos</small>
+        </div>
+      </div>
+
+      <div class="stat-card staff">
+        <div class="stat-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ staff_users }}</h3>
+          <p>Administradores</p>
+          <small>Staff del sistema</small>
+        </div>
+      </div>
+
+      <div class="stat-card managers">
+        <div class="stat-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ total_managers }}</h3>
+          <p>Perfiles Manager</p>
+          <small>Con datos asociados</small>
+        </div>
+      </div>
+
+      <div class="stat-card points">
+        <div class="stat-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ total_points|floatformat:0 }}</h3>
+          <p>Puntos Totales</p>
+          <small>En el sistema</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribución por Niveles -->
+    <div class="levels-section">
+      <h2>Distribución por Niveles</h2>
+      <div class="levels-grid">
+        {% for level_stat in levels_stats %}
+          <div class="level-card {{ level_stat.acc_level }}">
+            <div class="level-icon">
+              {% if level_stat.acc_level == 'bronze' %}
+                <i class="fas fa-medal"></i>
+              {% elif level_stat.acc_level == 'silver' %}
+                <i class="fas fa-award"></i>
+              {% elif level_stat.acc_level == 'gold' %}
+                <i class="fas fa-trophy"></i>
+              {% elif level_stat.acc_level == 'platinum' %}
+                <i class="fas fa-crown"></i>
+              {% elif level_stat.acc_level == 'diamond' %}
+                <i class="fas fa-gem"></i>
+              {% endif %}
+            </div>
+            <div class="level-content">
+              <h4>{{ level_stat.acc_level|title }}</h4>
+              <p>{{ level_stat.count }} usuario{{ level_stat.count|pluralize }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="quick-actions">
+      <h2>Acciones Rápidas</h2>
+      <div class="actions-grid">
+        <a href="{% url 'user_create' %}" class="action-card">
+          <i class="fas fa-user-plus"></i>
+          <h3>Crear Usuario</h3>
+          <p>Agregar nuevo usuario al sistema</p>
+        </a>
+
+        <a href="{% url 'admin:users_customuser_changelist' %}" class="action-card">
+          <i class="fas fa-users-cog"></i>
+          <h3>Gestionar Usuarios</h3>
+          <p>Ver y editar usuarios existentes</p>
+        </a>
+
+        <a href="{% url 'admin:manager_managerdata_changelist' %}" class="action-card">
+          <i class="fas fa-chart-bar"></i>
+          <h3>Gestionar Perfiles</h3>
+          <p>Administrar datos de managers</p>
+        </a>
+
+        <a href="{% url 'manager' %}" class="action-card">
+          <i class="fas fa-eye"></i>
+          <h3>Vista Usuario</h3>
+          <p>Ver como usuario normal</p>
+        </a>
+      </div>
+    </div>
+
+    {% if error %}
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ error }}
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    /* Estilos del Dashboard Admin */
+    .admin-dashboard {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-welcome h1 {
+      color: #333;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .admin-welcome p {
+      color: #666;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
+    .admin-actions {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: #000;
+      color: white;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Estadísticas */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+    
+    .stat-card.users .stat-icon {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    
+    .stat-card.staff .stat-icon {
+      background: linear-gradient(135deg, #dc3545, #000);
+    }
+    
+    .stat-card.managers .stat-icon {
+      background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    .stat-card.points .stat-icon {
+      background: linear-gradient(135deg, #ffc107, #fd7e14);
+    }
+    
+    .stat-content h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-content p {
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-content small {
+      color: #999;
+      font-size: 0.9rem;
+    }
+    
+    /* Niveles */
+    .levels-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .levels-section h2 {
+      color: #333;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .level-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .level-card.bronze {
+      border-color: #cd7f32;
+    }
+    
+    .level-card.silver {
+      border-color: #c0c0c0;
+    }
+    
+    .level-card.gold {
+      border-color: #ffd700;
+    }
+    
+    .level-card.platinum {
+      border-color: #e5e4e2;
+    }
+    
+    .level-card.diamond {
+      border-color: #b9f2ff;
+    }
+    
+    .level-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .level-card.bronze .level-icon {
+      color: #cd7f32;
+    }
+    
+    .level-card.silver .level-icon {
+      color: #c0c0c0;
+    }
+    
+    .level-card.gold .level-icon {
+      color: #ffd700;
+    }
+    
+    .level-card.platinum .level-icon {
+      color: #e5e4e2;
+    }
+    
+    .level-card.diamond .level-icon {
+      color: #b9f2ff;
+    }
+    
+    .level-content h4 {
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .level-content p {
+      color: #666;
+      margin: 0;
+    }
+    
+    /* Acciones Rápidas */
+    .quick-actions {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .quick-actions h2 {
+      color: #333;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .action-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .action-card:hover {
+      transform: translateY(-5px);
+      border-color: #dc3545;
+      background: white;
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.15);
+    }
+    
+    .action-card i {
+      font-size: 2.5rem;
+      color: #dc3545;
+      margin-bottom: 1rem;
+    }
+    
+    .action-card h3 {
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .action-card p {
+      color: #666;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    
+    .error-message {
+      background: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      padding: 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .admin-dashboard {
+        padding: 1rem;
+      }
+    
+      .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    
+      .admin-actions {
+        justify-content: center;
+      }
+    
+      .stats-grid,
+      .levels-grid,
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <!-- Font Awesome para iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+{% endblock %}

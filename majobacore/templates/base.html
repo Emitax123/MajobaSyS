@@ -17,7 +17,7 @@
         </div>
         <ul class="nav-menu">
           <li>
-            <a href="#" class="nav-link">Inicio</a>
+            <a href="{% url 'index' %}" class="nav-link">Inicio</a>
           </li>
           <li>
             <a href="#" class="nav-link">Herramientas</a>
@@ -25,9 +25,29 @@
           <li>
             <a href="#" class="nav-link">Empresas</a>
           </li>
-          <li>
-            <a href="#" class="nav-link">Acceso miembros</a>
-          </li>
+          {% if user.is_authenticated %}
+            <li>
+              <a href="{% if user.is_staff %}
+                  {% url 'admin_dashboard' %}
+                {% else %}
+                  {% url 'manager' %}
+                {% endif %}"
+                class="nav-link">
+                {% if user.is_staff %}
+                  Panel Admin
+                {% else %}
+                  Mi Cuenta
+                {% endif %}
+              </a>
+            </li>
+            <li>
+              <a href="{% url 'logout' %}" class="nav-link">Cerrar Sesión</a>
+            </li>
+          {% else %}
+            <li>
+              <a href="{% url 'login' %}" class="nav-link">Acceso miembros</a>
+            </li>
+          {% endif %}
         </ul>
 
         <button class="hamburger" id="hamburger">
