@@ -17,16 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from .views import index, majoba_view
+from .views import index, majoba_view, hormicons_view, constructora_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('manager/', include('manager.urls')),
+    path('manager/', include('manager.urls')),
+    path('users/', include('users.urls')),
     path('', index, name='index'),
     path('majoba/', majoba_view, name='majoba'),
- 
+    path('hormicons/', hormicons_view, name='hormicons'),
+    path('constructora/', constructora_view, name='constructora'),
 ]
-
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [

@@ -6,3 +6,9 @@ def index(request):
 
 def majoba_view(request):
     return render(request, 'majoba_template.html')
+
+def hormicons_view(request):
+    return render(request, 'hormicons_template.html')
+
+def constructora_view(request):
+    return render(request, 'constructora_template.html')

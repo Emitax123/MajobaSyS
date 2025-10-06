@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from .views import manager_view
+from .views import user_create_view
 
 urlpatterns = [
-    path('', manager_view, name='manager'),
+    path('create/', user_create_view, name='user_create'),
 ]
 
 if settings.DEBUG:

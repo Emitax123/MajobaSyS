@@ -2,7 +2,53 @@ from django.db import models
 from users.models import CustomUser
 
 # Create your models here.
-class CustomManager(models.Model):
+
+class Project(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='projects',
+        verbose_name='Usuario'
+    )
+    name = models.CharField(max_length=255, verbose_name='Nombre del Proyecto')
+    description = models.TextField(blank=True, verbose_name='Descripción')
+    start_date = models.DateField(verbose_name='Fecha de Inicio')
+    end_date = models.DateField(null=True, blank=True, verbose_name='Fecha de Fin')
+    is_active = models.BooleanField(default=True, verbose_name='Activo')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Proyecto'
+        verbose_name_plural = 'Proyectos'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.name
+
+class Notification(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+        verbose_name='Usuario'
+    )
+    message = models.CharField(max_length=255, verbose_name='Mensaje')
+    is_read = models.BooleanField(default=False, verbose_name='Leído')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Notificación'
+        verbose_name_plural = 'Notificaciones'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Notificación para {self.user.username}: {self.message[:20]}"
+    
+
+class ManagerData(models.Model):
     user = models.OneToOneField(
         CustomUser, 
         on_delete=models.CASCADE, 
@@ -30,6 +76,8 @@ class CustomManager(models.Model):
         default=0,
         verbose_name='Notificaciones'
     )
+
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

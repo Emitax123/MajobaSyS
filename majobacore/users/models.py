@@ -17,14 +17,16 @@ class CustomUser(AbstractUser):
     first_name = models.CharField('Nombre', max_length=150, blank=True)
     last_name = models.CharField('Apellido', max_length=150, blank=True)
     phone = models.CharField('Teléfono', max_length=20, blank=True)
-    position = models.CharField('Cargo/Posición', max_length=100, blank=True)
-    department = models.CharField('Departamento', max_length=100, blank=True)
+    profession = models.CharField('Profesión', max_length=100, blank=True)
+    direction = models.CharField('Dirección', max_length=255, blank=True)
     
     # Campos de control
     created_at = models.DateTimeField('Fecha de creación', auto_now_add=True)
     updated_at = models.DateTimeField('Última actualización', auto_now=True)
     is_active = models.BooleanField('Activo', default=True)
-    
+
+    is_staff = models.BooleanField('Es administrador', default=False)
+
     # Username es el campo principal para login
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []  # No requerir email ni otros campos

@@ -10,9 +10,9 @@ class CustomUserAdmin(UserAdmin):
     Perfecto para crear usuarios manualmente.
     """
     # Campos que aparecen en la lista de usuarios
-    list_display = ('username', 'get_full_name', 'position', 'department', 'is_active', 'created_at')
-    list_filter = ('is_active', 'is_staff', 'is_superuser', 'department', 'created_at')
-    search_fields = ('username', 'first_name', 'last_name', 'position', 'department')
+    list_display = ('username', 'get_full_name', 'profession', 'direction', 'is_active', 'created_at')
+    list_filter = ('is_active', 'is_staff', 'is_superuser', 'direction', 'created_at')
+    search_fields = ('username', 'first_name', 'last_name', 'profession', 'direction')
     ordering = ('-created_at',)
     
     # Campos en el formulario de edición
@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'phone', 'email')
         }),
         ('Información Laboral', {
-            'fields': ('position', 'department')
+            'fields': ('profession', 'direction')
         }),
         ('Permisos', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
@@ -41,7 +41,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 
-                      'position', 'department', 'is_active', 'is_staff'),
+                      'profession', 'direction', 'is_active', 'is_staff'),
         }),
     )
     
