@@ -7,5 +7,5 @@ urlpatterns = [
     path('', manager_view, name='manager'),
     path('admin-dashboard/', admin_dashboard_view, name='admin_dashboard'),
     path('modify/<int:user_id>/', manager_modification, name='manager_modification'),
-    path('search-users/', search_users_ajax, name='search_users_ajax'),
+    path('search/', search_users_ajax, name='search'),  # Nueva URL para el JavaScript
 ]
