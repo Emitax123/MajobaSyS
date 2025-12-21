@@ -1,14 +1,93 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="container mt-4">
-    <h2>Crear Usuario</h2>
+  <link rel="stylesheet" href="{% static 'css/create_user.css' %}" />
+  <div class="user-form-container">
+    <span>Crear Usuario</span>
     <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        
-    </form>
-</div>
+      {% csrf_token %}
 
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for error in form.non_field_errors %}
+            <div class="error-message">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="input-cont">
+        <label for="form.username.id_for_label" class="form-label">Nombre de Usuario</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div class="error-message">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="input-cont">
+        <label for="form.first_name.id_for_label" class="form-label">Nombre</label>
+        {{ form.first_name }}
+        {% if form.first_name.errors %}
+          <div class="error-message">{{ form.first_name.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.last_name.id_for_label" class="form-label">Apellido</label>
+        {{ form.last_name }}
+        {% if form.last_name.errors %}
+          <div class="error-message">{{ form.last_name.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.email.id_for_label" class="form-label">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div class="error-message">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.phone.id_for_label" class="form-label">Teléfono</label>
+        {{ form.phone }}
+        {% if form.phone.errors %}
+          <div class="error-message">{{ form.phone.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.profession.id_for_label" class="form-label">Profesión</label>
+        {{ form.profession }}
+        {% if form.profession.errors %}
+          <div class="error-message">{{ form.profession.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.is_staff.id_for_label" class="form-label">Es Staff</label>
+        {{ form.is_staff }}
+        {% if form.is_staff.errors %}
+          <div class="error-message">{{ form.is_staff.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.direction.id_for_label" class="form-label">Dirección</label>
+        {{ form.direction }}
+        {% if form.direction.errors %}
+          <div class="error-message">{{ form.direction.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.password1.id_for_label" class="form-label">Contraseña</label>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <div class="error-message">{{ form.password1.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="input-cont">
+        <label for="form.password2.id_for_label" class="form-label">Confirmar Contraseña</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <div class="error-message">{{ form.password2.errors }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="red-btn user-btn">Guardar</button>
+    </form>
+  </div>
 {% endblock %}

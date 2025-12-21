@@ -1,0 +1,302 @@
+/* ===== DISEÑO MODERNO PARA MODIFY MANAGER ===== */
+
+/* Contenedor principal con diseño moderno */
+.admin-manager-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 350px 4px 1fr;
+    gap: 2rem;
+    align-items: start;
+    margin-top: 0;
+}
+
+/* Card para datos del usuario */
+.manager-data {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(216, 29, 38, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.manager-data:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.data-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: #d81d26;
+    text-align: center;
+    border-bottom: 3px solid #d81d26;
+    padding-bottom: 0.5rem;
+}
+
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #d81d26;
+    font-size: 1.1rem;
+    transition: background-color 0.2s ease;
+    width: 100%;
+}
+
+.data-item:hover {
+    background: #e9ecef;
+}
+
+.data-value {
+    font-weight: 700;
+    color: white;
+    background: #d81d26;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Separador visual elegante */
+.red-border {
+    background: linear-gradient(180deg, #d81d26 0%, #c71d26 50%, #d81d26 100%);
+    width: 4px;
+    border-radius: 2px;
+    align-self: stretch;
+    box-shadow: 0 0 10px rgba(216, 29, 38, 0.3);
+    margin: 0;
+}
+
+/* Contenedor de modificaciones */
+.manager-mod-container {
+    display: grid;
+    grid-template-columns: 300px 4px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Panel de acciones */
+.manager-modify {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(216, 29, 38, 0.1);
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+}
+
+.manager-modify .data-title {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.manager-modify a,
+.add-btn,
+.minus-btn {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    background: linear-gradient(135deg, #d81d26 0%, #c71d26 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(216, 29, 38, 0.3);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.manager-modify a:hover,
+.add-btn:hover:not(.disabled-btn),
+.minus-btn:hover:not(.disabled-btn) {
+    background: linear-gradient(135deg, #c71d26 0%, #b01d26 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(216, 29, 38, 0.4);
+}
+
+.disabled-btn {
+    background: #6c757d !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3) !important;
+}
+
+/* Panel de formularios */
+.manager-forms {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(216, 29, 38, 0.1);
+    min-height: 400px;
+}
+
+form {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.inputs-cont {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+form label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+form input[type="number"] {
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    width: 100%;
+}
+
+form input[type="number"]:focus {
+    outline: none;
+    border-color: #d81d26;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.1);
+}
+
+textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #d81d26;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.1);
+}
+
+textarea::placeholder,
+form input::placeholder {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 1em;
+}
+
+/* Botón de guardar */
+.save-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #d81d26 0%, #c71d26 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(216, 29, 38, 0.3);
+    margin-top: 1rem;
+}
+
+.save-btn:hover {
+    background: linear-gradient(135deg, #c71d26 0%, #b01d26 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(216, 29, 38, 0.4);
+}
+
+/* Checkbox personalizado */
+.manager-forms input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+    accent-color: #d81d26;
+    transform: scale(1.2);
+}
+
+.manager-forms label:has(input[type="checkbox"]) {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    color: #495057;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    margin-bottom: 0;
+}
+
+.manager-forms label:has(input[type="checkbox"]):hover {
+    background: #f8f9fa;
+}
+
+/* Responsivo */
+@media (max-width: 1200px) {
+    .admin-manager-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .manager-mod-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .red-border {
+        height: 4px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-manager-container {
+        padding: 1rem;
+    }
+
+    .manager-data,
+    .manager-modify,
+    .manager-forms {
+        padding: 1.5rem;
+    }
+
+    .data-title {
+        font-size: 1.5rem;
+    }
+
+    .manager-modify a,
+    .add-btn,
+    .minus-btn {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+}

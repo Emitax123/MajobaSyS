@@ -1,34 +1,148 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
+  <div class="company-container">
+    <!-- <span class="title">La Constructora</span> -->
+    <span class="intro-text">
+      La Constructora es el área especializada en la proyección, dirección y ejecución de obras.
+      <span class="red-border"></span>
+    </span>
 
-   <h2>La Constructora </h2>
-   <p>La constructora es el área especializada en la proyección, dirección y ejecución de obras.</p>
-   <div class="proyects-container">
-      <!-- Obras civiles -->  
-      <div class="proyects-item">
-         <img src="{% static 'img/constructora1.jpg' %}" alt="Constructora Image 1">
-            <span>Obras civiles</span>
-            <button>Ver mas</button>
+    <div class="proyects-container">
+      <!-- Obras civiles -->
+      <div class="proyects-row">
+        <div class="proyects-item">
+          <img src="{% static 'images/constructora/IMG1.jpg' %}" alt="Constructora Image 1" />
+          <span>Obras civiles</span>
+        </div>
+        <!-- Pavimentos y pisos industriales -->
+        <div class="proyects-item">
+          <img src="{% static 'images/constructora/IMG2.jpg' %}" alt="Constructora Image 2" />
+          <span>Pavimentos y pisos industriales</span>
+        </div>
+        <!-- Redes y entubamientos -->
+        <div class="proyects-item">
+          <img src="{% static 'images/constructora/IMG3.jpg' %}" alt="Constructora Image 3" />
+          <span>Redes y entubamientos</span>
+        </div>
+        <!-- Movimientos de suelo -->
+        <div class="proyects-item">
+          <img src="{% static 'images/constructora/IMG4.jpg' %}" alt="Constructora Image 4" />
+          <span>Movimientos de suelo</span>
+        </div>
       </div>
-      <!-- Pavimentos y pisos industriales -->
-      <div class="proyects-item">
-         <img src="{% static 'img/constructora2.jpg' %}" alt="Constructora Image 2">
-         <span>Pavimentos y pisos industriales</span>
-         <button>Ver mas</button>
-      </div>
-      <!-- Redes y entubamientos -->
-      <div class="proyects-item">
-         <img src="{% static 'img/constructora3.jpg' %}" alt="Constructora Image 3">
-         <span>Redes y entubamientos</span>
-         <button>Ver mas</button>
-      </div>
-      <!-- Movimientos de suelo -->
-      <div class="proyects-item">
-         <img src="{% static 'img/constructora4.jpg' %}" alt="Constructora Image 4">
-         <span>Movimientos de suelo</span>
-         <button>Ver mas</button>
-      </div>
+    </div>
+  </div>
+  {% include 'carousel.html' %}
+  <style>
+    .company-container {
+      margin: 2em 0;
+      padding: 2em;
+      background-color: #ffffff;
+    }
+    .company-container span.intro-text {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      font-size: 1.2em;
     
-   </div>
+      font-weight: 500;
+      padding: 0 10em;
+    }
+    span.red-border {
+      display: block;
+      width: 50%;
+      height: 2px;
+      background-color: #d81d26;
+      margin: 1em auto 2em auto;
+    }
+    .proyects-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+      margin-bottom: 2em;
+      padding: 2em;
+    }
+    .proyects-row {
+      display: flex;
+      flex-flow: row;
+      justify-content: center;
+      gap: 2em;
+    }
+    .proyects-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+      text-align: center;
+      font-weight: 500;
+      font-size: 1.1em;
+    }
+    .proyects-item img {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+  </style>
+  <script>
+    // JavaScript para el carrusel
+    let currentSlideIndex = 0
+    const slides = document.querySelectorAll('.carousel-slide')
+    const indicators = document.querySelectorAll('.indicator')
+    const totalSlides = slides.length
+    
+    function showSlide(n) {
+      // Ocultar todas las slides
+      slides.forEach((slide) => slide.classList.remove('active'))
+      indicators.forEach((indicator) => indicator.classList.remove('active'))
+    
+      // Ajustar índice si está fuera de rango
+      if (n >= totalSlides) currentSlideIndex = 0
+      if (n < 0) currentSlideIndex = totalSlides - 1
+    
+      // Mostrar slide actual
+      slides[currentSlideIndex].classList.add('active')
+      indicators[currentSlideIndex].classList.add('active')
+    }
+    
+    function moveSlide(direction) {
+      currentSlideIndex += direction
+      showSlide(currentSlideIndex)
+    }
+    
+    function currentSlide(n) {
+      currentSlideIndex = n - 1
+      showSlide(currentSlideIndex)
+    }
+    
+    // Auto-play del carrusel (opcional)
+    function autoPlay() {
+      moveSlide(1)
+    }
+    
+    // Iniciar auto-play cada 5 segundos
+    setInterval(autoPlay, 5000)
+    
+    // Pausar auto-play al hacer hover
+    const carousel = document.querySelector('.carousel')
+    let autoPlayInterval = setInterval(autoPlay, 5000)
+    
+    carousel.addEventListener('mouseenter', () => {
+      clearInterval(autoPlayInterval)
+    })
+    
+    carousel.addEventListener('mouseleave', () => {
+      autoPlayInterval = setInterval(autoPlay, 5000)
+    })
+    
+    // Soporte para navegación con teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') moveSlide(-1)
+      if (e.key === 'ArrowRight') moveSlide(1)
+    })
+  </script>
 {% endblock %}

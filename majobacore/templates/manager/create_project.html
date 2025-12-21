@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <div class="create-project-container">
+    <span class="title">Crear Nuevo Proyecto</span>
+    <form autocomplete="off" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="red-btn" type="submit">Crear Proyecto</button>
+    </form>
+  </div>
+  <style>
+    .create-project-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 600px;
+      margin: 2em auto;
+      padding: 2em;
+      background-color: #ffffff;
+      border-radius: 8px;
+    }
+    .create-project-container .title {
+      display: flex;
+      justify-content: center;
+      padding-bottom: 0.5em;
+      font-size: 1.5em;
+      margin-bottom: 1em;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 2px solid #d81d26;
+    }
+    form {
+      display: flex;
+      flex-flow: column;
+      gap: 1em;
+    }
+    form p:last-of-type {
+      display: flex;
+      flex-flow: row;
+      gap: 0.5em;
+      align-items: center;
+      margin: ;
+    }
+    form p:last-of-type label {
+      margin: 0;
+    }
+    form label {
+      display: block;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    form input[type='checkbox'] {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      cursor: pointer;
+      accent-color: #d81d26;
+    }
+    
+    form input[type='checkbox']:checked {
+      background-color: #d81d26;
+    }
+    
+    form label:has(input[type='checkbox']) {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: s 8px;
+      font-size: 1rem;
+    }
+    
+    .red-btn {
+      display: flex;
+      place-self: center;
+      padding: 0.5em;
+      font-weight: 500;
+    }
+  </style>
+{% endblock %}

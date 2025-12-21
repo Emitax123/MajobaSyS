@@ -1,312 +1,144 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <h2>Hormicons</h2>
-    <p>Hormicons es el área especializada en la fabricación y comercialización de productos de hormigón elaborado.</p>
+  <div class="company-container">
+    <span class="intro-text">
+      Hormicons es el área especializada en la fabricación y comercialización de productos de hormigón elaborado.
+      <span class="red-border"></span>
+    </span>
 
     <div class="proyects-container">
+      <div class="proyects-row">
         <!-- Hormigon elaborado -->
         <div class="proyects-item">
-            <img src="{% static 'img/hormicons1.jpg' %}" alt="Hormicons Image 1">
-                <span>Hormigón elaborado</span>
-                <button>Ver mas</button>
+          <img src="{% static 'images/hormicons/IMG1.jpg' %}" alt="Hormicons Image 1" />
+          <span>Hormigón elaborado</span>
         </div>
         <!-- Premoldeados -->
         <div class="proyects-item">
-            <img src="{% static 'img/hormicons2.jpg' %}" alt="Hormicons Image 2">
-            <span>Premoldeados</span>
-            <button>Ver mas</button>
+          <img src="{% static 'images/hormicons/IMG2.jpg' %}" alt="Hormicons Image 2" />
+          <span>Premoldeados</span>
         </div>
         <!-- Alquiler de maquinas y equipos -->
         <div class="proyects-item">
-            <img src="{% static 'img/hormicons3.jpg' %}" alt="Hormicons Image 3">
-            <span>Alquiler de maquinas y equipos</span>
-            <button>Ver mas</button>
+          <img src="{% static 'images/hormicons/IMG3.jpg' %}" alt="Hormicons Image 3" />
+          <span>Alquiler de maquinas y equipos</span>
         </div>
-       
+      </div>
     </div>
+  </div>
+  <!-- Carrusel de Imágenes -->
+  {% include 'carousel.html' %}
+  <style>
+    .company-container {
+      margin: 2em 0;
+      padding: 2em;
+      background-color: #ffffff;
+    }
+    .company-container span.intro-text {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      font-size: 1.2em;
+    
+      font-weight: 500;
+      padding: 0 10em;
+    }
+    span.red-border {
+      display: block;
+      width: 50%;
+      height: 2px;
+      background-color: #d81d26;
+      margin: 1em auto 2em auto;
+    }
+    .proyects-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+    
+      padding: 2em;
+    }
+    .proyects-row {
+      display: flex;
+      flex-flow: row;
+      justify-content: center;
+      gap: 2em;
+    }
+    .proyects-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+      text-align: center;
+      font-weight: 500;
+      font-size: 1.1em;
+    }
+    .proyects-item img {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+  </style>
 
-    <!-- Carrusel de Imágenes -->
-    <div class="carousel-section">
-        <h3>Galería de Proyectos</h3>
-        <div class="carousel-container">
-            <div class="carousel">
-                <div class="carousel-track" id="carouselTrack">
-                    <div class="carousel-slide active">
-                        <img src="{% static 'img/carousel1.jpg' %}" alt="Proyecto 1">
-                        <div class="carousel-caption">
-                            <h4>Proyecto Residencial</h4>
-                            <p>Desarrollo de viviendas con hormigón de alta calidad</p>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="{% static 'img/carousel2.jpg' %}" alt="Proyecto 2">
-                        <div class="carousel-caption">
-                            <h4>Infraestructura Urbana</h4>
-                            <p>Construcción de puentes y vías con materiales premoldeados</p>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="{% static 'img/carousel3.jpg' %}" alt="Proyecto 3">
-                        <div class="carousel-caption">
-                            <h4>Proyectos Industriales</h4>
-                            <p>Estructuras industriales con equipos especializados</p>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <img src="{% static 'img/carousel4.jpg' %}" alt="Proyecto 4">
-                        <div class="carousel-caption">
-                            <h4>Obras Públicas</h4>
-                            <p>Desarrollo de infraestructura pública de gran escala</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Controles del carrusel -->
-                <button class="carousel-btn carousel-btn-prev" onclick="moveSlide(-1)">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="carousel-btn carousel-btn-next" onclick="moveSlide(1)">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-            
-            <!-- Indicadores -->
-            <div class="carousel-indicators">
-                <button class="indicator active" onclick="currentSlide(1)"></button>
-                <button class="indicator" onclick="currentSlide(2)"></button>
-                <button class="indicator" onclick="currentSlide(3)"></button>
-                <button class="indicator" onclick="currentSlide(4)"></button>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        /* Estilos del Carrusel */
-        .carousel-section {
-            margin-top: 50px;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 15px;
-        }
-
-        .carousel-section h3 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2rem;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .carousel-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .carousel {
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .carousel-slide {
-            min-width: 100%;
-            position: relative;
-            display: none;
-        }
-
-        .carousel-slide.active {
-            display: block;
-        }
-
-        .carousel-slide img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            color: white;
-            padding: 40px 30px 30px;
-            text-align: center;
-        }
-
-        .carousel-caption h4 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .carousel-caption p {
-            font-size: 1.1rem;
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        /* Botones de navegación */
-        .carousel-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #333;
-            transition: all 0.3s ease;
-            z-index: 10;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .carousel-btn:hover {
-            background: white;
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .carousel-btn-prev {
-            left: 20px;
-        }
-
-        .carousel-btn-next {
-            right: 20px;
-        }
-
-        /* Indicadores */
-        .carousel-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 25px;
-        }
-
-        .indicator {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .indicator.active {
-            background: #007bff;
-            transform: scale(1.2);
-        }
-
-        .indicator:hover {
-            background: #0056b3;
-            transform: scale(1.1);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .carousel-slide img {
-                height: 300px;
-            }
-            
-            .carousel-caption {
-                padding: 20px 15px 15px;
-            }
-            
-            .carousel-caption h4 {
-                font-size: 1.4rem;
-            }
-            
-            .carousel-caption p {
-                font-size: 1rem;
-            }
-            
-            .carousel-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-            
-            .carousel-btn-prev {
-                left: 10px;
-            }
-            
-            .carousel-btn-next {
-                right: 10px;
-            }
-        }
-    </style>
-
-    <script>
-        // JavaScript para el carrusel
-        let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.carousel-slide');
-        const indicators = document.querySelectorAll('.indicator');
-        const totalSlides = slides.length;
-
-        function showSlide(n) {
-            // Ocultar todas las slides
-            slides.forEach(slide => slide.classList.remove('active'));
-            indicators.forEach(indicator => indicator.classList.remove('active'));
-            
-            // Ajustar índice si está fuera de rango
-            if (n >= totalSlides) currentSlideIndex = 0;
-            if (n < 0) currentSlideIndex = totalSlides - 1;
-            
-            // Mostrar slide actual
-            slides[currentSlideIndex].classList.add('active');
-            indicators[currentSlideIndex].classList.add('active');
-        }
-
-        function moveSlide(direction) {
-            currentSlideIndex += direction;
-            showSlide(currentSlideIndex);
-        }
-
-        function currentSlide(n) {
-            currentSlideIndex = n - 1;
-            showSlide(currentSlideIndex);
-        }
-
-        // Auto-play del carrusel (opcional)
-        function autoPlay() {
-            moveSlide(1);
-        }
-
-        // Iniciar auto-play cada 5 segundos
-        setInterval(autoPlay, 5000);
-
-        // Pausar auto-play al hacer hover
-        const carousel = document.querySelector('.carousel');
-        let autoPlayInterval = setInterval(autoPlay, 5000);
-
-        carousel.addEventListener('mouseenter', () => {
-            clearInterval(autoPlayInterval);
-        });
-
-        carousel.addEventListener('mouseleave', () => {
-            autoPlayInterval = setInterval(autoPlay, 5000);
-        });
-
-        // Soporte para navegación con teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') moveSlide(-1);
-            if (e.key === 'ArrowRight') moveSlide(1);
-        });
-    </script>
-
-
-{% endblock content %}
+  <script>
+    // JavaScript para el carrusel
+    let currentSlideIndex = 0
+    const slides = document.querySelectorAll('.carousel-slide')
+    const indicators = document.querySelectorAll('.indicator')
+    const totalSlides = slides.length
+    
+    function showSlide(n) {
+      // Ocultar todas las slides
+      slides.forEach((slide) => slide.classList.remove('active'))
+      indicators.forEach((indicator) => indicator.classList.remove('active'))
+    
+      // Ajustar índice si está fuera de rango
+      if (n >= totalSlides) currentSlideIndex = 0
+      if (n < 0) currentSlideIndex = totalSlides - 1
+    
+      // Mostrar slide actual
+      slides[currentSlideIndex].classList.add('active')
+      indicators[currentSlideIndex].classList.add('active')
+    }
+    
+    function moveSlide(direction) {
+      currentSlideIndex += direction
+      showSlide(currentSlideIndex)
+    }
+    
+    function currentSlide(n) {
+      currentSlideIndex = n - 1
+      showSlide(currentSlideIndex)
+    }
+    
+    // Auto-play del carrusel (opcional)
+    function autoPlay() {
+      moveSlide(1)
+    }
+    
+    // Iniciar auto-play cada 5 segundos
+    setInterval(autoPlay, 5000)
+    
+    // Pausar auto-play al hacer hover
+    const carousel = document.querySelector('.carousel')
+    let autoPlayInterval = setInterval(autoPlay, 5000)
+    
+    carousel.addEventListener('mouseenter', () => {
+      clearInterval(autoPlayInterval)
+    })
+    
+    carousel.addEventListener('mouseleave', () => {
+      autoPlayInterval = setInterval(autoPlay, 5000)
+    })
+    
+    // Soporte para navegación con teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') moveSlide(-1)
+      if (e.key === 'ArrowRight') moveSlide(1)
+    })
+  </script>
+{% endblock %}

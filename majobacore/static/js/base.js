@@ -31,15 +31,44 @@
             });
         });
 
-        // Add smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
+        
+
+        // Dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const mainContent = document.querySelector('.main-content');
+            const dropdown = document.querySelector('.dropdown');
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            
+            
+            if (dropdown && dropdownToggle && !mainContent) {
+                // Toggle dropdown when clicking on the toggle
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropdown.classList.toggle('active');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+
+                // Close dropdown when clicking on a dropdown link
+                const dropdownLinks = dropdown.querySelectorAll('.dropdown-link');
+                dropdownLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        dropdown.classList.remove('active');
                     });
-                }
-            });
+                });
+
+                // Close dropdown when pressing Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && dropdown.classList.contains('active')) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
         });

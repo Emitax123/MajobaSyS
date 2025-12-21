@@ -1,10 +1,12 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import ManagerData
-from .forms import ManagerDataForm
+from .models import ManagerData, Project, Notification
+from .forms import ManagerDataForm, ProjectForm
 from users.models import CustomUser
 from django.db import models
+from django.db.models import F
+from django.db import transaction
 from django.shortcuts import redirect
 import logging
 logger = logging.getLogger(__name__)
@@ -33,17 +35,23 @@ def manager_view(request):
             user=request.user,
             defaults={
                 'points': 0,
-                'acc_level': 'bronze',
+                'acc_level': 'principiante',
                 'notifications': 0
             }
         )
+        #Obtener proyectos asociados al usuario
         
+        projects = Project.objects.filter(user=request.user).all()[:3]
+        print(projects)
+        notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
         if created:
             logger.info(f"ManagerData creado para el usuario {request.user.username}")
         
         return render(request, 'manager/account_manager.html', {
             'manager_info': manager_info,
-            'user': request.user
+            'user': request.user,
+            'projects': projects,
+            'notifications': notifications,
         })
     except Exception as e:
         logger.error(f"Error al cargar ManagerData para {request.user.username}: {e}")
@@ -51,6 +59,55 @@ def manager_view(request):
             'error': 'Error al cargar la información del manager.'
         })
 
+def create_project_view(request):
+    """
+    Vista para crear un nuevo proyecto asociado al usuario autenticado.
+    """
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.user = request.user
+            project.save()
+            logger.info(f"Nuevo proyecto '{project.name}' creado por {request.user.username}")
+            return redirect('manager')
+        else:
+            logger.warning(f"Error en el formulario de creación de proyecto por {request.user.username}: {form.errors}")
+            return render(request, 'manager/create_project.html', {'form': form})
+    else:
+        form = ProjectForm()
+        return render(request, 'manager/create_project.html', {'form': form})
+
+def list_projects_view(request):
+    """
+    Vista para listar todos los proyectos del usuario autenticado.
+    """
+    projects = Project.objects.filter(user=request.user).all().order_by('-created_at')
+    return render(request, 'manager/projects_list.html', {'projects': projects})
+
+def modify_project_view(request, project_id):
+    """
+    Vista para modificar un proyecto existente.
+    """
+    
+    try:
+        project = Project.objects.get(id=project_id, user=request.user)
+    except Project.DoesNotExist:
+        logger.warning(f"Proyecto con ID {project_id} no encontrado para {request.user.username}")
+        return redirect('projects_list')
+    
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            logger.info(f"Proyecto '{project.name}' modificado por {request.user.username}")
+            return redirect('list_projects')
+        else:
+            logger.warning(f"Error en el formulario de modificación de proyecto por {request.user.username}: {form.errors}")
+            return render(request, 'manager/modify_project.html', {'form': form, 'project': project})
+    else:
+        form = ProjectForm(instance=project)
+        return render(request, 'manager/modify_project.html', {'form': form, 'project': project})
 
 @login_required
 def admin_dashboard_view(request):
@@ -85,7 +142,11 @@ def admin_dashboard_view(request):
             'total_managers': total_managers,
             'total_points': total_points,
             'levels_stats': levels_stats,
-            'user': request.user
+            'user': request.user,
+            'user_created': request.session.pop('user_created', False)
+        
+
+
         }
         
         return render(request, 'manager/admin_dashboard.html', context)
@@ -108,7 +169,7 @@ def search_users_ajax(request):
     query = request.GET.get('q', '').strip()
     page = int(request.GET.get('page', 1))
     per_page = 10  # Número de resultados por página
-    
+    print(query)
     if not query:
         return JsonResponse({'users': [], 'total': 0, 'page': page, 'per_page': per_page})
     
@@ -130,11 +191,15 @@ def search_users_ajax(request):
         'id': user.id,
         'username': user.username,
         'full_name': user.get_full_name(),
-        'email': user.email,
+        
         'is_staff': user.is_staff,
         'is_active': user.is_active
     } for user in users_page]
     
+    print(users_data)
+    print(total_results)
+    print(page)
+    print(per_page)
     # 5. Devolver JSON con usuarios encontrados
     return JsonResponse({
         'users': users_data,
@@ -143,12 +208,59 @@ def search_users_ajax(request):
         'per_page': per_page
     })
 
+
+def create_notification(manager_info, type, points, description=None):
+    """
+    Crear una notificación para el usuario
+    """
+    try:
+        # Determinar el mensaje según el tipo
+        if type == 1:
+            message = f"¡Felicitaciones! sumaste {points} puntos."
+            if description:
+                description = description
+            else:
+                description = f"Se han añadido puntos a tu cuenta."
+            
+        elif type == 2:
+            message = f"Gastaste {points} puntos."
+            if description:
+                description = description
+            else:
+                description = f"Se han restado puntos de tu cuenta."
+           
+        else:
+            return None
+            
+        # Crear la notificación
+        print('creando noti2')
+        notification = Notification.objects.create(
+            user=manager_info.user,
+            
+            message=message,
+            description=description,
+            is_read=False
+        )
+        
+        # Incrementar el contador de notificaciones en ManagerData
+        manager_info.notifications += 1
+        manager_info.save()
+        
+        logger.info(f"Notificación creada para {manager_info.user.username}: {message}")
+        print('NOfiticacion')
+        return notification
+        
+    except Exception as e:
+        logger.error(f"Error al crear notificación: {e}")
+        return None
+
+@transaction.atomic
 def manager_modification(request, user_id):
     """
     Vista para que un administrador modifique la información del ManagerData de un usuario.
     Si el usuario no tiene un ManagerData asociado, se crea uno nuevo.
     """
-    manager_info = ManagerData.objects.filter(user_id=user_id).first()
+    manager_info = ManagerData.objects.filter(user_id=user_id).select_related('user').first()
     
     if not manager_info:
         manager_info = create_manager(request.user)
@@ -158,18 +270,39 @@ def manager_modification(request, user_id):
             })
 
     if request.method == 'POST':
-        form = ManagerDataForm(request.POST, instance=manager_info)
-        if form.is_valid():
-            form.save()
-            logger.info(f"ManagerData actualizado para {manager_info.user.username} por {request.user.username}")
-            return render(request, 'manager/account_manager.html', {
-                'manager_info': manager_info,
-                'success': 'Información del manager actualizada correctamente.'
-            })
-        else:
-            logger.warning(f"Error en el formulario de ManagerData para {manager_info.user.username}: {form.errors}")
-    else:
-        form = ManagerDataForm(instance=manager_info)
+        if request.POST.get('checkbox-option'):
+            print('check')
+        if request.POST.get('user-points'):
+            points = int(request.POST.get('user-points', 0))
+            if points > 0:
+               ManagerData.objects.filter(id=manager_info.id).update(
+                        points=F('points') + points
+                    )
+               manager_info.refresh_from_db()
+            if request.POST.get('checkbox-option'):
+                if request.POST.get('description'):
+                    create_notification(manager_info, 1, points, request.POST.get('description'))
+                else:
+                    create_notification(manager_info, 1, points)
+        elif request.POST.get('user-minus-points'):
+            points = int(request.POST.get('user-minus-points', 0))
+            if points > 0:
+                # Actualización atómica que previene puntos negativos
+                    ManagerData.objects.filter(id=manager_info.id).update(
+                        points=models.Case(
+                            models.When(points__gte=points, 
+                                      then=F('points') - points),
+                            default=0
+                        )
+                    )
+                    manager_info.refresh_from_db()
+            if request.POST.get('checkbox-option'):
+                if request.POST.get('description'):
+                    create_notification(manager_info, 2, points, request.POST.get('description'))
+                else:
+                    create_notification(manager_info, 2, points)
 
-    return render(request, 'manager/modify_manager.html', {'form': form, 'manager_info': manager_info})
+    user = manager_info.user
+
+    return render(request, 'manager/modify_manager.html', { 'manager_info': manager_info, 'user': user})
 

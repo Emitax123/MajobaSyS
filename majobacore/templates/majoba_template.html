@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-  <div class="company-conainer">
-    <p>Majoba S.A. es las unidad encargada de la venta general de materiales de construccion. Con casa en central en Castelli, Bs.As. y Lezama, Bs.As. Con un amplio catalogo de productos y un equipo de profesionales a disposicion, estamos listos para atender tus necesidades.</p>
-    <div class="budget-container">
-      <button class="red-button">Solicitar Presupuesto</button>
-    </div>
+  <div class="company-container">
+    <span class="intro-text">
+      Majoba S.A. es las unidad encargada de la venta general de materiales de construccion. <br />
+      Con casa en central en Castelli, Bs.As. y Lezama, Bs.As, disponemos de un amplio catalogo de productos <br />
+      y un equipo de profesionales a disposicion, estamos listos para atender tus necesidades.
+      <span class="red-border"></span>
+    </span>
+
     <div class="brands-container">
-      <h2>En Majoba S.A. podes encontrar productos de las siguientes marcas y mas</h2>
+      <span class="title">En Majoba S.A. podes encontrar productos de las siguientes marcas y mas</span>
       <div class="brands-list"></div>
     </div>
     <div class="materials-container">
@@ -47,23 +50,25 @@
           <span>Aberturas</span>
         </div>
       </div>
-      <div class="materials-row"></div>
-      <div class="material-item">
-        <img src="{% static 'images/majoba/materials9.jpg' %}" alt="" />
-        <span>Maderera</span>
+      <div class="materials-row">
+        <div class="material-item">
+          <img src="{% static 'images/majoba/materials9.jpg' %}" alt="" />
+          <span>Maderera</span>
+        </div>
+        <div class="material-item">
+          <img src="{% static 'images/majoba/materials10.jpg' %}" alt="" />
+          <span>Chapas, perfiles y tubos</span>
+        </div>
+        <div class="material-item">
+          <img src="{% static 'images/majoba/materials11.jpg' %}" alt="" />
+          <span>Hierros y mallas</span>
+        </div>
+        <div class="material-item">
+          <img src="{% static 'images/majoba/materials12.jpg' %}" alt="" />
+          <span>Placas de yeso y PVC</span>
+        </div>
       </div>
-      <div class="material-item">
-        <img src="{% static 'images/majoba/materials10.jpg' %}" alt="" />
-        <span>Chapas, perfiles y tubos</span>
-      </div>
-      <div class="material-item">
-        <img src="{% static 'images/majoba/materials11.jpg' %}" alt="" />
-        <span>Hierros y mallas</span>
-      </div>
-      <div class="material-item">
-        <img src="{% static 'images/majoba/materials12.jpg' %}" alt="" />
-        <span>Placas de yeso y PVC</span>
-      </div>
+
       <div class="materials-row">
         <div class="material-item">
           <img src="{% static 'images/majoba/materials13.jpg' %}" alt="" />
@@ -84,4 +89,73 @@
       </div>
     </div>
   </div>
+
+  <style>
+    div.company-container {
+      margin: 2em 0;
+      padding: 2em;
+      background-color: #ffffff;
+    }
+    div.company-container span.intro-text {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      font-size: 1.2em;
+      margin-bottom: 1.5em;
+      font-weight: 500;
+      padding: 0 10em;
+    }
+    span.red-border {
+      display: block;
+      width: 50%;
+      height: 2px;
+      background-color: #d81d26;
+      margin: 1em auto 2em auto;
+    }
+    span.title {
+      display: block;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: 600;
+      margin-bottom: 1.5em;
+    }
+    button.red-btn {
+      padding: 0.8em 1.5em;
+      font-size: 1.1em;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .materials-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2em;
+    
+      padding: 2em;
+    }
+    .materials-row {
+      display: flex;
+      flex-flow: row;
+      justify-content: center;
+      gap: 2em;
+    }
+    .material-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+      text-align: center;
+      font-weight: 500;
+      font-size: 1.1em;
+    }
+    .material-item img {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+  </style>
 {% endblock %}

@@ -68,29 +68,35 @@
       </div>
     </section>
 
-    <div class="features-grid">
-      <h2>Nuestras empresas</h2>
+    <div id="empresas-section" class="features-grid">
+      <h1>Nuestras empresas</h1>
       <div class="features-container">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <img src="{% static 'images/majoba-card-logo.png' %}" alt="Majoba" />
-          </div>
+        <a href="{% url 'majoba' %}">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <img src="{% static 'images/majoba-card-logo.png' %}" alt="Majoba" />
+            </div>
 
-          <p class="feature-description">Venta de materiales de construccion</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <img src="{% static 'images/laconstructora-card-logo.png' %}" alt="La Constructora" />
+            <p class="feature-description">Venta de materiales de construccion</p>
           </div>
+        </a>
+        <a href="{% url 'constructora' %}">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <img src="{% static 'images/laconstructora-card-logo.png' %}" alt="La Constructora" />
+            </div>
 
-          <p class="feature-description">Gestión de proyectos de construcción</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <img src="{% static 'images/hormicons-card-logo.png' %}" alt="Hormicons" />
+            <p class="feature-description">Gestión de proyectos de construcción</p>
           </div>
-          <p class="feature-description">Hormigón Elaborado</p>
-        </div>
+        </a>
+        <a href="{% url 'hormicons' %}">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <img src="{% static 'images/hormicons-card-logo.png' %}" alt="Hormicons" />
+            </div>
+            <p class="feature-description">Hormigón Elaborado</p>
+          </div>
+        </a>
       </div>
     </div>
 
@@ -104,7 +110,25 @@
       </div>
     </section>
   </main>
-
+  <script>
+    document.getElementById('empresas').addEventListener('click', function (e) {
+      e.preventDefault() // Prevenir el comportamiento por defecto del enlace
+    
+      const empresasSection = document.getElementById('empresas-section')
+      if (empresasSection) {
+        const navbar = document.querySelector('.navbar')
+        const navbarHeight = navbar ? navbar.offsetHeight : 0
+    
+        const elementPosition = empresasSection.getBoundingClientRect().top
+        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight
+    
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        })
+      }
+    })
+  </script>
   <script>
     // Carrusel JavaScript
     let currentSlideIndex = 0

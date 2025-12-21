@@ -2,7 +2,7 @@
 
 /* Alternativa: Si no tienes las imágenes, puedes usar gradientes como placeholder */
 .carousel-slide:nth-child(1) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d81d26 0%, #3e0609 100%);
 }
 
 .carousel-slide:nth-child(2) {

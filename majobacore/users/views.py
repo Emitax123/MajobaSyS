@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.urls import reverse
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 from manager.views import create_manager
 from django.contrib.auth.decorators import login_required
@@ -12,20 +12,27 @@ logger = logging.getLogger(__name__)
 
 
 def user_create_view(request):
-    print("Metodo de request:", request.method)
     if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
         try:
-            form = CustomUserCreationForm(request.POST)
             if form.is_valid():
-                form.save()
-                # Ademas deberiamos crear automáticamente un ManagerData asociado
-                print("Usuario creado, ahora creando ManagerData...")
-                create_manager(form.instance)
-                print("ManagerData creado.")
-                return render(request, 'users/staff_template.html')
+                user = form.save()
+                # Crear automáticamente un ManagerData asociado
+               
+                create_manager(user)
+           
+                messages.success(request, f'Usuario {user.username} creado exitosamente.')
+                request.session['user_created'] = True
+                
+            
+                return redirect('admin_dashboard')
         except Exception as e:
             logger.error(f"Error al crear usuario: {e}")
-    form = CustomUserCreationForm()
+            
+            
+    else:
+        form = CustomUserCreationForm()
+    
     return render(request, 'users/user_create.html', {'form': form})
 
 
@@ -115,14 +122,36 @@ def profile_view(request):
 def user_modification(request, user_id):
     try:
         user = CustomUser.objects.get(id=user_id)
+        
+        # Obtener información del manager si existe
+        manager_info = None
+        try:
+            manager_info = user.manager_user
+        except:
+            pass
+        
         if request.method == 'POST':
-            form = CustomUserCreationForm(request.POST, instance=user)
+            # Usar el formulario correcto para modificación
+            form = CustomUserChangeForm(request.POST, instance=user)
             if form.is_valid():
-                form.save()
-                return render(request, 'users/staff_template.html')
+                updated_user = form.save()
+                messages.success(request, f'Usuario {updated_user.username} modificado exitosamente.')
+                return redirect('manager_modification', user_id=updated_user.id)
+            else:
+                # Si el formulario no es válido, se renderiza con los errores
+                messages.error(request, 'Por favor, corrige los errores en el formulario.')
         else:
-            form = CustomUserCreationForm(instance=user)
-            return render(request, 'users/user_modify.html', {'form': form, 'user_id': user_id})
+            # Usar el formulario correcto para modificación
+            form = CustomUserChangeForm(instance=user)
+        
+        return render(request, 'users/user_modify.html', {
+            'form': form, 
+            'user': user,
+            'manager_info': manager_info,
+            'user_id': user_id
+        })
+        
     except CustomUser.DoesNotExist:
         logger.error(f"Usuario con id {user_id} no encontrado.")
-        return render(request, 'users/user_not_found.html')
+        messages.error(request, 'Usuario no encontrado.')
+        return redirect('admin_dashboard')

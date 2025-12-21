@@ -14,9 +14,9 @@ class CustomUser(AbstractUser):
     email = models.EmailField(blank=True, null=True)
     
     # Campos adicionales
-    first_name = models.CharField('Nombre', max_length=150, blank=True)
-    last_name = models.CharField('Apellido', max_length=150, blank=True)
-    phone = models.CharField('Teléfono', max_length=20, blank=True)
+    first_name = models.CharField('Nombre', max_length=150, blank=False, null=False)
+    last_name = models.CharField('Apellido', max_length=150, blank=False, null=False)
+    phone = models.CharField('Teléfono', max_length=20, blank=False, null=False)
     profession = models.CharField('Profesión', max_length=100, blank=True)
     direction = models.CharField('Dirección', max_length=255, blank=True)
     

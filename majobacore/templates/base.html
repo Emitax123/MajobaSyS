@@ -13,32 +13,40 @@
     <nav class="navbar">
       <div class="nav-container">
         <div id="logo">
-          <a href="#"><img src="{% static 'images/logo-majoba-nav.svg' %}" /></a>
+          <a href="{% url 'index' %}"><img src="{% static 'images/logo-majoba-nav.svg' %}" /></a>
         </div>
         <ul class="nav-menu">
+          <li>
+            <a style="padding: 0.5em; font-weight: 600;" class="red-btn" href="">Solicitar Presupuesto</a>
+          </li>
           <li>
             <a href="{% url 'index' %}" class="nav-link">Inicio</a>
           </li>
           <li>
             <a href="#" class="nav-link">Herramientas</a>
           </li>
-          <li>
-            <a href="#" class="nav-link">Empresas</a>
+          <li class="dropdown">
+            <a id="empresas" href="#" class="nav-link dropdown-toggle">Empresas</a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{% url 'majoba' %}" class="dropdown-link">Majoba</a>
+              </li>
+              <li>
+                <a href="{% url 'constructora' %}" class="dropdown-link">La Constructora</a>
+              </li>
+              <li>
+                <a href="{% url 'hormicons' %}" class="dropdown-link">Hormicons</a>
+              </li>
+            </ul>
           </li>
-          {% if user.is_authenticated %}
+          {% if request.user.is_authenticated %}
+            {% if request.user.is_staff %}
+              <li>
+                <a href="{% url 'admin_dashboard' %}" class="nav-link">Panel Admin</a>
+              </li>
+            {% endif %}
             <li>
-              <a href="{% if user.is_staff %}
-                  {% url 'admin_dashboard' %}
-                {% else %}
-                  {% url 'manager' %}
-                {% endif %}"
-                class="nav-link">
-                {% if user.is_staff %}
-                  Panel Admin
-                {% else %}
-                  Mi Cuenta
-                {% endif %}
-              </a>
+              <a href="{% url 'manager' %}" class="nav-link">Mi Cuenta</a>
             </li>
             <li>
               <a href="{% url 'logout' %}" class="nav-link">Cerrar Sesión</a>
@@ -143,7 +151,5 @@
     </footer>
 
     <script src="{% static 'js/base.js' %}"></script>
-    <script src="{% static 'js/search.js' %}"></script>
   </body>
-
 </html>

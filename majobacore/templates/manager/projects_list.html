@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="projects-list-section">
+    <span class="title">Lista de Proyectos</span>
+    <div class="projects-list">
+      {% for project in projects %}
+        <div class="project-card">
+          <span class="project-title">{{ project.name }}</span>
+          <p>
+            <strong>Descripción:</strong> {{ project.description }}
+          </p>
+          <p>
+            <strong>Ubicación:</strong> {{ project.location }}
+          </p>
+          <p>
+            <strong>Fecha de Inicio:</strong> {{ project.start_date }}
+          </p>
+          <p>
+            <strong>Fecha de Fin:</strong> {% if project.end_date %}
+              {{ project.end_date }}
+            {% endif %}
+          </p>
+          <a href="{% url 'modify_project' project.id %}" class="red-btn btn-details">Ver Detalles</a>
+        </div>
+      {% empty %}
+        <p>No hay proyectos disponibles.</p>
+      {% endfor %}
+    </div>
+    <a class="red-btn" href="{% url 'manager' %}">Volver al Panel de Administración</a>
+  </div>
+
+  <style>
+    .projects-list-section {
+      background-color: #ffffff;
+      margin-top: 2em;
+      padding: 2em;
+    }
+    .title {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 1em;
+      display: block;
+    }
+    
+    .project-card {
+      border: 1px solid #ddd;
+      background-color: #ddd9d5ff;
+      border-radius: 5px;
+      padding: 1em;
+      margin-bottom: 1em;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .project-title {
+      font-size: 1.2em;
+      font-weight: bold;
+    
+      display: block;
+    }
+    
+    .project-card p:last-of-type {
+      margin-bottom: 0.5em;
+    }
+    .btn-details {
+      padding: 0.2em;
+    }
+    
+    .red-btn {
+      padding: 0.3em;
+      font-weight: 500;
+      border-radius: 8px;
+    }
+  </style>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<div class="carousel-section">
+  <h3>Galería de Proyectos</h3>
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide active">
+          <img src="{% static 'images/slider 1.avif' %}" alt="Proyecto 1" />
+          <div class="carousel-caption">
+            <h4>Proyecto Residencial</h4>
+            <p>Desarrollo de viviendas con hormigón de alta calidad</p>
+          </div>
+        </div>
+        <div class="carousel-slide">
+          <img src="{% static 'images/slider 2.jpg' %}" alt="Proyecto 2" />
+          <div class="carousel-caption">
+            <h4>Infraestructura Urbana</h4>
+            <p>Construcción de puentes y vías con materiales premoldeados</p>
+          </div>
+        </div>
+        <div class="carousel-slide">
+          <img src="{% static 'images/slider 3.jpg' %}" alt="Proyecto 3" />
+          <div class="carousel-caption">
+            <h4>Proyectos Industriales</h4>
+            <p>Estructuras industriales con equipos especializados</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controles del carrusel -->
+      <button class="carousel-btn carousel-btn-prev" onclick="moveSlide(-1)"><img src="{% static 'images/arrow.svg' %}" alt="Anterior" style="width: 100%; height: 100%; object-fit: contain; filter: invert(1);transform: rotate(180deg);" /></button>
+      <button class="carousel-btn carousel-btn-next" onclick="moveSlide(1)"><img src="{% static 'images/arrow.svg' %}" alt="Siguiente" style="width: 100%; height: 100%; object-fit: contain; filter: invert(1); " /></button>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="carousel-indicators">
+      <button class="indicator active" onclick="currentSlide(1)"></button>
+      <button class="indicator" onclick="currentSlide(2)"></button>
+      <button class="indicator" onclick="currentSlide(3)"></button>
+    </div>
+  </div>
+</div>
