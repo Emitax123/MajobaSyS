@@ -1,0 +1,107 @@
+.budget-form-main {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.budget-form-section {
+    width: 100%;
+    max-width: 500px;
+}
+
+.budget-form-container {
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.budget-form-container h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid #d81d26;
+    padding-bottom: 0.5rem;
+}
+
+.budget-form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.budget-form-container label {
+    display: block;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.5rem;
+    margin-top: 1.2rem;
+    font-size: 0.9rem;
+}
+
+.budget-form-container label:first-of-type {
+    margin-top: 0;
+}
+
+.budget-form-container input[type="text"],
+.budget-form-container input[type="tel"],
+.budget-form-container input[type="email"],
+.budget-form-container textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+}
+
+.budget-form-container input:focus,
+.budget-form-container textarea:focus {
+    outline: none;
+    border-color: #d81d26;
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.1);
+}
+
+.budget-form-container textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-btn {
+    padding: 0.75rem 2rem;
+    margin-top: 1.5rem;
+    background-color: #d81d26;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    width: fit-content;
+    align-self: center;
+}
+
+.submit-btn:hover {
+    background-color: #b81820;
+    transform: translateY(-1px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .budget-form-container {
+        padding: 1.5rem;
+    }
+
+    .budget-form-container h1 {
+        font-size: 1.5rem;
+    }
+}

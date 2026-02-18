@@ -1,6 +1,7 @@
 .main-content {
     width: 100%;
     margin: 2rem auto;
+    overflow-x: hidden;
 }
 
 /* ========== CAROUSEL STYLES ========== */
@@ -256,8 +257,14 @@
 /* Responsive para slider */
 @media (max-width: 768px) {
     .slider-container {
-        height: 400px;
-        border-radius: 8px;
+        height: 250px!important;
+        border-radius: 0;
+        padding: 0!important;
+        
+    }
+    .slider-image {
+        width: 90%;
+        margin: 0 1em 0 1em;
     }
 
     .slider-title {
@@ -354,4 +361,110 @@
 
 .feature-description {
     color: #7f8c8d;
+}
+
+/* ========== RESPONSIVE FIXES ========== */
+
+/* Tablet: 2 columnas para cards de empresas */
+@media (min-width: 600px) and (max-width: 1024px) {
+    .features-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    
+}
+
+/* Mobile: mejoras responsive */
+@media (max-width: 600px) {
+    /* Cards en columna con padding lateral */
+    .features-container {
+        padding: 0 1rem;
+        gap: 1rem;
+    }
+    
+    .feature-card {
+       
+        max-width:280px;
+        height: auto;
+        min-height: 280px;
+        padding: 1em 1em 1.5em 1em;
+        margin: 0 auto;
+    }
+    
+    .feature-icon {
+        margin-bottom: 0rem;
+    }
+    
+    .feature-icon img {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .feature-description {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    /* Footer columnas apiladas */
+    .footer-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .footer-section {
+        width: 100%;
+    }
+    
+    /* Botón navbar más compacto */
+    .red-btn {
+        font-size: 0.85rem;
+        padding: 0.4em 0.8em;
+    }
+    
+    /* Slider subtitle más pequeño */
+    .slider-subtitle {
+        font-size: 1.2em;
+    }
+    
+    /* Main content padding */
+    .main-content {
+        margin: 1rem auto;
+    }
+    
+    /* Features grid padding */
+    .features-grid {
+        margin: 1.5em 0 2em 0;
+        padding: 0 1rem;
+    }
+    
+    .features-grid h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Mobile extra pequeño */
+@media (max-width: 375px) {
+    .feature-card {
+        max-width: 280px;
+        min-height: 240px;
+        padding: 1.25rem;
+    }
+    
+    .feature-icon img {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .feature-description {
+        font-size: 0.85rem;
+    }
+    
+    .features-grid h1 {
+        font-size: 1.5rem;
+    }
 }

@@ -540,49 +540,544 @@
     }
     
     /* Responsive */
-    @media (max-width: 1200px) {
+    @media (max-width: 1024px) {
+      .account-dashboard {
+        padding: 1.5em;
+      }
+
+      .dashboard-header {
+        padding: 25px;
+      }
+
+      .user-welcome span.title {
+        font-size: 2rem;
+      }
+
       .points-section {
-        grid-template-columns: 1fr;
+        gap: 2em;
+      }
+
+      .projects-grid {
+        gap: 1.5em;
+      }
+
+      .notifications-section {
+        width: 100%;
+        margin-top: 2em;
       }
     }
-    
+
     @media (max-width: 768px) {
       .account-dashboard {
-        padding: 15px;
+        padding: 1em;
       }
-    
+
       .dashboard-header {
         flex-direction: column;
         text-align: center;
-        gap: 20px;
+        padding: 20px;
+        margin-bottom: 2em;
       }
-    
-      .user-welcome h1 {
-        font-size: 2rem;
+
+      .user-welcome span.title {
+        font-size: 1.8rem;
       }
-    
-      .projects-grid {
-        grid-template-columns: 1fr;
+
+      .user-welcome span {
+        font-size: 1rem;
       }
-    
-      .notifications-header {
+
+      /* Sección de puntos en columna */
+      .points-section {
         flex-direction: column;
-        align-items: stretch;
+        gap: 1.5em;
+        margin-bottom: 2em;
       }
-    
-      .notifications-controls {
-        justify-content: space-between;
+
+      .points-card,
+      .levels-card {
+        padding: 1.5em;
       }
-    
+
+      .points-header span.title {
+        font-size: 1.5rem;
+      }
+
+      .points-number {
+        font-size: 2.5rem;
+      }
+
+      .levels-card span.title {
+        font-size: 1.3rem;
+      }
+
+      /* Proyectos en columna */
+      .projects-grid {
+        flex-direction: column;
+        gap: 1.5em;
+      }
+
+      .projects-section {
+        padding: 1.5em;
+        margin-bottom: 2em;
+      }
+
+      .projects-section span.title {
+        font-size: 1.3rem;
+      }
+
+      .project-header span.project-name {
+        font-size: 1.1rem;
+      }
+
+      /* Notificaciones */
+      .notifications-section {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .notifications-header span.title {
+        font-size: 1.3rem;
+      }
+
       .notification-item {
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
       }
-    
-      .notification-icon {
-        align-self: center;
-        margin-bottom: 15px;
-        margin-right: 0;
+
+      .notification-content span {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .account-dashboard {
+        padding: 0.8em;
+      }
+
+      .dashboard-header {
+        padding: 15px;
+        margin-bottom: 1.5em;
+      }
+
+      .user-welcome span.title {
+        font-size: 1.5rem;
+      }
+
+      .user-welcome span {
+        font-size: 0.9rem;
+      }
+
+      .points-section {
+        gap: 1.2em;
+        margin-bottom: 1.5em;
+      }
+
+      .points-card,
+      .levels-card {
+        padding: 1.2em;
+      }
+
+      .points-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1em;
+      }
+
+      .points-header span.title {
+        font-size: 1.3rem;
+      }
+
+      .points-number {
+        font-size: 2rem;
+      }
+
+      .points-label {
+        font-size: 1rem;
+      }
+
+      .btn-redeem {
+        width: 100%;
+        padding: 0.8em;
+        font-size: 0.95rem;
+      }
+
+      .level-item {
+        padding: 0.8em;
+      }
+
+      .level-badge {
+        width: 35px;
+        height: 35px;
+        margin-right: 10px;
+      }
+
+      .level-name {
+        font-size: 0.95rem;
+      }
+
+      .level-points {
+        font-size: 0.85rem;
+      }
+
+      .projects-section {
+        padding: 1.2em;
+        margin-bottom: 1.5em;
+      }
+
+      .projects-section span.title {
+        font-size: 1.2rem;
+      }
+
+      .projects-section span.sub-title {
+        font-size: 0.9rem;
+      }
+
+      .project-card {
+        padding: 1.2em;
+      }
+
+      .project-header span.project-name {
+        font-size: 1rem;
+      }
+
+      .project-details p {
+        font-size: 0.9rem;
+      }
+
+      .btn-details {
+        padding: 0.6em;
+        font-size: 0.9rem;
+      }
+
+      .notifications-section {
+        padding: 15px;
+      }
+
+      .notifications-header span.title {
+        font-size: 1.2rem;
+      }
+
+      .notification-item {
+        padding: 1em;
+      }
+
+      .notification-content span {
+        font-size: 1rem;
+      }
+
+      .notification-content p {
+        font-size: 0.9rem;
+      }
+
+      .notification-time {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .account-dashboard {
+        padding: 0.6em;
+      }
+
+      .dashboard-header {
+        padding: 12px;
+        margin-bottom: 1.2em;
+      }
+
+      .user-welcome span.title {
+        font-size: 1.3rem;
+      }
+
+      .user-welcome span {
+        font-size: 0.85rem;
+      }
+
+      .points-section {
+        gap: 1em;
+        margin-bottom: 1.2em;
+      }
+
+      .points-card,
+      .levels-card {
+        padding: 1em;
+      }
+
+      .points-header span.title {
+        font-size: 1.2rem;
+      }
+
+      .points-number {
+        font-size: 1.8rem;
+      }
+
+      .current-level,
+      .next-level {
+        font-size: 0.85rem;
+      }
+
+      .progress-bar {
+        height: 10px;
+      }
+
+      .progress-text {
+        font-size: 0.85rem;
+      }
+
+      .btn-redeem {
+        padding: 0.7em;
+        font-size: 0.9rem;
+      }
+
+      .levels-card span.title {
+        font-size: 1.1rem;
+      }
+
+      .level-item {
+        padding: 0.6em;
+        margin-bottom: 0.8em;
+      }
+
+      .level-badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+        margin-right: 8px;
+      }
+
+      .level-name {
+        font-size: 0.9rem;
+      }
+
+      .level-points {
+        font-size: 0.8rem;
+      }
+
+      .projects-section {
+        padding: 1em;
+        margin-bottom: 1.2em;
+      }
+
+      .projects-section span.title {
+        font-size: 1.1rem;
+      }
+
+      .projects-section span.sub-title {
+        font-size: 0.85rem;
+      }
+
+      .projects-section a {
+        padding: 0.5em;
+        font-size: 0.9rem;
+      }
+
+      .projects-grid {
+        gap: 1em;
+      }
+
+      .project-card {
+        padding: 1em;
+      }
+
+      .project-header span.project-name {
+        font-size: 0.95rem;
+      }
+
+      .project-status {
+        font-size: 0.8rem;
+      }
+
+      .project-details p {
+        font-size: 0.85rem;
+        gap: 5px;
+      }
+
+      .btn-details {
+        padding: 0.5em;
+        font-size: 0.85rem;
+      }
+
+      .notifications-section {
+        padding: 12px;
+      }
+
+      .notifications-header span.title {
+        font-size: 1.1rem;
+      }
+
+      .notification-item {
+        padding: 0.8em;
+        margin-bottom: 0.8em;
+      }
+
+      .notification-content span {
+        font-size: 0.95rem;
+      }
+
+      .notification-content p {
+        font-size: 0.85rem;
+      }
+
+      .notification-time {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .account-dashboard {
+        padding: 0.5em;
+      }
+
+      .dashboard-header {
+        padding: 10px;
+        margin-bottom: 1em;
+      }
+
+      .user-welcome span.title {
+        font-size: 1.1rem;
+      }
+
+      .user-welcome span {
+        font-size: 0.8rem;
+      }
+
+      .points-section {
+        gap: 0.8em;
+        margin-bottom: 1em;
+      }
+
+      .points-card,
+      .levels-card {
+        padding: 0.8em;
+      }
+
+      .points-header span.title {
+        font-size: 1.1rem;
+      }
+
+      .points-number {
+        font-size: 1.6rem;
+      }
+
+      .points-label {
+        font-size: 0.9rem;
+      }
+
+      .current-level,
+      .next-level {
+        font-size: 0.8rem;
+      }
+
+      .progress-bar {
+        height: 8px;
+      }
+
+      .progress-text {
+        font-size: 0.8rem;
+      }
+
+      .btn-redeem {
+        padding: 0.6em;
+        font-size: 0.85rem;
+      }
+
+      .levels-card span.title {
+        font-size: 1rem;
+      }
+
+      .level-item {
+        padding: 0.5em;
+        margin-bottom: 0.6em;
+      }
+
+      .level-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        margin-right: 6px;
+      }
+
+      .level-name {
+        font-size: 0.85rem;
+      }
+
+      .level-points {
+        font-size: 0.75rem;
+      }
+
+      .projects-section {
+        padding: 0.8em;
+        margin-bottom: 1em;
+      }
+
+      .projects-section span.title {
+        font-size: 1rem;
+      }
+
+      .projects-section span.sub-title {
+        font-size: 0.8rem;
+      }
+
+      .projects-section a {
+        padding: 0.4em;
+        font-size: 0.85rem;
+      }
+
+      .projects-grid {
+        gap: 0.8em;
+      }
+
+      .project-card {
+        padding: 0.8em;
+      }
+
+      .project-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5em;
+      }
+
+      .project-header span.project-name {
+        font-size: 0.9rem;
+      }
+
+      .project-status {
+        font-size: 0.75rem;
+      }
+
+      .project-details p {
+        font-size: 0.8rem;
+        margin: 8px 0;
+      }
+
+      .btn-details {
+        padding: 0.4em;
+        font-size: 0.8rem;
+      }
+
+      .notifications-section {
+        padding: 10px;
+      }
+
+      .notifications-header span.title {
+        font-size: 1rem;
+      }
+
+      .notification-item {
+        padding: 0.6em;
+        margin-bottom: 0.6em;
+      }
+
+      .notification-content span {
+        font-size: 0.9rem;
+      }
+
+      .notification-content p {
+        font-size: 0.8rem;
+      }
+
+      .notification-time {
+        font-size: 0.75rem;
       }
     }
   </style>

@@ -1,0 +1,129 @@
+{
+  "name": "majobasys-master-agent",
+  "version": "2.0.0",
+  "description": "Agente maestro Full Stack para MajobaSyS con acceso a todas las skills",
+  "author": "MajobaSyS Team",
+  "type": "full-stack",
+  "priority": "high",
+  "language": "es",
+  
+  "capabilities": [
+    "backend-development",
+    "frontend-development",
+    "api-design",
+    "testing",
+    "security",
+    "deployment",
+    "debugging",
+    "refactoring",
+    "documentation"
+  ],
+  
+  "skills": {
+    "django": [
+      "django-expert",
+      "django-patterns",
+      "django-conventions",
+      "django-rest-framework",
+      "django-security"
+    ],
+    "python": [
+      "python-best-practices",
+      "python-performance-optimization"
+    ],
+    "frontend": [
+      "frontend-design",
+      "web-design-guidelines"
+    ],
+    "api": [
+      "api-design-principles",
+      "api-security-best-practices",
+      "api-error-handling",
+      "api-documentation",
+      "rest-api-design"
+    ],
+    "security": [
+      "jwt-security",
+      "django-security",
+      "api-security-best-practices"
+    ],
+    "testing": [
+      "test-driven-development",
+      "testing-strategies",
+      "jest-testing-expert",
+      "systematic-debugging"
+    ],
+    "database": [
+      "postgresql-table-design",
+      "database",
+      "redis-best-practices"
+    ],
+    "devops": [
+      "deployment",
+      "observability-monitoring",
+      "application-logging"
+    ],
+    "nodejs": [
+      "nodejs-backend-patterns",
+      "nodejs-backend-typescript",
+      "error-handling-patterns"
+    ],
+    "typescript": [
+      "typescript-best-practices",
+      "typescript-advanced-types",
+      "typescript-advanced-patterns",
+      "zod",
+      "zod-schema-validation"
+    ],
+    "utilities": [
+      "celery",
+      "cloudinary",
+      "find-skills"
+    ]
+  },
+  
+  "auto_load_skills": true,
+  "validation_enabled": true,
+  "documentation_language": "es",
+  
+  "workflow": {
+    "mode": "guided",
+    "auto_validate": true,
+    "auto_document": true,
+    "require_approval": true
+  },
+  
+  "project_context": {
+    "name": "MajobaSyS",
+    "type": "django-webapp",
+    "framework": "Django 5.2+",
+    "database": {
+      "development": "SQLite",
+      "production": "PostgreSQL"
+    },
+    "cache": {
+      "development": "DummyCache",
+      "production": "Redis"
+    },
+    "deployment": "Railway",
+    "server": "Gunicorn",
+    "static_files": "WhiteNoise",
+    "testing": "pytest"
+  },
+  
+  "conventions": {
+    "imports_order": ["stdlib", "django", "third-party", "local"],
+    "docstrings_language": "es",
+    "logging_enabled": true,
+    "validators_required": true,
+    "indexes_required": true,
+    "permissions_required": true
+  },
+  
+  "validations": [
+    "python manage.py check",
+    "python manage.py check --deploy",
+    "python manage.py makemigrations --check",
+    "pytest --settings=majobacore.settings.testing"
+  ]
+}

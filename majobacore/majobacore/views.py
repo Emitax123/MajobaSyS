@@ -12,3 +12,6 @@ def hormicons_view(request):
 
 def constructora_view(request):
     return render(request, 'constructora_template.html')
+
+def budget_view(request):
+    return render(request, 'budget_form.html')

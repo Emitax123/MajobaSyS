@@ -158,13 +158,13 @@ class ManagerData(models.Model):
 
     def update_level(self):
         """Actualizar el nivel basado en puntos totales"""
-        if self.lifetime_points >= 10000:
+        if self.points >= 10000:
             self.acc_level = 'maestro'
-        elif self.lifetime_points >= 5000:
+        elif self.points >= 5000:
             self.acc_level = 'experto'
-        elif self.lifetime_points >= 2000:
+        elif self.points >= 2000:
             self.acc_level = 'avanzado'
-        elif self.lifetime_points >= 500:
+        elif self.points >= 500:
             self.acc_level = 'intermedio'
         else:
             self.acc_level = 'principiante'

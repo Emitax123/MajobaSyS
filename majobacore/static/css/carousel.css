@@ -135,7 +135,27 @@
   }
 
   /* Responsive */
+  @media (max-width: 1024px) {
+      .carousel-section {
+          padding: 1.5em 1.5em;
+      }
+      
+      .carousel-section h3 {
+          font-size: 2rem;
+      }
+  }
+  
   @media (max-width: 768px) {
+      .carousel-section {
+          padding: 1.5em 1em;
+          margin-top: 30px;
+      }
+      
+      .carousel-section h3 {
+          font-size: 1.8rem;
+          margin-bottom: 20px;
+      }
+      
       .carousel-slide img {
           height: 300px;
       }
@@ -164,5 +184,120 @@
 
       .carousel-btn-next {
           right: 10px;
+      }
+  }
+  
+  @media (max-width: 600px) {
+      .carousel-section {
+          padding: 1em 0.75em;
+          margin-top: 20px;
+      }
+      
+      .carousel-section h3 {
+          font-size: 1.6rem;
+          margin-bottom: 15px;
+      }
+      
+      .carousel-slide img {
+          height: 250px;
+      }
+      
+      .carousel-caption {
+          padding: 0.75em 0.75em;
+          margin-bottom: 0.5em;
+      }
+      
+      .carousel-caption h4 {
+          font-size: 1.2rem;
+          margin-bottom: 0.4em;
+      }
+      
+      .carousel-caption p {
+          font-size: 0.9rem;
+      }
+      
+      .carousel-btn {
+          width: 35px;
+          height: 35px;
+      }
+      
+      .carousel-btn-prev {
+          left: 8px;
+      }
+      
+      .carousel-btn-next {
+          right: 8px;
+      }
+      
+      .carousel-indicators {
+          gap: 10px;
+          margin-top: 20px;
+      }
+      
+      .indicator {
+          width: 12px;
+          height: 12px;
+      }
+  }
+  
+  @media (max-width: 480px) {
+      .carousel-section {
+          padding: 0.75em 0.5em;
+      }
+      
+      .carousel-section h3 {
+          font-size: 1.4rem;
+      }
+      
+      .carousel-slide img {
+          height: 220px;
+      }
+      
+      .carousel-caption {
+          padding: 0.6em 0.5em;
+      }
+      
+      .carousel-caption h4 {
+          font-size: 1.1rem;
+      }
+      
+      .carousel-caption p {
+          font-size: 0.85rem;
+      }
+      
+      .carousel-btn {
+          width: 32px;
+          height: 32px;
+      }
+      
+      .carousel-btn-prev {
+          left: 5px;
+      }
+      
+      .carousel-btn-next {
+          right: 5px;
+      }
+  }
+  
+  @media (max-width: 360px) {
+      .carousel-section h3 {
+          font-size: 1.25rem;
+      }
+      
+      .carousel-slide img {
+          height: 200px;
+      }
+      
+      .carousel-caption h4 {
+          font-size: 1rem;
+      }
+      
+      .carousel-caption p {
+          font-size: 0.8rem;
+      }
+      
+      .indicator {
+          width: 10px;
+          height: 10px;
       }
   }

@@ -83,3 +83,5 @@ yarn-error.log*
 
 # Redis dump
 dump.rdb
+
+nul

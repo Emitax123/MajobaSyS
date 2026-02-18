@@ -1,4 +1,6 @@
 {% load static %}
+{% load i18n %}
+<!DOCTYPE html>
 <html lang="es-AR">
   <head>
     <meta charset="UTF-8" />
@@ -13,11 +15,11 @@
     <nav class="navbar">
       <div class="nav-container">
         <div id="logo">
-          <a href="{% url 'index' %}"><img src="{% static 'images/logo-majoba-nav.svg' %}" /></a>
+          <a href="{% url 'index' %}"><img src="{% static 'images/logo-majoba-nav.svg' %}" alt="Majoba S.A. - Inicio" /></a>
         </div>
         <ul class="nav-menu">
           <li>
-            <a style="padding: 0.5em; font-weight: 600;" class="red-btn" href="">Solicitar Presupuesto</a>
+            <a style="padding: 0.5em; font-weight: 600;" class="red-btn" href="{% url 'budget' %}">Solicitar Presupuesto</a>
           </li>
           <li>
             <a href="{% url 'index' %}" class="nav-link">Inicio</a>
@@ -139,11 +141,12 @@
         <!-- Footer Bottom -->
         <div class="footer-bottom">
           <div class="footer-bottom-content">
-            <p>&copy; 2025 Majoba S.A. - Todos los derechos reservados</p>
-            <div class="footer-links">
-              <a href="#" class="footer-link">Política de Privacidad</a>
-              <a href="#" class="footer-link">Términos y Condiciones</a>
-              <a href="#" class="footer-link">Contacto</a>
+            <p>&copy; {% now "Y" %} Majoba S.A. - Todos los derechos reservados</p>
+            <div class="footer-links social-media">
+              <a href="#" class="social-link">Facebook</a>
+              <a href="#" class="social-link">Twitter</a>
+              <a href="#" class="social-link">Instagram</a>
+              
             </div>
           </div>
         </div>

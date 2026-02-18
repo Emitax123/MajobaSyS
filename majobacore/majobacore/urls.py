@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from .views import index, majoba_view, hormicons_view, constructora_view
+from .views import index, majoba_view, hormicons_view, constructora_view, budget_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +27,7 @@ urlpatterns = [
     path('majoba/', majoba_view, name='majoba'),
     path('hormicons/', hormicons_view, name='hormicons'),
     path('constructora/', constructora_view, name='constructora'),
+    path('budget/', budget_view, name='budget'),
 ]
 if settings.DEBUG:
     import debug_toolbar

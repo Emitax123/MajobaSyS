@@ -82,6 +82,151 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease;
     }
+    
+    .proyects-item img:hover {
+      transform: scale(1.05);
+    }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+    
+    /* Tablet: 768px - 1024px */
+    @media (max-width: 1024px) {
+      .company-container span.intro-text {
+        padding: 0 4em;
+        font-size: 1.1em;
+      }
+      
+      .proyects-row {
+        gap: 1.5em;
+      }
+      
+      .proyects-item img {
+        width: 250px;
+        height: 250px;
+      }
+    }
+    
+    /* Tablet pequeño: hasta 768px */
+    @media (max-width: 768px) {
+      .company-container {
+        margin: 1.5em 0;
+        padding: 1.5em;
+      }
+      
+      .company-container span.intro-text {
+        padding: 0 2em;
+        font-size: 1.05em;
+      }
+      
+      .proyects-container {
+        padding: 1.5em;
+      }
+      
+      .proyects-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 2em;
+      }
+      
+      .proyects-item {
+        width: 100%;
+        max-width: 400px;
+      }
+      
+      .proyects-item img {
+        width: 280px;
+        height: 280px;
+      }
+    }
+    
+    /* Mobile: hasta 600px */
+    @media (max-width: 600px) {
+      .company-container {
+        margin: 1em 0;
+        padding: 1em;
+      }
+      
+      .company-container span.intro-text {
+        padding: 0 1em;
+        font-size: 1em;
+        line-height: 1.6;
+      }
+      
+      span.red-border {
+        width: 60%;
+        margin: 0.75em auto 1.5em auto;
+      }
+      
+      .proyects-container {
+        padding: 1em;
+        gap: 1.5em;
+      }
+      
+      .proyects-row {
+        gap: 1.5em;
+      }
+      
+      .proyects-item {
+        font-size: 1em;
+        max-width: 320px;
+      }
+      
+      .proyects-item img {
+        width: 240px;
+        height: 240px;
+      }
+    }
+    
+    /* Mobile pequeño: hasta 480px */
+    @media (max-width: 480px) {
+      .company-container {
+        padding: 0.75em;
+      }
+      
+      .company-container span.intro-text {
+        padding: 0 0.5em;
+        font-size: 0.95em;
+      }
+      
+      span.red-border {
+        width: 70%;
+      }
+      
+      .proyects-container {
+        padding: 0.75em;
+      }
+      
+      .proyects-row {
+        gap: 1.25em;
+      }
+      
+      .proyects-item {
+        font-size: 0.95em;
+        max-width: 100%;
+      }
+      
+      .proyects-item img {
+        width: 200px;
+        height: 200px;
+      }
+    }
+    
+    /* Mobile extra pequeño: hasta 360px */
+    @media (max-width: 360px) {
+      .company-container span.intro-text {
+        font-size: 0.9em;
+        padding: 0 0.25em;
+      }
+      
+      .proyects-item {
+        font-size: 0.9em;
+      }
+      
+      .proyects-item img {
+        width: 180px;
+        height: 180px;
+      }
+    }
   </style>
 
   <script>
