@@ -17,17 +17,33 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from .views import index, majoba_view, hormicons_view, constructora_view, budget_view
+from .views import (
+    index, 
+    majoba_view, 
+    hormicons_view, 
+    constructora_view, 
+    budget_view,
+    health_check,
+    liveness_check,
+    readiness_check,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('manager/', include('manager.urls')),
     path('users/', include('users.urls')),
+    
+    # Páginas principales
     path('', index, name='index'),
     path('majoba/', majoba_view, name='majoba'),
     path('hormicons/', hormicons_view, name='hormicons'),
     path('constructora/', constructora_view, name='constructora'),
     path('budget/', budget_view, name='budget'),
+    
+    # Health check endpoints para Railway
+    path('health/', health_check, name='health_check'),
+    path('health/live/', liveness_check, name='liveness'),
+    path('health/ready/', readiness_check, name='readiness'),
 ]
 if settings.DEBUG:
     import debug_toolbar

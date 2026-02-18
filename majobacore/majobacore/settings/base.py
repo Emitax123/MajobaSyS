@@ -11,12 +11,14 @@ from decouple import config, Csv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-d*xd59=w7923dsnt#xy=8jbuf_c*6scivaft%ko(8r8vq6jd0l')
+# En producción DEBE ser proporcionado por variable de entorno
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+# ALLOWED_HOSTS debe ser configurado explícitamente en producción
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 # Application definition
 DJANGO_APPS = [
@@ -83,7 +85,7 @@ DATABASES = {
     }
 }
 
-# Custom User Model (uncomment when CustomUser model is created)
+# Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # Password validation
@@ -95,7 +97,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
-            'min_length': 8,
+            'min_length': 12,  # Aumentado a 12 para mayor seguridad
         }
     },
     {
@@ -129,9 +131,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User Model
-AUTH_USER_MODEL = 'users.CustomUser'
-
 # Email Configuration
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = config('EMAIL_HOST', default='localhost')
@@ -140,66 +139,115 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
+SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')  # Para errores del servidor
+ADMINS = []  # Se configurará en production.py si es necesario
 
 # Logging Configuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'file_format': {
-            'format': '[{asctime}] {levelname} {name}: {message}',
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} {module} {process:d} {thread:d} - {message}',
             'style': '{',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
         'simple': {
-            'format': '{levelname}: {message}',
+            'format': '[{asctime}] {levelname} {name}: {message}',
             'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d',
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
         },
     },
     'handlers': {
-        # Solo errores críticos en consola
+        # Consola para desarrollo (solo con DEBUG=True)
         'console': {
-            'level': 'ERROR',
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
+        },
+        # Consola para producción (sin DEBUG)
+        'console_prod': {
+            'level': 'WARNING',
+            'filters': ['require_debug_false'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
         },
         # Archivo para información general
         'info_file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'info.log',
-            'formatter': 'file_format',
+            'maxBytes': 10485760,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
         },
         # Archivo solo para errores
         'error_file': {
             'level': 'ERROR',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'logs' / 'errors.log',
-            'formatter': 'file_format',
+            'maxBytes': 10485760,  # 10MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        # Mail para errores críticos en producción
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
         },
     },
     'root': {
-        'handlers': ['console'],
-        'level': 'ERROR',  # Solo errores críticos
+        'handlers': ['console', 'console_prod'],
+        'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['error_file'],  # Solo errores a archivo
+            'handlers': ['console', 'console_prod', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['error_file', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,
         },
+        'django.security': {
+            'handlers': ['error_file', 'mail_admins'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',  # Cambiar a DEBUG para ver queries SQL
+            'propagate': False,
+        },
         'majobacore': {
-            'handlers': ['info_file', 'error_file'],
+            'handlers': ['console', 'console_prod', 'info_file', 'error_file'],
             'level': 'INFO',
             'propagate': False,
         },
         'users': {
-            'handlers': ['info_file', 'error_file'],
+            'handlers': ['console', 'console_prod', 'info_file', 'error_file'],
             'level': 'INFO',
             'propagate': False,
         },
         'manager': {
-            'handlers': ['info_file', 'error_file'],
+            'handlers': ['console', 'console_prod', 'info_file', 'error_file'],
             'level': 'INFO',
             'propagate': False,
         },
@@ -217,13 +265,22 @@ CACHES = {
 # Session Configuration
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
-SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_COOKIE_AGE = 86400  # 24 hours (1 día)
+SESSION_SAVE_EVERY_REQUEST = False  # Solo guardar si hay cambios
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_NAME = 'majobasys_sessionid'  # Nombre personalizado
 
 # CSRF Configuration
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_NAME = 'majobasys_csrftoken'  # Nombre personalizado
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000', cast=Csv())
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'  # Vista personalizable
+
+# Security Settings (base - se sobrescriben en production.py)
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
