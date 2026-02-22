@@ -1,11 +1,9 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "buildCommand": "pip install -r requirements/production.txt && python manage.py collectstatic --noinput --settings=majobacore.settings.production"
+    "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
     "healthcheckPath": "/",
