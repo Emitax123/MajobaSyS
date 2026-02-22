@@ -1,15 +1,6 @@
 [build]
 builder = "NIXPACKS"
 
-[build.nixpacksPlan]
-providers = ["python"]
-
-[build.nixpacksPhases.install]
-cmds = ["pip install -r requirements.txt"]
-
-[build.nixpacksPhases.build]
-cmds = ["python manage.py collectstatic --noinput --settings=majobacore.settings.production"]
-
 [deploy]
 healthcheckPath = "/health/live/"
 healthcheckTimeout = 100
