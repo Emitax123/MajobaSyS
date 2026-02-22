@@ -7,6 +7,7 @@ from .base import *
 import os
 import sys
 import logging
+import dj_database_url
 
 # ============================================================================
 # DETECCIÓN DE FASE DE BUILD
@@ -86,7 +87,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 # BASE DE DATOS - POSTGRESQL
 # ============================================================================
 
-# Durante build, usar configuración dummy; en runtime, validar estrictamente
+# Durante build, usar configuración dummy; en runtime, usar DATABASE_URL
 if IS_BUILD_PHASE:
     # Configuración dummy para collectstatic (no se usa en build)
     DATABASES = {
@@ -96,23 +97,32 @@ if IS_BUILD_PHASE:
         }
     }
 else:
-    # Configuración real de PostgreSQL para runtime
+    # Configuración real de PostgreSQL usando DATABASE_URL (Railway lo provee automáticamente)
+    # Railway format: postgresql://user:password@host:port/dbname
+    DATABASE_URL = config('DATABASE_URL', default='')
+    
+    if not DATABASE_URL:
+        raise ValueError(
+            "DATABASE_URL not found in environment variables.\n"
+            "Railway should provide this automatically when you add a PostgreSQL database.\n"
+            "Format: postgresql://user:password@host:port/dbname"
+        )
+    
+    # Parse DATABASE_URL con dj-database-url
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST'),
-            'PORT': config('DB_PORT', default='5432', cast=int),
-            'ATOMIC_REQUESTS': True,  # Transacciones automáticas por request
-            'CONN_MAX_AGE': 600,  # Mantener conexiones por 10 minutos
-            'OPTIONS': {
-                'sslmode': 'require',  # Railway requiere SSL
-                'connect_timeout': 10,
-                'options': '-c statement_timeout=30000',  # 30 segundos timeout
-            },
-        }
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,  # Connection pooling: mantener conexiones 10 minutos
+            conn_health_checks=True,  # Health checks automáticos
+            ssl_require=True,  # Railway requiere SSL
+        )
+    }
+    
+    # Configuraciones adicionales de PostgreSQL
+    DATABASES['default']['ATOMIC_REQUESTS'] = True  # Transacciones automáticas
+    DATABASES['default']['OPTIONS'] = {
+        'connect_timeout': 10,
+        'options': '-c statement_timeout=30000',  # 30 segundos timeout para queries
     }
 
 # ============================================================================
@@ -129,27 +139,44 @@ if IS_BUILD_PHASE:
     }
 else:
     # Configuración real de Redis para runtime
-    REDIS_URL = config('REDIS_URL')
+    # Railway provee REDIS_URL automáticamente cuando agregas Redis
+    REDIS_URL = config('REDIS_URL', default='')
     
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': REDIS_URL,
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-                'SOCKET_CONNECT_TIMEOUT': 5,
-                'SOCKET_TIMEOUT': 5,
-                'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-                'CONNECTION_POOL_KWARGS': {
-                    'max_connections': 50,
-                    'retry_on_timeout': True,
+    if REDIS_URL:
+        # Redis configurado: usar django-redis
+        CACHES = {
+            'default': {
+                'BACKEND': 'django_redis.cache.RedisCache',
+                'LOCATION': REDIS_URL,
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                    'SOCKET_CONNECT_TIMEOUT': 5,
+                    'SOCKET_TIMEOUT': 5,
+                    'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+                    'CONNECTION_POOL_KWARGS': {
+                        'max_connections': 50,
+                        'retry_on_timeout': True,
+                    },
+                    'IGNORE_EXCEPTIONS': True,  # No fallar si Redis no está disponible
                 },
-                'IGNORE_EXCEPTIONS': True,  # No fallar si Redis no está disponible
-            },
-            'KEY_PREFIX': 'majobasys',
-            'TIMEOUT': 300,  # 5 minutos por defecto
+                'KEY_PREFIX': 'majobasys',
+                'TIMEOUT': 300,  # 5 minutos por defecto
+            }
         }
-    }
+    else:
+        # Redis no configurado: usar cache local (menos eficiente pero funciona)
+        import warnings
+        warnings.warn(
+            "REDIS_URL not found - using LocMemCache. "
+            "For better performance, add Redis in Railway.",
+            RuntimeWarning
+        )
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'LOCATION': 'unique-snowflake',
+            }
+        }
 
 # Session backend con Redis
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
@@ -201,27 +228,43 @@ else:
 # EMAIL
 # ============================================================================
 
-# Configuración de email (opcional durante build)
+# Configuración de email (opcional durante build, con defaults en runtime)
 if IS_BUILD_PHASE:
     # Durante build, usar console backend
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    # Durante runtime, configurar SMTP real
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = config('EMAIL_HOST')
-    EMAIL_PORT = config('EMAIL_PORT', cast=int)
-    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
-    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
-    SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')
-
-    # Administradores que reciben emails de errores
-    ADMINS = [
-        ('Admin', config('ADMIN_EMAIL', default=SERVER_EMAIL)),
-    ]
-    MANAGERS = ADMINS
+    # Durante runtime: Si EMAIL_HOST está configurado, usar SMTP; si no, console
+    EMAIL_HOST = config('EMAIL_HOST', default='')
+    
+    if EMAIL_HOST:
+        # SMTP configurado
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+        EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+        EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+        EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+        EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+        EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+        DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
+        SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')
+        
+        # Administradores que reciben emails de errores
+        ADMINS = [
+            ('Admin', config('ADMIN_EMAIL', default=SERVER_EMAIL)),
+        ]
+        MANAGERS = ADMINS
+    else:
+        # Email no configurado: usar console backend (logs en stdout)
+        import warnings
+        warnings.warn(
+            "EMAIL_HOST not configured - emails will be printed to console. "
+            "Configure SMTP settings for production email delivery.",
+            RuntimeWarning
+        )
+        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+        DEFAULT_FROM_EMAIL = 'noreply@majobacore.com'
+        SERVER_EMAIL = 'admin@majobacore.com'
+        ADMINS = []
+        MANAGERS = []
 
 # ============================================================================
 # LOGGING PARA PRODUCCIÓN
@@ -386,24 +429,27 @@ ADMIN_URL = config('ADMIN_URL', default='admin/')
 # VALIDACIONES FINALES
 # ============================================================================
 
-# Verificar que todas las configuraciones críticas estén presentes
+# Verificar que las configuraciones CRÍTICAS estén presentes
 # Solo validar en RUNTIME, no durante BUILD
 if not IS_BUILD_PHASE:
+    # Validar solo las variables absolutamente necesarias
+    # DATABASE_URL y REDIS_URL son opcionales (tienen defaults)
     REQUIRED_ENV_VARS = [
         'SECRET_KEY',
-        'DB_NAME',
-        'DB_USER',
-        'DB_PASSWORD',
-        'DB_HOST',
-        'REDIS_URL',
+        'DATABASE_URL',  # Railway lo provee automáticamente
         'ALLOWED_HOSTS',
     ]
 
     missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
     if missing_vars:
         raise ValueError(
-            f"Missing required environment variables for production: {', '.join(missing_vars)}. "
-            f"See RAILWAY_ENV_SETUP.md for configuration instructions."
+            f"Missing required environment variables for production:\n"
+            f"  {', '.join(missing_vars)}\n\n"
+            f"Railway Setup:\n"
+            f"  1. Add PostgreSQL database (provides DATABASE_URL automatically)\n"
+            f"  2. Set SECRET_KEY: python manage.py generate_secret_key\n"
+            f"  3. Set ALLOWED_HOSTS to your Railway domain\n\n"
+            f"See RAILWAY_ENV_SETUP.md for details."
         )
 
 # Log de inicio
