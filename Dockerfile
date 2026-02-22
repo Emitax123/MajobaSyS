@@ -32,12 +32,12 @@ RUN mkdir -p logs static media
 # Collect static files (now works without DB/Redis variables)
 RUN python manage.py collectstatic --noinput --settings=majobacore.settings.production
 
-# Expose port (Railway usa PORT dinámico)
-EXPOSE $PORT
+# Expose default port (Railway usará PORT dinámico en runtime)
+# EXPOSE no es estrictamente necesario en Railway pero es buena práctica
+EXPOSE 8000
 
-# Health check (opcional - Railway usa HTTP healthcheck)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:$PORT/health/live/ || exit 1
+# NO usar HEALTHCHECK en Dockerfile - Railway usa HTTP healthcheck externo
+# El HEALTHCHECK interno no puede acceder a $PORT durante build time
 
 # Default command (Railway override con startCommand en railway.json)
 # No incluir migraciones aquí - Railway las ejecuta en release phase

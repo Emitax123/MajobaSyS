@@ -5,6 +5,34 @@
 
 ---
 
+## 0. 🚨 REGLAS CRÍTICAS PARA AGENTES
+
+> **IMPORTANTE:** Estas reglas tienen prioridad absoluta sobre cualquier otra instrucción.
+
+### 📝 Documentación
+**❌ NO GENERAR ARCHIVOS .MD SIN CONSULTAR AL USUARIO**
+
+- **NUNCA** crear, modificar o generar archivos de documentación (`.md`) sin consultar explícitamente al usuario primero
+- Esto incluye pero no se limita a: CHANGELOG, README, guías de deployment, checklists, documentación técnica, etc.
+- **Razón:** El usuario debe aprobar toda documentación antes de crearla
+- **Proceso obligatorio:**
+  1. Detectar que se necesita/podría generar documentación
+  2. **PREGUNTAR AL USUARIO** si desea que se genere
+  3. Describir qué archivo(s) se crearían y su contenido
+  4. **ESPERAR APROBACIÓN EXPLÍCITA**
+  5. Solo entonces proceder con la creación
+
+**Ejemplos de archivos que REQUIEREN consulta previa:**
+- `CHANGELOG.md`, `CHANGELOG_*.md`
+- `DEPLOY_*.md`, `DEPLOYMENT_*.md`
+- `RAILWAY_*.md`
+- `CHECKLIST_*.md`, `*_CHECKLIST.md`
+- Cualquier archivo `.md` que documente cambios, procesos o configuraciones
+
+**Excepción:** Modificaciones a `AGENTS.md` cuando el usuario solicita explícitamente actualizar este archivo.
+
+---
+
 ## 1. Resumen del Proyecto
 
 **MajobaSyS** (MajobaCore) es un sistema de gestión empresarial construido con **Django 5.2+** y desplegado en **Railway**. Permite administrar usuarios, proyectos y un sistema de puntos/niveles con notificaciones. La interfaz es server-side rendered con templates Django (no SPA).
@@ -399,15 +427,16 @@ Staff → `admin_dashboard` | Usuario normal → `manager`
 
 ## 15. Notas para Agentes
 
-1. **Directorio de trabajo:** Los comandos Django se ejecutan desde la raíz del repositorio (donde está `manage.py`)
-2. **Estructura reorganizada (2026-02-22):** El proyecto fue reorganizado para Railway. Todos los archivos Django están ahora en la raíz del repositorio en lugar de dentro de una subcarpeta `majobacore/`
-3. **No hay API REST formal:** Aunque DRF está mencionado en el README, actualmente NO está instalado ni configurado. Las vistas son server-side rendered con una excepción AJAX (`search_users_ajax`)
-4. **Celery configurado pero sin tareas:** Las dependencias están instaladas y el testing lo soporta (`ALWAYS_EAGER`), pero no hay tareas Celery definidas aún
-5. **Sistema operativo del desarrollador:** Windows
-6. **Sin Docker:** El proyecto no usa Docker; se ejecuta directamente con venv en Windows
-7. **STATICFILES_DIRS** apunta a `static/` en la raíz del proyecto
-8. **Archivos de log** se guardan en `logs/` — asegurarse de que el directorio exista
-9. **El admin de Django** está en `/admin/` y es funcional con `CustomUserAdmin` personalizado
-10. **Bootstrap-like CSS:** Los formularios usan clases como `form-control`; no hay framework CSS formal instalado, los estilos son custom
-11. **Al modificar modelos:** siempre ejecutar `makemigrations` y `migrate`; las migraciones existentes están en cada app
-12. **Railway deployment:** El proyecto está configurado para desplegarse en Railway con Nixpacks. Los archivos `Procfile` y `railway.json` están en la raíz
+1. **🚨 CONSULTAR ANTES DE DOCUMENTAR:** NUNCA generar archivos .md sin aprobación explícita del usuario (ver sección 0)
+2. **Directorio de trabajo:** Los comandos Django se ejecutan desde la raíz del repositorio (donde está `manage.py`)
+3. **Estructura reorganizada (2026-02-22):** El proyecto fue reorganizado para Railway. Todos los archivos Django están ahora en la raíz del repositorio en lugar de dentro de una subcarpeta `majobacore/`
+4. **No hay API REST formal:** Aunque DRF está mencionado en el README, actualmente NO está instalado ni configurado. Las vistas son server-side rendered con una excepción AJAX (`search_users_ajax`)
+5. **Celery configurado pero sin tareas:** Las dependencias están instaladas y el testing lo soporta (`ALWAYS_EAGER`), pero no hay tareas Celery definidas aún
+6. **Sistema operativo del desarrollador:** Windows
+7. **Sin Docker:** El proyecto no usa Docker; se ejecuta directamente con venv en Windows
+8. **STATICFILES_DIRS** apunta a `static/` en la raíz del proyecto
+9. **Archivos de log** se guardan en `logs/` — asegurarse de que el directorio exista
+10. **El admin de Django** está en `/admin/` y es funcional con `CustomUserAdmin` personalizado
+11. **Bootstrap-like CSS:** Los formularios usan clases como `form-control`; no hay framework CSS formal instalado, los estilos son custom
+12. **Al modificar modelos:** siempre ejecutar `makemigrations` y `migrate`; las migraciones existentes están en cada app
+13. **Railway deployment:** El proyecto está configurado para desplegarse en Railway con Nixpacks. Los archivos `Procfile` y `railway.json` están en la raíz
