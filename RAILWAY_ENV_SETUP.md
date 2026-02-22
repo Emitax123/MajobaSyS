@@ -2,15 +2,6 @@
 
 Este documento lista las variables de entorno necesarias para desplegar MajobaSyS en Railway.
 
-## 🔥 IMPORTANTE: Build vs Runtime
-
-**El proyecto ahora detecta automáticamente cuando está en BUILD PHASE (collectstatic) vs RUNTIME (servidor):**
-
-- **BUILD:** `collectstatic` usa valores por defecto temporales
-- **RUNTIME:** Valida estrictamente todas las variables
-
-**Resultado:** El build de Docker funciona sin necesidad de configurar variables de DB/Redis primero.
-
 ## Variables Obligatorias
 
 ### 1. SECRET_KEY (Crítico)
