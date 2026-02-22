@@ -1,11 +1,22 @@
 # Resumen de Cambios - Build Phase Detection
 
 **Fecha:** 2026-02-22
-**Problema:** Railway ejecutaba `collectstatic` durante el build sin tener acceso a variables de entorno de DB/Redis, causando errores.
+**Problema:** Railway ejecutaba `collectstatic` durante el build de Docker sin tener acceso a variables de entorno como SECRET_KEY, DB, Redis, causando errores.
 
 ## Cambios Realizados
 
-### 1. `majobacore/settings/production.py`
+### 1. `majobacore/settings/base.py`
+
+**Añadido:** Detección de collectstatic y SECRET_KEY temporal para build
+```python
+IS_COLLECTSTATIC = 'collectstatic' in sys.argv or 'compress' in sys.argv
+SECRET_KEY = config(
+    'SECRET_KEY',
+    default='django-insecure-build-key-only-for-collectstatic' if IS_COLLECTSTATIC else None
+)
+```
+
+### 2. `majobacore/settings/production.py`
 
 **Añadido:** Detección automática de fase de build
 ```python

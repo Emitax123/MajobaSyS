@@ -25,7 +25,11 @@ DEBUG = False
 
 # Validar que SECRET_KEY esté configurado (solo en runtime)
 if not IS_BUILD_PHASE:
-    if not SECRET_KEY or SECRET_KEY == 'django-insecure-d*xd59=w7923dsnt#xy=8jbuf_c*6scivaft%ko(8r8vq6jd0l':
+    INSECURE_KEYS = [
+        'django-insecure-d*xd59=w7923dsnt#xy=8jbuf_c*6scivaft%ko(8r8vq6jd0l',
+        'django-insecure-build-key-only-for-collectstatic',
+    ]
+    if not SECRET_KEY or SECRET_KEY in INSECURE_KEYS:
         raise ValueError(
             "SECRET_KEY must be set in environment variables for production. "
             "Generate one with: python manage.py generate_secret_key"

@@ -19,22 +19,31 @@
 
 ### Build Phase Detection (Importante)
 
-**Desde 2026-02-22**, `production.py` detecta automáticamente si está en fase de **BUILD** (`collectstatic`) o **RUNTIME** (servidor):
+**Desde 2026-02-22**, los settings detectan automáticamente si están en fase de **BUILD** (`collectstatic`) o **RUNTIME** (servidor):
 
-- **BUILD Phase:** Usa configuraciones dummy (SQLite :memory:, DummyCache, console email)
-- **RUNTIME Phase:** Valida estrictamente todas las variables de entorno (PostgreSQL, Redis, SMTP)
+**Durante BUILD:**
+- `SECRET_KEY`: Usa valor temporal dummy (no requiere variable de entorno)
+- `DATABASES`: SQLite :memory: (no requiere PostgreSQL)
+- `CACHES`: DummyCache (no requiere Redis)
+- `EMAIL`: Console backend (no requiere SMTP)
 
-Esta distinción permite que `collectstatic` funcione sin necesidad de variables de DB/Redis, resolviendo conflictos de despliegue en Railway.
+**Durante RUNTIME:**
+- Valida estrictamente todas las variables de entorno
+- Requiere SECRET_KEY real (no acepta valores dummy)
+- Requiere PostgreSQL configurado
+- Requiere Redis configurado
+
+Esta distinción permite que `collectstatic` funcione en Docker sin necesidad de configurar variables primero, resolviendo conflictos de despliegue en Railway.
 
 **Variables requeridas SOLO en RUNTIME:**
 - `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`
 - `REDIS_URL`
-- `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` (si se usa email)
+- `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` (opcional)
 
-**Variables requeridas SIEMPRE:**
-- `SECRET_KEY`
-- `ALLOWED_HOSTS`
-- `DJANGO_SETTINGS_MODULE`
+**Variables requeridas SIEMPRE (pero tienen defaults para BUILD):**
+- `SECRET_KEY` - OBLIGATORIO en runtime, usa dummy en build
+- `ALLOWED_HOSTS` - OBLIGATORIO en runtime, defaults en build
+- `DJANGO_SETTINGS_MODULE` - OBLIGATORIO siempre
 
 ---
 

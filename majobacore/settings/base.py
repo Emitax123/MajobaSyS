@@ -4,15 +4,52 @@ This file contains settings common to all environments.
 """
 
 import os
+import sys
 from pathlib import Path
 from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# En producción DEBE ser proporcionado por variable de entorno
-SECRET_KEY = config('SECRET_KEY')
+# ============================================================================
+# BUILD PHASE DETECTION
+# ============================================================================
+# Detectar si estamos en fase de BUILD (collectstatic/compress) o RUNTIME (servidor)
+IS_BUILD_PHASE = any([
+    'collectstatic' in sys.argv,
+    'compress' in sys.argv,
+    'compilemessages' in sys.argv,
+])
+
+IS_RUNTIME_PHASE = any([
+    'runserver' in sys.argv,
+    'gunicorn' in sys.argv[0] if sys.argv else False,
+    'uwsgi' in sys.argv[0] if sys.argv else False,
+])
+
+# ============================================================================
+# SECRET KEY CONFIGURATION
+# ============================================================================
+# Durante BUILD: Usar clave temporal (collectstatic no necesita la real)
+# Durante RUNTIME: OBLIGATORIO desde variable de entorno (falla si no existe)
+
+if IS_BUILD_PHASE:
+    # Fase de build: usar clave temporal segura
+    SECRET_KEY = config(
+        'SECRET_KEY',
+        default='django-insecure-build-key-only-for-collectstatic-do-not-use-in-production'
+    )
+else:
+    # Fase de runtime o desconocida: REQUERIR SECRET_KEY real
+    SECRET_KEY = config('SECRET_KEY')
+    
+    # Validación adicional: Nunca permitir claves inseguras en runtime
+    if SECRET_KEY and isinstance(SECRET_KEY, str) and 'django-insecure' in SECRET_KEY:
+        raise ValueError(
+            "SECRET_KEY contains 'django-insecure' - CRITICAL SECURITY ERROR!\n"
+            "This appears to be a development/build key being used in runtime.\n"
+            "Generate a secure SECRET_KEY with: python manage.py generate_secret_key"
+        )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
