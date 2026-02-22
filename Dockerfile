@@ -33,12 +33,9 @@ RUN mkdir -p logs static media
 RUN python manage.py collectstatic --noinput --settings=majobacore.settings.production
 
 # Expose default port (Railway usará PORT dinámico en runtime)
-# EXPOSE no es estrictamente necesario en Railway pero es buena práctica
 EXPOSE 8000
 
-# NO usar HEALTHCHECK en Dockerfile - Railway usa HTTP healthcheck externo
-# El HEALTHCHECK interno no puede acceder a $PORT durante build time
-
-# Default command (Railway override con startCommand en railway.json)
-# No incluir migraciones aquí - Railway las ejecuta en release phase
-CMD ["sh", "-c", "gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120 --access-logfile - --error-logfile -"]
+# Default command - Railway override con railway.json startCommand
+# IMPORTANTE: No usar sintaxis exec form ["cmd"] porque no expande variables
+# Usar shell form para que $PORT se expanda correctamente
+CMD gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120 --access-logfile - --error-logfile -
