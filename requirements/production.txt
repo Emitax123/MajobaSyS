@@ -4,6 +4,9 @@
 # Error monitoring and tracking
 sentry-sdk>=1.35.0
 
+# Structured logging (JSON format)
+python-json-logger>=2.0.7
+
 # File storage (S3)
 django-storages>=1.14.0
 boto3>=1.29.0

@@ -22,83 +22,85 @@
 ## 2. Estructura del Proyecto
 
 ```
-MajobaSyS/                         ← Raíz del repositorio
-└── majobacore/                     ← Directorio del proyecto Django (manage.py vive aquí)
-    ├── manage.py
-    ├── db.sqlite3                  ← BD local de desarrollo
-    ├── Procfile                    ← Comandos Railway (migrate + gunicorn)
-    ├── railway.json                ← Config de despliegue Railway
-    ├── pytest.ini                  ← Config de pytest + coverage
-    ├── run_dev.bat                 ← Script rápido para correr en Windows
-    ├── setup_dev.bat               ← Script de setup inicial en Windows
-    ├── requirements/
-    │   ├── base.txt                ← Deps compartidas (Django, Celery, Redis, Pillow, etc.)
-    │   ├── development.txt         ← Deps dev (debug-toolbar, pytest, black, flake8, etc.)
-    │   └── production.txt          ← Deps prod (sentry-sdk, boto3, newrelic, etc.)
-    │
-    ├── majobacore/                 ← Paquete principal del proyecto Django
-    │   ├── __init__.py
-    │   ├── urls.py                 ← URL raíz: admin/, manager/, users/, páginas estáticas
-    │   ├── views.py                ← Vistas de páginas estáticas (index, majoba, hormicons, constructora, budget)
-    │   ├── wsgi.py
-    │   ├── asgi.py
-    │   ├── settings/
-    │   │   ├── __init__.py
-    │   │   ├── base.py             ← Settings comunes (AUTH_USER_MODEL, logging, cache, CSRF, sesiones)
-    │   │   ├── development.py      ← SQLite, DEBUG=True, debug-toolbar, DummyCache
-    │   │   ├── production.py       ← PostgreSQL, SSL, HSTS, Redis, Sentry-ready
-    │   │   └── testing.py          ← SQLite :memory:, MD5 hasher, Celery eager, sin migraciones
-    │   ├── utils/
-    │   │   └── security.py         ← SecurityHeadersMiddleware, rate limit config, helpers
-    │   └── management/
-    │       └── commands/
-    │           └── generate_secret_key.py
-    │
-    ├── users/                      ← App de autenticación y usuarios
-    │   ├── models.py               ← CustomUser (extiende AbstractUser)
-    │   ├── views.py                ← Login, logout, registro, perfil, modificación de usuarios
-    │   ├── forms.py                ← CustomUserCreationForm, CustomUserChangeForm, CustomLoginForm
-    │   ├── urls.py                 ← create/, login/, logout/, profile/, modify/<id>/
-    │   ├── admin.py                ← CustomUserAdmin con fieldsets personalizados
-    │   └── tests.py
-    │
-    ├── manager/                    ← App de gestión (proyectos, puntos, notificaciones)
-    │   ├── models.py               ← Project, Notification, ManagerData
-    │   ├── views.py                ← Dashboard, CRUD proyectos, modificación de manager, búsqueda AJAX
-    │   ├── forms.py                ← ManagerDataForm, ProjectForm
-    │   ├── urls.py                 ← Manager dashboard, admin-dashboard, proyectos, búsqueda
-    │   ├── admin.py                ← Registro básico de modelos
-    │   └── tests.py
-    │
-    ├── templates/                  ← Templates Django (Jinja-like)
-    │   ├── base.html               ← Layout base
-    │   ├── index.html              ← Landing page
-    │   ├── carousel.html
-    │   ├── budget_form.html
-    │   ├── majoba_template.html
-    │   ├── hormicons_template.html
-    │   ├── constructora_template.html
-    │   ├── manager/                ← Templates de la app manager
-    │   │   ├── account_manager.html
-    │   │   ├── admin_dashboard.html
-    │   │   ├── create_project.html
-    │   │   ├── modify_manager.html
-    │   │   ├── modify_project.html
-    │   │   ├── projects_list.html
-    │   │   ├── staff_template.html
-    │   │   └── manage_acc_create.html
-    │   └── users/                  ← Templates de la app users
-    │       ├── login.html
-    │       ├── user_create.html
-    │       └── user_modify.html
-    │
-    ├── static/                     ← Archivos estáticos
-    │   ├── css/                    ← Estilos (base.css, admin_dashboard.css, etc.)
-    │   ├── js/                     ← JavaScript (base.js, admin-dashboard.js, search.js, manager.js)
-    │   └── images/                 ← Imágenes y logos (majoba/, hormicons/, constructora/, favicon_io/)
-    │
-    ├── media/                      ← Archivos subidos por usuarios
-    └── logs/                       ← Archivos de log (info.log, errors.log)
+MajobaSyS/                         ← Raíz del repositorio y proyecto Django
+├── manage.py                      ← Script de gestión Django
+├── db.sqlite3                     ← BD local de desarrollo
+├── Procfile                       ← Comandos Railway (migrate + gunicorn)
+├── railway.json                   ← Config de despliegue Railway
+├── pytest.ini                     ← Config de pytest + coverage
+├── run_dev.bat                    ← Script rápido para correr en Windows
+├── setup_dev.bat                  ← Script de setup inicial en Windows
+├── .gitignore                     ← Archivos ignorados por Git
+├── AGENTS.md                      ← Este archivo
+├── requirements/
+│   ├── base.txt                   ← Deps compartidas (Django, Celery, Redis, Pillow, etc.)
+│   ├── development.txt            ← Deps dev (debug-toolbar, pytest, black, flake8, etc.)
+│   └── production.txt             ← Deps prod (sentry-sdk, boto3, etc.)
+│
+├── majobacore/                    ← Paquete principal del proyecto Django
+│   ├── __init__.py
+│   ├── urls.py                    ← URL raíz: admin/, manager/, users/, páginas estáticas
+│   ├── views.py                   ← Vistas de páginas estáticas (index, majoba, hormicons, constructora, budget)
+│   ├── wsgi.py
+│   ├── asgi.py
+│   ├── settings/
+│   │   ├── __init__.py
+│   │   ├── base.py                ← Settings comunes (AUTH_USER_MODEL, logging, cache, CSRF, sesiones)
+│   │   ├── development.py         ← SQLite, DEBUG=True, debug-toolbar, DummyCache
+│   │   ├── production.py          ← PostgreSQL, SSL, HSTS, Redis, Sentry-ready
+│   │   └── testing.py             ← SQLite :memory:, MD5 hasher, Celery eager, sin migraciones
+│   ├── utils/
+│   │   └── security.py            ← SecurityHeadersMiddleware, rate limit config, helpers
+│   └── management/
+│       └── commands/
+│           ├── generate_secret_key.py
+│           └── check_production_settings.py
+│
+├── users/                         ← App de autenticación y usuarios
+│   ├── models.py                  ← CustomUser (extiende AbstractUser)
+│   ├── views.py                   ← Login, logout, registro, perfil, modificación de usuarios
+│   ├── forms.py                   ← CustomUserCreationForm, CustomUserChangeForm, CustomLoginForm
+│   ├── urls.py                    ← create/, login/, logout/, profile/, modify/<id>/
+│   ├── admin.py                   ← CustomUserAdmin con fieldsets personalizados
+│   └── tests.py
+│
+├── manager/                       ← App de gestión (proyectos, puntos, notificaciones)
+│   ├── models.py                  ← Project, Notification, ManagerData
+│   ├── views.py                   ← Dashboard, CRUD proyectos, modificación de manager, búsqueda AJAX
+│   ├── forms.py                   ← ManagerDataForm, ProjectForm
+│   ├── urls.py                    ← Manager dashboard, admin-dashboard, proyectos, búsqueda
+│   ├── admin.py                   ← Registro básico de modelos
+│   └── tests.py
+│
+├── templates/                     ← Templates Django (Jinja-like)
+│   ├── base.html                  ← Layout base
+│   ├── index.html                 ← Landing page
+│   ├── carousel.html
+│   ├── budget_form.html
+│   ├── majoba_template.html
+│   ├── hormicons_template.html
+│   ├── constructora_template.html
+│   ├── manager/                   ← Templates de la app manager
+│   │   ├── account_manager.html
+│   │   ├── admin_dashboard.html
+│   │   ├── create_project.html
+│   │   ├── modify_manager.html
+│   │   ├── modify_project.html
+│   │   ├── projects_list.html
+│   │   ├── staff_template.html
+│   │   └── manage_acc_create.html
+│   └── users/                     ← Templates de la app users
+│       ├── login.html
+│       ├── user_create.html
+│       └── user_modify.html
+│
+├── static/                        ← Archivos estáticos
+│   ├── css/                       ← Estilos (base.css, admin_dashboard.css, etc.)
+│   ├── js/                        ← JavaScript (base.js, admin-dashboard.js, search.js, manager.js)
+│   └── images/                    ← Imágenes y logos (majoba/, hormicons/, constructora/, favicon_io/)
+│
+├── media/                         ← Archivos subidos por usuarios
+└── logs/                          ← Archivos de log (info.log, errors.log)
 ```
 
 ---
@@ -378,13 +380,15 @@ Staff → `admin_dashboard` | Usuario normal → `manager`
 
 ## 15. Notas para Agentes
 
-1. **Directorio de trabajo:** Los comandos Django se ejecutan desde `majobacore/` (donde está `manage.py`)
-2. **No hay API REST formal:** Aunque DRF está mencionado en el README, actualmente NO está instalado ni configurado. Las vistas son server-side rendered con una excepción AJAX (`search_users_ajax`)
-3. **Celery configurado pero sin tareas:** Las dependencias están instaladas y el testing lo soporta (`ALWAYS_EAGER`), pero no hay tareas Celery definidas aún
-4. **Sistema operativo del desarrollador:** Windows
-5. **Sin Docker:** El proyecto no usa Docker; se ejecuta directamente con venv en Windows
-6. **STATICFILES_DIRS** apunta a `static/` en la raíz del proyecto Django
-7. **Archivos de log** se guardan en `logs/` — asegurarse de que el directorio exista
-8. **El admin de Django** está en `/admin/` y es funcional con `CustomUserAdmin` personalizado
-9. **Bootstrap-like CSS:** Los formularios usan clases como `form-control`; no hay framework CSS formal instalado, los estilos son custom
-10. **Al modificar modelos:** siempre ejecutar `makemigrations` y `migrate`; las migraciones existentes están en cada app
+1. **Directorio de trabajo:** Los comandos Django se ejecutan desde la raíz del repositorio (donde está `manage.py`)
+2. **Estructura reorganizada (2026-02-22):** El proyecto fue reorganizado para Railway. Todos los archivos Django están ahora en la raíz del repositorio en lugar de dentro de una subcarpeta `majobacore/`
+3. **No hay API REST formal:** Aunque DRF está mencionado en el README, actualmente NO está instalado ni configurado. Las vistas son server-side rendered con una excepción AJAX (`search_users_ajax`)
+4. **Celery configurado pero sin tareas:** Las dependencias están instaladas y el testing lo soporta (`ALWAYS_EAGER`), pero no hay tareas Celery definidas aún
+5. **Sistema operativo del desarrollador:** Windows
+6. **Sin Docker:** El proyecto no usa Docker; se ejecuta directamente con venv en Windows
+7. **STATICFILES_DIRS** apunta a `static/` en la raíz del proyecto
+8. **Archivos de log** se guardan en `logs/` — asegurarse de que el directorio exista
+9. **El admin de Django** está en `/admin/` y es funcional con `CustomUserAdmin` personalizado
+10. **Bootstrap-like CSS:** Los formularios usan clases como `form-control`; no hay framework CSS formal instalado, los estilos son custom
+11. **Al modificar modelos:** siempre ejecutar `makemigrations` y `migrate`; las migraciones existentes están en cada app
+12. **Railway deployment:** El proyecto está configurado para desplegarse en Railway con Nixpacks. Los archivos `Procfile` y `railway.json` están en la raíz

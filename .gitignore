@@ -1,3 +1,7 @@
+# ============================================================================
+# MajobaSyS - Django Project .gitignore
+# ============================================================================
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,9 +20,12 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # Virtual Environment
 venv/
@@ -26,6 +33,8 @@ env/
 ENV/
 .venv/
 .env/
+env.bak/
+venv.bak/
 
 # Django
 *.log
@@ -33,6 +42,8 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media/
+staticfiles/
+static_root/
 
 # IDE
 .vscode/
@@ -40,6 +51,9 @@ media/
 *.swp
 *.swo
 *~
+.spyderproject
+.spyproject
+.ropeproject
 
 # OS
 .DS_Store
@@ -49,16 +63,14 @@ media/
 .Trashes
 ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # Environment variables
 .env
 .env.local
 .env.development
 .env.production
-
-# Static files (generated)
-staticfiles/
-static_root/
+.env.test
 
 # Logs
 logs/
@@ -67,6 +79,12 @@ logs/
 # Cache
 .cache/
 .pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.tox/
+.nox/
 
 # Coverage
 htmlcov/
@@ -74,6 +92,17 @@ htmlcov/
 .coverage.*
 coverage.xml
 *.cover
+*.py,cover
+.hypothesis/
+nosetests.xml
+
+# Translations
+*.mo
+*.pot
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
 
 # Node.js (si usas frontend)
 node_modules/
@@ -84,4 +113,54 @@ yarn-error.log*
 # Redis dump
 dump.rdb
 
-nul
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Flask (si se usa)
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+/site
+
+# PyBuilder
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# SageMath
+*.sage.py
+
+# Carpeta antigua (temporal durante migración)
+majobacore/
