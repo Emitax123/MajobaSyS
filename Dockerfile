@@ -26,8 +26,11 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy project files
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput --settings=majobacore.settings.production || true
+# Create necessary directories
+RUN mkdir -p logs static media
+
+# Collect static files (now works without DB/Redis variables)
+RUN python manage.py collectstatic --noinput --settings=majobacore.settings.production
 
 # Expose port
 EXPOSE 8000

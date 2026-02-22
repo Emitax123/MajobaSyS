@@ -9,22 +9,31 @@ import sys
 import logging
 
 # ============================================================================
+# DETECCIÓN DE FASE DE BUILD
+# ============================================================================
+
+# Detectar si estamos en fase de build (collectstatic) o runtime (servidor)
+# Durante build, muchas variables de entorno no existen aún
+IS_BUILD_PHASE = sys.argv and any(arg in sys.argv for arg in ['collectstatic', 'compress'])
+
+# ============================================================================
 # SEGURIDAD CRÍTICA
 # ============================================================================
 
 # DEBUG debe estar SIEMPRE en False en producción
 DEBUG = False
 
-# Validar que SECRET_KEY esté configurado
-if not SECRET_KEY or SECRET_KEY == 'django-insecure-d*xd59=w7923dsnt#xy=8jbuf_c*6scivaft%ko(8r8vq6jd0l':
-    raise ValueError(
-        "SECRET_KEY must be set in environment variables for production. "
-        "Generate one with: python manage.py generate_secret_key"
-    )
+# Validar que SECRET_KEY esté configurado (solo en runtime)
+if not IS_BUILD_PHASE:
+    if not SECRET_KEY or SECRET_KEY == 'django-insecure-d*xd59=w7923dsnt#xy=8jbuf_c*6scivaft%ko(8r8vq6jd0l':
+        raise ValueError(
+            "SECRET_KEY must be set in environment variables for production. "
+            "Generate one with: python manage.py generate_secret_key"
+        )
 
-# ALLOWED_HOSTS debe ser explícitamente configurado
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-if not ALLOWED_HOSTS:
+# ALLOWED_HOSTS debe ser explícitamente configurado (solo en runtime)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+if not IS_BUILD_PHASE and (not ALLOWED_HOSTS or ALLOWED_HOSTS == ['localhost', '127.0.0.1']):
     raise ValueError("ALLOWED_HOSTS must be set in environment variables for production")
 
 # Agregar dominio de Railway automáticamente si existe
@@ -73,49 +82,70 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 # BASE DE DATOS - POSTGRESQL
 # ============================================================================
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='5432', cast=int),
-        'ATOMIC_REQUESTS': True,  # Transacciones automáticas por request
-        'CONN_MAX_AGE': 600,  # Mantener conexiones por 10 minutos
-        'OPTIONS': {
-            'sslmode': 'require',  # Railway requiere SSL
-            'connect_timeout': 10,
-            'options': '-c statement_timeout=30000',  # 30 segundos timeout
-        },
+# Durante build, usar configuración dummy; en runtime, validar estrictamente
+if IS_BUILD_PHASE:
+    # Configuración dummy para collectstatic (no se usa en build)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+else:
+    # Configuración real de PostgreSQL para runtime
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
+            'PORT': config('DB_PORT', default='5432', cast=int),
+            'ATOMIC_REQUESTS': True,  # Transacciones automáticas por request
+            'CONN_MAX_AGE': 600,  # Mantener conexiones por 10 minutos
+            'OPTIONS': {
+                'sslmode': 'require',  # Railway requiere SSL
+                'connect_timeout': 10,
+                'options': '-c statement_timeout=30000',  # 30 segundos timeout
+            },
+        }
+    }
 
 # ============================================================================
 # CACHE - REDIS
 # ============================================================================
 
-REDIS_URL = config('REDIS_URL')
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_URL,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
-            'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
-            'CONNECTION_POOL_KWARGS': {
-                'max_connections': 50,
-                'retry_on_timeout': True,
-            },
-            'IGNORE_EXCEPTIONS': True,  # No fallar si Redis no está disponible
-        },
-        'KEY_PREFIX': 'majobasys',
-        'TIMEOUT': 300,  # 5 minutos por defecto
+# Durante build, usar DummyCache; en runtime, usar Redis
+if IS_BUILD_PHASE:
+    # Cache dummy para build
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
     }
-}
+else:
+    # Configuración real de Redis para runtime
+    REDIS_URL = config('REDIS_URL')
+    
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'SOCKET_CONNECT_TIMEOUT': 5,
+                'SOCKET_TIMEOUT': 5,
+                'COMPRESSOR': 'django_redis.compressors.zlib.ZlibCompressor',
+                'CONNECTION_POOL_KWARGS': {
+                    'max_connections': 50,
+                    'retry_on_timeout': True,
+                },
+                'IGNORE_EXCEPTIONS': True,  # No fallar si Redis no está disponible
+            },
+            'KEY_PREFIX': 'majobasys',
+            'TIMEOUT': 300,  # 5 minutos por defecto
+        }
+    }
 
 # Session backend con Redis
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
@@ -163,21 +193,31 @@ else:
 # EMAIL
 # ============================================================================
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = config('EMAIL_PORT', cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
-SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')
+# ============================================================================
+# EMAIL
+# ============================================================================
 
-# Administradores que reciben emails de errores
-ADMINS = [
-    ('Admin', config('ADMIN_EMAIL', default=SERVER_EMAIL)),
-]
-MANAGERS = ADMINS
+# Configuración de email (opcional durante build)
+if IS_BUILD_PHASE:
+    # Durante build, usar console backend
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # Durante runtime, configurar SMTP real
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = config('EMAIL_HOST')
+    EMAIL_PORT = config('EMAIL_PORT', cast=int)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
+    SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')
+
+    # Administradores que reciben emails de errores
+    ADMINS = [
+        ('Admin', config('ADMIN_EMAIL', default=SERVER_EMAIL)),
+    ]
+    MANAGERS = ADMINS
 
 # ============================================================================
 # LOGGING PARA PRODUCCIÓN
@@ -335,35 +375,43 @@ ADMIN_URL = config('ADMIN_URL', default='admin/')
 # HEALTH CHECK
 # ============================================================================
 
-# Agregar apps para health checks
-INSTALLED_APPS += ['django_extensions']
+# django_extensions ya está incluido en base.py
+# No añadir nuevamente para evitar duplicados
 
 # ============================================================================
 # VALIDACIONES FINALES
 # ============================================================================
 
 # Verificar que todas las configuraciones críticas estén presentes
-REQUIRED_ENV_VARS = [
-    'SECRET_KEY',
-    'DB_NAME',
-    'DB_USER',
-    'DB_PASSWORD',
-    'DB_HOST',
-    'REDIS_URL',
-    'ALLOWED_HOSTS',
-]
+# Solo validar en RUNTIME, no durante BUILD
+if not IS_BUILD_PHASE:
+    REQUIRED_ENV_VARS = [
+        'SECRET_KEY',
+        'DB_NAME',
+        'DB_USER',
+        'DB_PASSWORD',
+        'DB_HOST',
+        'REDIS_URL',
+        'ALLOWED_HOSTS',
+    ]
 
-missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
-if missing_vars:
-    raise ValueError(
-        f"Missing required environment variables for production: {', '.join(missing_vars)}"
-    )
+    missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
+    if missing_vars:
+        raise ValueError(
+            f"Missing required environment variables for production: {', '.join(missing_vars)}. "
+            f"See RAILWAY_ENV_SETUP.md for configuration instructions."
+        )
 
 # Log de inicio
 import logging
 logger = logging.getLogger('majobacore')
-logger.info('Production settings loaded successfully')
-logger.info(f'DEBUG mode: {DEBUG}')
-logger.info(f'ALLOWED_HOSTS: {ALLOWED_HOSTS}')
-logger.info(f'Database: {DATABASES["default"]["ENGINE"]} at {DATABASES["default"]["HOST"]}')
-logger.info(f'Cache backend: {CACHES["default"]["BACKEND"]}')
+
+if IS_BUILD_PHASE:
+    logger.info('Production settings loaded in BUILD PHASE (collectstatic)')
+    logger.info('Using dummy configurations for database and cache')
+else:
+    logger.info('Production settings loaded successfully in RUNTIME')
+    logger.info(f'DEBUG mode: {DEBUG}')
+    logger.info(f'ALLOWED_HOSTS: {ALLOWED_HOSTS}')
+    logger.info(f'Database: {DATABASES["default"]["ENGINE"]} at {DATABASES["default"]["HOST"]}')
+    logger.info(f'Cache backend: {CACHES["default"]["BACKEND"]}')
