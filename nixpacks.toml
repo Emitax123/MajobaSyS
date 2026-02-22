@@ -24,5 +24,7 @@ cmds = [
     "python manage.py collectstatic --noinput --settings=majobacore.settings.production"
 ]
 
-[start]
-cmd = "python manage.py migrate --settings=majobacore.settings.production --noinput && gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120"
+# [start] is commented out because Railway uses Procfile instead
+# Procfile defines:
+#   release: python manage.py migrate --settings=majobacore.settings.production --noinput
+#   web: gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120 --access-logfile - --error-logfile -
