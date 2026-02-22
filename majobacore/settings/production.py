@@ -80,6 +80,8 @@ for _domain in _railway_domains:
 # SSL/HTTPS
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Excluir health checks del redirect — Railway los hace por HTTP interno
+SECURE_REDIRECT_EXEMPT = [r'^health/']
 
 # HSTS (HTTP Strict Transport Security)
 SECURE_HSTS_SECONDS = 31536000  # 1 año
