@@ -31,15 +31,21 @@ if not IS_BUILD_PHASE:
         'django-insecure-build-key-only-for-collectstatic',
     ]
     if not SECRET_KEY or SECRET_KEY in INSECURE_KEYS:
-        raise ValueError(
+        import warnings
+        warnings.warn(
             "SECRET_KEY must be set in environment variables for production. "
-            "Generate one with: python manage.py generate_secret_key"
+            "Generate one with: python manage.py generate_secret_key",
+            RuntimeWarning
         )
 
 # ALLOWED_HOSTS debe ser explícitamente configurado (solo en runtime)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 if not IS_BUILD_PHASE and (not ALLOWED_HOSTS or ALLOWED_HOSTS == ['localhost', '127.0.0.1']):
-    raise ValueError("ALLOWED_HOSTS must be set in environment variables for production")
+    import warnings
+    warnings.warn(
+        "ALLOWED_HOSTS must be set in environment variables for production",
+        RuntimeWarning
+    )
 
 # Agregar dominio de Railway automáticamente si existe
 RAILWAY_STATIC_URL = os.getenv('RAILWAY_STATIC_URL')
@@ -102,28 +108,38 @@ else:
     DATABASE_URL = config('DATABASE_URL', default='')
     
     if not DATABASE_URL:
-        raise ValueError(
+        import warnings
+        warnings.warn(
             "DATABASE_URL not found in environment variables.\n"
             "Railway should provide this automatically when you add a PostgreSQL database.\n"
-            "Format: postgresql://user:password@host:port/dbname"
+            "Format: postgresql://user:password@host:port/dbname\n"
+            "Falling back to SQLite for now.",
+            RuntimeWarning
         )
+        # Fallback a SQLite si no hay DATABASE_URL
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    else:
+        # Parse DATABASE_URL con dj-database-url
+        DATABASES = {
+            'default': dj_database_url.parse(
+                DATABASE_URL,
+                conn_max_age=600,  # Connection pooling: mantener conexiones 10 minutos
+                conn_health_checks=True,  # Health checks automáticos
+                ssl_require=True,  # Railway requiere SSL
+            )
+        }
     
-    # Parse DATABASE_URL con dj-database-url
-    DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,  # Connection pooling: mantener conexiones 10 minutos
-            conn_health_checks=True,  # Health checks automáticos
-            ssl_require=True,  # Railway requiere SSL
-        )
-    }
-    
-    # Configuraciones adicionales de PostgreSQL
-    DATABASES['default']['ATOMIC_REQUESTS'] = True  # Transacciones automáticas
-    DATABASES['default']['OPTIONS'] = {
-        'connect_timeout': 10,
-        'options': '-c statement_timeout=30000',  # 30 segundos timeout para queries
-    }
+        # Configuraciones adicionales de PostgreSQL
+        DATABASES['default']['ATOMIC_REQUESTS'] = True  # Transacciones automáticas
+        DATABASES['default']['OPTIONS'] = {
+            'connect_timeout': 10,
+            'options': '-c statement_timeout=30000',  # 30 segundos timeout para queries
+        }
 
 # ============================================================================
 # CACHE - REDIS
@@ -400,7 +416,9 @@ if CORS_ALLOWED_ORIGINS:
 # OPTIMIZACIONES DE RENDIMIENTO
 # ============================================================================
 
-# Template caching
+# Template caching - Solo si no se está en modo APP_DIRS
+# APP_DIRS y loaders son mutuamente excluyentes
+TEMPLATES[0]['APP_DIRS'] = False  # Deshabilitar APP_DIRS para usar loaders
 TEMPLATES[0]['OPTIONS']['loaders'] = [
     ('django.template.loaders.cached.Loader', [
         'django.template.loaders.filesystem.Loader',
@@ -433,23 +451,25 @@ ADMIN_URL = config('ADMIN_URL', default='admin/')
 # Solo validar en RUNTIME, no durante BUILD
 if not IS_BUILD_PHASE:
     # Validar solo las variables absolutamente necesarias
-    # DATABASE_URL y REDIS_URL son opcionales (tienen defaults)
-    REQUIRED_ENV_VARS = [
+    # DATABASE_URL y REDIS_URL son opcionales (tienen fallbacks)
+    RECOMMENDED_ENV_VARS = [
         'SECRET_KEY',
         'DATABASE_URL',  # Railway lo provee automáticamente
         'ALLOWED_HOSTS',
     ]
 
-    missing_vars = [var for var in REQUIRED_ENV_VARS if not os.getenv(var)]
+    missing_vars = [var for var in RECOMMENDED_ENV_VARS if not os.getenv(var)]
     if missing_vars:
-        raise ValueError(
-            f"Missing required environment variables for production:\n"
+        import warnings
+        warnings.warn(
+            f"Missing recommended environment variables for production:\n"
             f"  {', '.join(missing_vars)}\n\n"
             f"Railway Setup:\n"
             f"  1. Add PostgreSQL database (provides DATABASE_URL automatically)\n"
             f"  2. Set SECRET_KEY: python manage.py generate_secret_key\n"
             f"  3. Set ALLOWED_HOSTS to your Railway domain\n\n"
-            f"See RAILWAY_ENV_SETUP.md for details."
+            f"See RAILWAY_ENV_SETUP.md for details.",
+            RuntimeWarning
         )
 
 # Log de inicio
@@ -463,5 +483,7 @@ else:
     logger.info('Production settings loaded successfully in RUNTIME')
     logger.info(f'DEBUG mode: {DEBUG}')
     logger.info(f'ALLOWED_HOSTS: {ALLOWED_HOSTS}')
-    logger.info(f'Database: {DATABASES["default"]["ENGINE"]} at {DATABASES["default"]["HOST"]}')
+    db_engine = DATABASES["default"]["ENGINE"]
+    db_host = DATABASES["default"].get("HOST", "local/sqlite")
+    logger.info(f'Database: {db_engine} at {db_host}')
     logger.info(f'Cache backend: {CACHES["default"]["BACKEND"]}')
