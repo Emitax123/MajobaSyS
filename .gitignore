@@ -161,3 +161,6 @@ __pypackages__/
 
 # SageMath
 *.sage.py
+
+# Markdown documentation files
+*.md
