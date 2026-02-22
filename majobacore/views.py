@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.db import connection
 from django.core.cache import cache
@@ -95,19 +96,25 @@ def health_check(request):
     return JsonResponse(health_status, status=status_code)
 
 
-@require_http_methods(["GET"])
+@csrf_exempt
+@require_http_methods(["GET", "HEAD"])
 def liveness_check(request):
     """
     Liveness probe para Railway.
     Verifica que la aplicación está ejecutándose.
     
+    Este endpoint es ultra-ligero y NO verifica dependencias externas.
+    Railway lo usa para determinar si el contenedor está vivo.
+    
     Returns:
         HttpResponse: 200 OK si la app está viva
     """
-    return HttpResponse("OK", status=200)
+    # Respuesta simple y rápida - sin verificar DB ni cache
+    return HttpResponse("OK", status=200, content_type="text/plain")
 
 
-@require_http_methods(["GET"])
+@csrf_exempt
+@require_http_methods(["GET", "HEAD"])
 def readiness_check(request):
     """
     Readiness probe para Railway.
@@ -120,7 +127,7 @@ def readiness_check(request):
         # Verificar conexión a BD
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
-        return HttpResponse("Ready", status=200)
+        return HttpResponse("Ready", status=200, content_type="text/plain")
     except Exception as e:
         logger.error(f"Readiness check failed: {e}")
-        return HttpResponse("Not Ready", status=503)
+        return HttpResponse("Not Ready", status=503, content_type="text/plain")
