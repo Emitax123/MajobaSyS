@@ -49,10 +49,29 @@ if not IS_BUILD_PHASE and (not ALLOWED_HOSTS or ALLOWED_HOSTS == ['localhost', '
 
 # Agregar dominio de Railway automáticamente si existe
 RAILWAY_STATIC_URL = os.getenv('RAILWAY_STATIC_URL')
-if RAILWAY_STATIC_URL and isinstance(ALLOWED_HOSTS, list):
-    railway_domain = RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '')
-    if railway_domain not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(railway_domain)
+RAILWAY_PUBLIC_DOMAIN = os.getenv('RAILWAY_PUBLIC_DOMAIN', '')
+
+# Construir lista de dominios Railway
+_railway_domains = []
+for _env_val in [RAILWAY_STATIC_URL, RAILWAY_PUBLIC_DOMAIN]:
+    if _env_val:
+        _domain = _env_val.replace('https://', '').replace('http://', '').rstrip('/')
+        if _domain:
+            _railway_domains.append(_domain)
+
+# Agregar a ALLOWED_HOSTS
+if isinstance(ALLOWED_HOSTS, list):
+    for _domain in _railway_domains:
+        if _domain not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_domain)
+
+# Agregar a CSRF_TRUSTED_ORIGINS (requiere scheme)
+if not isinstance(CSRF_TRUSTED_ORIGINS, list):
+    CSRF_TRUSTED_ORIGINS = list(CSRF_TRUSTED_ORIGINS) if CSRF_TRUSTED_ORIGINS else []
+for _domain in _railway_domains:
+    _origin = f'https://{_domain}'
+    if _origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_origin)
 
 # ============================================================================
 # SEGURIDAD HTTP
@@ -286,29 +305,41 @@ else:
 # LOGGING PARA PRODUCCIÓN
 # ============================================================================
 
-# Sobrescribir configuración de logging para producción
-LOGGING['formatters']['json'] = {
-    '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-    'format': '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d %(funcName)s',
-}
+# En Railway, toda la salida a stdout/stderr es capturada automáticamente.
+# Usamos JSON structurado para facilitar búsqueda en los logs de Railway.
 
-# Handler para stdout (Railway captura esto)
-LOGGING['handlers']['console_json'] = {
+try:
+    import pythonjsonlogger  # noqa: F401
+    _json_formatter = {
+        '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+        'format': '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d %(funcName)s',
+    }
+except ImportError:
+    # Fallback si pythonjsonlogger no está instalado
+    _json_formatter = {
+        'format': '[{asctime}] {levelname} {name} {module} - {message}',
+        'style': '{',
+        'datefmt': '%Y-%m-%d %H:%M:%S',
+    }
+
+LOGGING['formatters']['json'] = _json_formatter
+
+LOGGING['handlers']['console'] = {
     'level': 'INFO',
     'class': 'logging.StreamHandler',
     'formatter': 'json',
     'stream': sys.stdout,
 }
 
-# Actualizar loggers para producción
-LOGGING['root']['handlers'] = ['console_json']
-LOGGING['loggers']['django']['handlers'] = ['console_json']
+# Actualizar niveles para producción (menos ruido)
+LOGGING['root']['handlers'] = ['console']
+LOGGING['loggers']['django']['handlers'] = ['console']
 LOGGING['loggers']['django']['level'] = 'WARNING'
-LOGGING['loggers']['django.request']['handlers'] = ['console_json', 'mail_admins']
-LOGGING['loggers']['django.security']['handlers'] = ['console_json', 'mail_admins']
-LOGGING['loggers']['majobacore']['handlers'] = ['console_json']
-LOGGING['loggers']['users']['handlers'] = ['console_json']
-LOGGING['loggers']['manager']['handlers'] = ['console_json']
+LOGGING['loggers']['django.request']['handlers'] = ['console', 'mail_admins']
+LOGGING['loggers']['django.security']['handlers'] = ['console', 'mail_admins']
+LOGGING['loggers']['majobacore']['handlers'] = ['console']
+LOGGING['loggers']['users']['handlers'] = ['console']
+LOGGING['loggers']['manager']['handlers'] = ['console']
 
 # ============================================================================
 # SEGURIDAD ADICIONAL
@@ -331,35 +362,6 @@ MIDDLEWARE = [
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
-
-# ============================================================================
-# DJANGO REST FRAMEWORK (si se usa)
-# ============================================================================
-
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/hour',
-        'user': '1000/hour',
-    },
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50,
-}
 
 # ============================================================================
 # MONITOREO Y ANALYTICS

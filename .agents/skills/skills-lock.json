@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "deploy": {
+      "source": "railwayapp/railway-skills",
+      "sourceType": "github",
+      "computedHash": "99b9ff018804acdf0f1053d37dfbf1350606e0addd0c01b59d519aced7704208"
+    },
+    "railway-docs": {
+      "source": "railwayapp/railway-skills",
+      "sourceType": "github",
+      "computedHash": "f2875f91dce7c7ac81db4e6415cf05623bea45b3eb251747eaf32107cfd918bf"
+    },
+    "service": {
+      "source": "railwayapp/railway-skills",
+      "sourceType": "github",
+      "computedHash": "fb44d04980465c74354d721feb01a3031c9646cf02a3384ce05faaaaf34e6aa3"
+    },
+    "status": {
+      "source": "railwayapp/railway-skills",
+      "sourceType": "github",
+      "computedHash": "aba0f09d8e0c03a80abd80472423626948ac25e1dc59be5d2982ca1af0ebfc1c"
+    }
+  }
+}

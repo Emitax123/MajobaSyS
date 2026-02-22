@@ -182,6 +182,9 @@ SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')  # Para er
 ADMINS = []  # Se configurará en production.py si es necesario
 
 # Logging Configuration
+# NOTA: Solo handlers de consola en base.py.
+# Los file handlers se agregan en development.py (local).
+# En producción (Railway) solo se usa stdout — Railway captura logs automáticamente.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -196,10 +199,6 @@ LOGGING = {
             'style': '{',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
-        'json': {
-            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d',
-        },
     },
     'filters': {
         'require_debug_false': {
@@ -210,83 +209,55 @@ LOGGING = {
         },
     },
     'handlers': {
-        # Consola para desarrollo (solo con DEBUG=True)
         'console': {
             'level': 'INFO',
-            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        # Consola para producción (sin DEBUG)
-        'console_prod': {
-            'level': 'WARNING',
-            'filters': ['require_debug_false'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'json',
-        },
-        # Archivo para información general
-        'info_file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'info.log',
-            'maxBytes': 10485760,  # 10MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        # Archivo solo para errores
-        'error_file': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'errors.log',
-            'maxBytes': 10485760,  # 10MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        # Mail para errores críticos en producción
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
+            'include_html': False,
         },
     },
     'root': {
-        'handlers': ['console', 'console_prod'],
+        'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'console_prod', 'error_file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['error_file', 'mail_admins'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['error_file', 'mail_admins'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'WARNING',
             'propagate': False,
         },
         'django.db.backends': {
             'handlers': ['console'],
-            'level': 'WARNING',  # Cambiar a DEBUG para ver queries SQL
+            'level': 'WARNING',
             'propagate': False,
         },
         'majobacore': {
-            'handlers': ['console', 'console_prod', 'info_file', 'error_file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'users': {
-            'handlers': ['console', 'console_prod', 'info_file', 'error_file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         'manager': {
-            'handlers': ['console', 'console_prod', 'info_file', 'error_file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
@@ -294,10 +265,10 @@ LOGGING = {
 }
 
 # Cache Configuration
+# Default: DummyCache. Cada entorno (development.py, production.py) lo sobrescribe.
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
