@@ -161,6 +161,3 @@ __pypackages__/
 
 # SageMath
 *.sage.py
-
-# Carpeta antigua (temporal durante migración)
-majobacore/
