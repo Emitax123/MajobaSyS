@@ -294,3 +294,7 @@ CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'  # Vista personalizable
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
+
+# Admin URL — en producción se recomienda cambiar por una URL no predecible
+# Se puede configurar con la variable de entorno ADMIN_URL (ej: "secretpanel/")
+ADMIN_URL = config('ADMIN_URL', default='admin/')

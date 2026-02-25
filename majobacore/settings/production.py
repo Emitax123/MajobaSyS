@@ -437,8 +437,9 @@ TEMPLATES[0]['OPTIONS']['debug'] = False
 # ADMIN PERSONALIZADO
 # ============================================================================
 
-# URL del admin (security by obscurity)
-ADMIN_URL = config('ADMIN_URL', default='admin/')
+# ADMIN_URL se define en base.py y se lee desde la variable de entorno ADMIN_URL.
+# En producción se recomienda usar una URL no predecible (ej: "secretpanel/").
+# Si no se configura, el default es "admin/".
 
 # ============================================================================
 # HEALTH CHECK

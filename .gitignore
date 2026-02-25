@@ -164,3 +164,5 @@ __pypackages__/
 
 # Markdown documentation files
 *.md
+majobacore/settings/SECURITY_NOTES.md
+DEPLOYMENT.md

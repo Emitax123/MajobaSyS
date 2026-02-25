@@ -60,9 +60,11 @@ python manage.py generate_secret_key
 
 Asegúrate de que estos archivos existen y están actualizados:
 
-- ✅ `Procfile` - Comandos de Railway
-- ✅ `railway.json` - Configuración de build
-- ✅ `requirements/production.txt` - Dependencias
+- ✅ `requirements.txt` - Indicador para Nixpacks (apunta a production.txt)
+- ✅ `runtime.txt` - Versión de Python
+- ✅ `Procfile` - Comando web (migrate + gunicorn)
+- ✅ `railway.toml` - Builder, buildCommand, healthcheck
+- ✅ `requirements/production.txt` - Dependencias de producción
 - ✅ `majobacore/settings/production.py` - Settings de producción
 - ✅ `.env.example` - Template de variables de entorno
 
@@ -217,23 +219,28 @@ ADMIN_EMAIL=admin@tudominio.com
 
 ### Proceso de Deployment
 
-Railway ejecutará automáticamente estos pasos (definidos en `railway.json` y `Procfile`):
+Railway + Nixpacks ejecuta estos pasos automáticamente:
 
-1. **Build**:
+1. **Detección**: Nixpacks detecta Python por `requirements.txt` en la raíz y versión por `runtime.txt`
+2. **Install** (automático): `pip install -r requirements.txt` (apunta a `requirements/production.txt`)
+3. **Build** (configurado en `railway.toml`):
    ```bash
-   pip install -r requirements/production.txt
    python manage.py collectstatic --noinput --settings=majobacore.settings.production
    ```
-
-2. **Release**:
+   > `collectstatic` activa `IS_BUILD_PHASE` en `production.py`, que usa DB dummy (SQLite :memory:) y DummyCache para no necesitar PostgreSQL ni Redis durante el build.
+4. **Start** (definido en `Procfile`):
    ```bash
-   python manage.py migrate --settings=majobacore.settings.production --noinput
+   python manage.py migrate --settings=majobacore.settings.production --noinput && gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4 --timeout 120 --access-logfile - --error-logfile -
    ```
+   > Las migraciones se ejecutan en cada start (antes de gunicorn). Es idempotente.
 
-3. **Start**:
-   ```bash
-   gunicorn majobacore.wsgi:application --bind 0.0.0.0:$PORT --workers 4
-   ```
+**Archivos clave de configuración:**
+| Archivo | Propósito |
+|---------|-----------|
+| `requirements.txt` | Indicador para Nixpacks (`-r requirements/production.txt`) |
+| `runtime.txt` | Versión de Python (`python-3.11`) |
+| `railway.toml` | Builder, buildCommand, healthcheck, restart policy |
+| `Procfile` | Comando `web:` (migrate + gunicorn) |
 
 ### Trigger del Deployment
 
@@ -366,11 +373,11 @@ Accede a: **Metrics** tab en tu servicio.
 ### Health Checks Configurados
 
 Railway verifica automáticamente:
-- **Path**: `/health/`
-- **Interval**: Cada 30 segundos
+- **Path**: `/health/live/` (configurado en `railway.toml`)
 - **Timeout**: 100 segundos
+- **Restart policy**: `ON_FAILURE`, max 10 retries
 
-Si el health check falla 3 veces consecutivas, Railway reinicia el servicio.
+**Importante:** Railway hace health checks por **HTTP interno** (no HTTPS). Por eso `SECURE_REDIRECT_EXEMPT = [r'^health/']` es obligatorio en `production.py` — sin esto, Django responde 301 redirect y Railway lo interpreta como fallo.
 
 ### Backups de Base de Datos
 
@@ -407,7 +414,57 @@ Sentry capturará automáticamente:
 
 ## 🔧 Troubleshooting
 
-### Problema: Deployment Falla en Build
+### Problema: Nixpacks No Detecta Python
+
+**Síntomas**: `Nixpacks was unable to generate a build plan for this app`
+
+**Causa**: No existe `requirements.txt` en la raíz del proyecto. Nixpacks no reconoce `requirements/` (carpeta) como indicador de Python.
+
+**Solución**: Crear `requirements.txt` en la raíz:
+```
+-r requirements/production.txt
+```
+
+### Problema: `pip: command not found` durante build
+
+**Síntomas**: `RUN pip install ... /bin/bash: line 1: pip: command not found`
+
+**Causa**: Un `nixpacks.toml` personalizado sobreescribe la fase `setup` y Nixpacks no instala Python.
+
+**Solución**: No usar `nixpacks.toml`. Configurar el build en `railway.toml` con `buildCommand` y dejar que Nixpacks maneje la instalación de Python automáticamente.
+
+### Problema: `FileNotFoundError: /app/logs/errors.log`
+
+**Síntomas**: Crash al iniciar Django con `ValueError: Unable to configure handler 'error_file'`
+
+**Causa**: `base.py` define `RotatingFileHandler` que escribe a `logs/errors.log` y `logs/info.log`. En Railway la carpeta `/app/logs/` no existe. Django falla al inicializar logging antes de ejecutar cualquier comando.
+
+**Solución**: No usar file handlers en `base.py`. Solo `StreamHandler` (console). Railway captura stdout automáticamente. Los file handlers solo deben existir en `development.py` para uso local.
+
+### Problema: Health Check Devuelve 301
+
+**Síntomas**: Logs muestran `GET /health/live/ HTTP/1.1" 301` y el health check falla cíclicamente.
+
+**Causa**: `SECURE_SSL_REDIRECT = True` redirige todo HTTP a HTTPS. Railway hace health checks internamente por HTTP plano. Django responde 301, Railway no sigue redirects.
+
+**Solución**: En `production.py`:
+```python
+SECURE_REDIRECT_EXEMPT = [r'^health/']
+```
+
+### Problema: `No directory at: /app/staticfiles/`
+
+**Síntomas**: Warning de WhiteNoise al arrancar. Archivos estáticos no cargan (404).
+
+**Causa**: `collectstatic` no se ejecutó durante el build. Nixpacks no lo ejecuta automáticamente.
+
+**Solución**: En `railway.toml`:
+```toml
+[build]
+buildCommand = "python manage.py collectstatic --noinput --settings=majobacore.settings.production"
+```
+
+### Problema: Deployment Falla en Build (dependencias)
 
 **Síntomas**: Error al instalar dependencias
 
@@ -592,23 +649,27 @@ Antes de considerar el deployment completo, verifica:
 - [ ] SECRET_KEY generado y guardado
 - [ ] Variables de entorno documentadas
 - [ ] Tests pasando localmente
-- [ ] `check_production_settings` pasa sin errores
+- [ ] `requirements.txt` en la raíz (apunta a `requirements/production.txt`)
+- [ ] `runtime.txt` con versión de Python
+- [ ] `railway.toml` con `buildCommand` para `collectstatic`
+- [ ] `Procfile` con comando `web:` (migrate + gunicorn)
+- [ ] NO existe `nixpacks.toml` (evitar conflictos con detección automática)
 
 ### Deployment
 - [ ] PostgreSQL agregado y conectado
-- [ ] Redis agregado y conectado
+- [ ] Redis agregado y conectado (opcional, tiene fallback a LocMemCache)
 - [ ] Variables de entorno configuradas
-- [ ] Build exitoso
+- [ ] Build exitoso (collectstatic se ejecutó)
 - [ ] Migraciones aplicadas
-- [ ] Gunicorn corriendo
+- [ ] Gunicorn corriendo en `$PORT`
 
 ### Post-Deployment
-- [ ] Health checks responden OK
+- [ ] Health check (`/health/live/`) responde 200 (no 301)
 - [ ] Página principal carga
 - [ ] Admin accesible
 - [ ] Superusuario creado
 - [ ] Login funciona
-- [ ] Archivos estáticos cargan
+- [ ] Archivos estáticos cargan (no hay warning de WhiteNoise)
 - [ ] CSRF funciona
 - [ ] Cache funciona
 - [ ] Logs sin errores críticos
@@ -617,12 +678,14 @@ Antes de considerar el deployment completo, verifica:
 ### Seguridad
 - [ ] DEBUG=False
 - [ ] SECRET_KEY único y seguro
-- [ ] ALLOWED_HOSTS configurado correctamente
-- [ ] HTTPS habilitado (automático en Railway)
-- [ ] Cookies seguras habilitadas
+- [ ] ALLOWED_HOSTS configurado (incluye dominio Railway)
+- [ ] HTTPS habilitado (`SECURE_SSL_REDIRECT=True`)
+- [ ] `SECURE_REDIRECT_EXEMPT = [r'^health/']` configurado
+- [ ] Cookies seguras habilitadas (`SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`)
+- [ ] CSRF_TRUSTED_ORIGINS incluye `https://tu-app.railway.app`
 - [ ] HSTS configurado
 - [ ] CSP configurado
-- [ ] Admin URL personalizado (opcional)
+- [ ] Logging solo a stdout (sin file handlers en producción)
 
 ---
 
@@ -653,4 +716,5 @@ Si completaste todos los pasos, tu aplicación MajobaSyS debería estar corriend
 ---
 
 **Documentación generada**: Febrero 2026  
-**Versión**: 1.0.0
+**Última actualización**: 2026-02-22 (fixes de Nixpacks, logging, SSL redirect, staticfiles)  
+**Versión**: 1.1.0
