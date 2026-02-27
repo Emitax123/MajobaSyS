@@ -17,8 +17,9 @@ DATABASES = {
     }
 }
 
-# Email backend for development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email backend para desarrollo — configurable desde .env
+# Por defecto console (no envía mails reales), pero se puede cambiar a smtp en .env
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 # Disable cache in development
 CACHES = {
@@ -56,10 +57,16 @@ SESSION_COOKIE_NAME = 'majobacore_sessionid'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
-# Logging for development
-LOGGING['handlers']['console']['level'] = 'DEBUG'
-LOGGING['loggers']['django']['level'] = 'DEBUG'
-LOGGING['loggers']['majobacore']['level'] = 'DEBUG'
+# Logging for development — solo WARNING y errores para no ensuciar la consola
+LOGGING['handlers']['console']['level'] = 'WARNING'
+LOGGING['root']['level'] = 'WARNING'
+LOGGING['loggers']['django']['level'] = 'WARNING'
+LOGGING['loggers']['django.request']['level'] = 'ERROR'
+LOGGING['loggers']['django.security']['level'] = 'WARNING'
+LOGGING['loggers']['django.db.backends']['level'] = 'WARNING'
+LOGGING['loggers']['majobacore']['level'] = 'WARNING'
+LOGGING['loggers']['users']['level'] = 'WARNING'
+LOGGING['loggers']['manager']['level'] = 'WARNING'
 
 # Static files configuration for development
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'

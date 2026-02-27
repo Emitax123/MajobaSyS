@@ -34,7 +34,17 @@ form {
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
+.input-cont input[type="checkbox"]:checked {
+    background-color: #d81d26;
+}
 
+.input-cont input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    cursor: pointer;
+    accent-color: #d81d26;
+}
 
 
 

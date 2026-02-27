@@ -42,13 +42,36 @@
       display: block;
     }
     
+    .projects-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5em;
+      margin-bottom: 1.5em;
+    }
+
     .project-card {
-      border: 1px solid #ddd;
-      background-color: #ddd9d5ff;
-      border-radius: 5px;
+      background: white;
+      border-radius: 10px;
       padding: 1em;
-      margin-bottom: 1em;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 2px solid #b0b0b0ff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 1024px) {
+      .projects-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .projects-list {
+        grid-template-columns: 1fr;
+      }
     }
     .project-title {
       font-size: 1.2em;

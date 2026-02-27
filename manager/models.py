@@ -1,6 +1,5 @@
 from django.db import models
 from users.models import CustomUser
-from django.utils.timesince import timesince
 # Create your models here.
 
 class Project(models.Model):
@@ -47,8 +46,35 @@ class Notification(models.Model):
         ordering = ['-created_at']
     
     def time_elapsed(self):
-        
-        return timesince(self.created_at)
+        """
+        Devuelve el tiempo transcurrido desde la creación de la notificación en español.
+
+        Returns:
+            str: Cadena legible como "ahora", "hace 5 minutos", "hace 2 horas", etc.
+        """
+        from django.utils import timezone
+
+        ahora = timezone.now()
+        diferencia = ahora - self.created_at
+        segundos = int(diferencia.total_seconds())
+
+        if segundos < 60:
+            return "ahora"
+        elif segundos < 3600:
+            minutos = segundos // 60
+            return f"hace {minutos} {'minuto' if minutos == 1 else 'minutos'}"
+        elif segundos < 86400:
+            horas = segundos // 3600
+            return f"hace {horas} {'hora' if horas == 1 else 'horas'}"
+        elif segundos < 2592000:
+            dias = segundos // 86400
+            return f"hace {dias} {'día' if dias == 1 else 'días'}"
+        elif segundos < 31536000:
+            meses = segundos // 2592000
+            return f"hace {meses} {'mes' if meses == 1 else 'meses'}"
+        else:
+            años = segundos // 31536000
+            return f"hace {años} {'año' if años == 1 else 'años'}"
     
     def __str__(self):
         return f"Notificación para {self.user.username}: {self.message[:20]}"

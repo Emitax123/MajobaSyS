@@ -385,17 +385,15 @@
     }
     
     .projects-grid {
-      display: flex;
-      flex-flow: row;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 2em;
     }
     
     .project-card {
       background: white;
-      width: 100%;
       border-radius: 10px;
       padding: 1em;
-    
       border: 2px solid #b0b0b0ff;
     }
     
@@ -558,6 +556,7 @@
       }
 
       .projects-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 1.5em;
       }
 
@@ -613,7 +612,7 @@
 
       /* Proyectos en columna */
       .projects-grid {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 1.5em;
       }
 

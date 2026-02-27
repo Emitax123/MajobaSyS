@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.db import connection
 from django.core.cache import cache
+from django.core.mail import send_mail
+from smtplib import SMTPException
 
 logger = logging.getLogger('majobacore')
 
@@ -40,8 +42,85 @@ def constructora_view(request):
 
 
 def budget_view(request):
-    """Formulario de presupuesto."""
-    return render(request, 'budget_form.html')
+    """
+    Formulario de solicitud de presupuesto.
+
+    GET  → Renderiza el formulario vacío.
+    POST → Valida los campos, envía un mail a la cuenta de la empresa
+           (EMAIL_HOST_USER) con los datos del solicitante y devuelve
+           feedback de éxito o error al usuario.
+    """
+    if request.method != 'POST':
+        return render(request, 'budget_form.html')
+
+    # Leer y limpiar campos del formulario
+    name            = request.POST.get('name', '').strip()
+    phone           = request.POST.get('phone', '').strip()
+    email           = request.POST.get('email', '').strip()
+    project_details = request.POST.get('project_details', '').strip()
+
+    # Validación básica — los campos son required en el template,
+    # pero validamos también en el servidor por seguridad.
+    if not all([name, phone, email, project_details]):
+        return render(request, 'budget_form.html', {
+            'error': 'Por favor completá todos los campos del formulario.',
+            'form_data': {
+                'name': name,
+                'phone': phone,
+                'email': email,
+                'project_details': project_details,
+            },
+        })
+
+    subject = f'Nueva solicitud de presupuesto — {name}'
+
+    message = (
+        f'Se recibió una nueva solicitud de presupuesto a través del sitio web.\n\n'
+        f'--- DATOS DEL SOLICITANTE ---\n'
+        f'Nombre:   {name}\n'
+        f'Teléfono: {phone}\n'
+        f'Email:    {email}\n\n'
+        f'--- DETALLES DEL PROYECTO ---\n'
+        f'{project_details}\n'
+    )
+
+    company_email = settings.EMAIL_HOST_USER
+
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[company_email],
+            fail_silently=False,
+        )
+        logger.info(
+            f'Presupuesto enviado correctamente | solicitante: {email} | nombre: {name}'
+        )
+        return render(request, 'budget_form.html', {'success': True})
+
+    except SMTPException as e:
+        logger.error(f'Error SMTP al enviar presupuesto de {email}: {e}')
+        return render(request, 'budget_form.html', {
+            'error': 'Hubo un problema al enviar tu solicitud. Por favor intentá más tarde o contactanos directamente.',
+            'form_data': {
+                'name': name,
+                'phone': phone,
+                'email': email,
+                'project_details': project_details,
+            },
+        })
+    except Exception as e:
+        logger.error(f'Error inesperado al enviar presupuesto de {email}: {e}')
+        return render(request, 'budget_form.html', {
+            'error': 'Ocurrió un error inesperado. Por favor intentá más tarde.',
+            'form_data': {
+                'name': name,
+                'phone': phone,
+                'email': email,
+                'project_details': project_details,
+            },
+        })
 
 
 # ============================================================================
