@@ -3,96 +3,133 @@
 {% block content %}
   <link rel="stylesheet" href="{% static 'css/modify_manager.css' %}" />
   <div class="admin-manager-container">
-    <div class="manager-data">
+
+    <!-- Panel: datos del usuario -->
+    <section class="manager-data" aria-label="Datos del usuario">
       <span class="data-title">Datos del usuario</span>
-      <span class="data-item">Nombre : <span class="data-value">{{ user.get_full_name }}</span></span>
+      <span class="data-item">
+        Nombre
+        <span class="data-value">{{ user.get_full_name }}</span>
+      </span>
+      <span class="data-item">
+        Puntos actuales
+        <span class="data-value">{{ manager_info.points }}</span>
+      </span>
+      <span class="data-item">
+        Nivel actual
+        <span class="data-value">{{ manager_info.acc_level }}</span>
+      </span>
+    </section>
 
-      <span class="data-item">Puntos actuales: <span class="data-value">{{ manager_info.points }}</span></span>
-
-      <span class="data-item">Nivel Actual: <span class="data-value">{{ manager_info.acc_level }}</span></span>
-    </div>
-
+    <!-- Panel: acciones y formularios -->
     <div class="manager-mod-container">
-      <div class="manager-modify">
-        <span class="data-title">Modificacion de datos</span>
+
+      <!-- Acciones -->
+      <div class="manager-modify" aria-label="Modificación de datos">
+        <span class="data-title">Modificación de datos</span>
         <a href="{% url 'user_modify' user.id %}">Cambiar datos de usuario</a>
-        <button id="add-btn" class="red-btn add-btn">Sumar puntos</button>
-
-        <button id="minus-btn" class="red-btn minus-btn">Restar puntos</button>
+        <button id="add-btn" type="button" class="red-btn add-btn" aria-expanded="false" aria-controls="add-form">
+          Sumar puntos
+        </button>
+        <button id="minus-btn" type="button" class="red-btn minus-btn" aria-expanded="false" aria-controls="minus-form">
+          Restar puntos
+        </button>
       </div>
-    </div>
-    <div id="manager-forms" style="display:none;" class="manager-forms">
-      <form id="add-form" style="display: none" method="post" action="">
-        {% csrf_token %}
-        <div class="inputs-cont">
-          <label for="user-points">Sumar puntos:</label>
-          <input placeholder="Ingresar puntos" type="integer" name="user-points" id="user-points" />
-          <label for="description">Descripción:</label>
-          <textarea placeholder="Ingrese una descripcion o motivo" name="description" id="description"></textarea>
-        </div>
-        <button type="submit" class="red-btn save-btn">Guardar</button>
-        <label for="checkbox-option"><input type="checkbox" id="checkbox-option" name="checkbox-option" checked />¿Notificar?</label>
-      </form>
-      <form id="minus-form" style="display: none" method="post" action="">
-        {% csrf_token %}
-        <div class="inputs-cont">
-          <label for="user-minus-points">Gastar puntos:</label>
-          <input placeholder="Ingresar puntos" type="integer" name="user-minus-points" id="user-minus-points" />
-          <label for="description">Descripción:</label>
-          <textarea placeholder="Ingrese una descripcion o motivo" name="description" id="description"></textarea>
-        </div>
-        <button type="submit" class="red-btn save-btn">Guardar</button>
-        <label for="checkbox-option"><input type="checkbox" id="checkbox-option" name="checkbox-option" checked />¿Notificar?</label>
-      </form>
-    </div>
-  </div>
 
-  <style>
-    .add-btn,
-    .minus-btn {
-      margin-bottom: 1em;
-      padding: 0.3em;
-      width: fit-content;
-      color: #ffffff;
-      text-decoration: none;
-      font-weight: bold;
-      background-color: #d81d26;
-      border-radius: 5px;
-    }
-    .disabled-btn {
-      background-color: grey !important;
-      cursor: not-allowed !important;
-      pointer-events: none !important;
-    }
-  </style>
+      <!-- Formularios (se muestran con JS) -->
+      <div id="manager-forms" class="manager-forms" style="display:none;" aria-live="polite">
+
+        <form id="add-form" style="display:none;" method="post" action="" novalidate>
+          {% csrf_token %}
+          <div class="inputs-cont">
+            <label for="user-points">Sumar puntos:</label>
+            <input
+              placeholder="Ingresar puntos"
+              type="number"
+              min="0"
+              inputmode="numeric"
+              name="user-points"
+              id="user-points"
+              required
+            />
+            <label for="add-description">Descripción:</label>
+            <textarea
+              placeholder="Ingrese una descripción o motivo"
+              name="description"
+              id="add-description"
+            ></textarea>
+          </div>
+          <button type="submit" class="red-btn save-btn">Guardar</button>
+          <label class="checkbox-label">
+            <input type="checkbox" id="add-checkbox" name="checkbox-option" checked />
+            ¿Notificar?
+          </label>
+        </form>
+
+        <form id="minus-form" style="display:none;" method="post" action="" novalidate>
+          {% csrf_token %}
+          <div class="inputs-cont">
+            <label for="user-minus-points">Gastar puntos:</label>
+            <input
+              placeholder="Ingresar puntos"
+              type="number"
+              min="0"
+              inputmode="numeric"
+              name="user-minus-points"
+              id="user-minus-points"
+              required
+            />
+            <label for="minus-description">Descripción:</label>
+            <textarea
+              placeholder="Ingrese una descripción o motivo"
+              name="description"
+              id="minus-description"
+            ></textarea>
+          </div>
+          <button type="submit" class="red-btn save-btn">Guardar</button>
+          <label class="checkbox-label">
+            <input type="checkbox" id="minus-checkbox" name="checkbox-option" checked />
+            ¿Notificar?
+          </label>
+        </form>
+
+      </div><!-- /manager-forms -->
+    </div><!-- /manager-mod-container -->
+
+  </div><!-- /admin-manager-container -->
+
+
   <script>
-    document.getElementById('add-btn').addEventListener('click', function () {
-      const managerForms = document.getElementById('manager-forms')
-      const addForm = document.getElementById('add-form')
-      const minusForm = document.getElementById('minus-form')
-      const minusBtn = document.getElementById('minus-btn')
-      // Alternar visibilidad del formulario de sumar
+    const addBtn      = document.getElementById('add-btn')
+    const minusBtn    = document.getElementById('minus-btn')
+    const managerForms = document.getElementById('manager-forms')
+    const addForm     = document.getElementById('add-form')
+    const minusForm   = document.getElementById('minus-form')
+
+    function showForm(formToShow, formToHide, activeBtn, inactiveBtn) {
+      formToHide.style.display = 'none'
+      managerForms.style.display = 'block'
+      formToShow.style.display  = 'flex'
+
+      activeBtn.classList.add('disabled-btn')
+      activeBtn.setAttribute('aria-expanded', 'true')
+
+      inactiveBtn.classList.remove('disabled-btn')
+      inactiveBtn.setAttribute('aria-expanded', 'false')
+
+      // Scroll suave al formulario en móvil
+      managerForms.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+
+    addBtn.addEventListener('click', function () {
       if (addForm.style.display === 'none') {
-        minusForm.style.display = 'none' // Ocultar el otro formulario
-        managerForms.style.display = 'flex'
-        addForm.style.display = 'flex'
-        minusBtn.classList.remove('disabled-btn')
-        this.classList.add('disabled-btn')
+        showForm(addForm, minusForm, addBtn, minusBtn)
       }
     })
-    
-    document.getElementById('minus-btn').addEventListener('click', function () {
-      const managerForms = document.getElementById('manager-forms')
-      const addForm = document.getElementById('add-form')
-      const minusForm = document.getElementById('minus-form')
-      const addBtn = document.getElementById('add-btn')
-      // Alternar visibilidad del formulario de restar
+
+    minusBtn.addEventListener('click', function () {
       if (minusForm.style.display === 'none') {
-        addForm.style.display = 'none' // Ocultar el otro formulario
-        managerForms.style.display = 'flex'
-        minusForm.style.display = 'flex'
-        addBtn.classList.remove('disabled-btn')
-        this.classList.add('disabled-btn')
+        showForm(minusForm, addForm, minusBtn, addBtn)
       }
     })
   </script>

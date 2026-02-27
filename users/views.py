@@ -49,6 +49,7 @@ def custom_login_view(request):
         password = request.POST.get('password')
         
         if username and password:
+            remember_me = request.POST.get('remember_me')
             user = authenticate(request, username=username, password=password)
             
             if user is not None:
@@ -59,6 +60,15 @@ def custom_login_view(request):
                     # Crear ManagerData si no existe
                     if not hasattr(user, 'manager_user'):
                         create_manager(user)
+                    
+                    # Manejar "Recordarme"
+                    if remember_me:
+                        # Sesión persistente: no expira al cerrar el navegador
+                        # SESSION_COOKIE_AGE define el máximo; aquí usamos ~1 año
+                        request.session.set_expiry(60 * 60 * 24 * 365)
+                    else:
+                        # Sesión de navegador: expira al cerrar el navegador
+                        request.session.set_expiry(0)
                     
                     # Redireccionar según el tipo de usuario
                     return redirect_after_login(request)

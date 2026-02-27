@@ -112,25 +112,6 @@
     </section>
   </main>
   <script>
-    document.getElementById('empresas').addEventListener('click', function (e) {
-      e.preventDefault() // Prevenir el comportamiento por defecto del enlace
-    
-      const empresasSection = document.getElementById('empresas-section')
-      if (empresasSection) {
-        const navbar = document.querySelector('.navbar')
-        const navbarHeight = navbar ? navbar.offsetHeight : 0
-    
-        const elementPosition = empresasSection.getBoundingClientRect().top
-        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight
-    
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        })
-      }
-    })
-  </script>
-  <script>
     // Carrusel JavaScript
     let currentSlideIndex = 0
     const slides = document.querySelectorAll('.carousel-slide')

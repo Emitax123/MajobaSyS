@@ -459,8 +459,8 @@ div#logo a img {
 @media (max-width: 768px) {
     .footer-content {
         flex-direction: column;
-        gap: 2rem;
-        padding: 2rem 0 1.5rem 0;
+        gap: 1.25rem;
+        padding: 1.25rem 0 1rem 0;
     }
     
     .footer-section {
@@ -471,32 +471,74 @@ div#logo a img {
         padding: 0 1rem;
     }
 
+    .footer-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .footer-title::after {
+        bottom: -5px;
+        width: 36px;
+        height: 2px;
+    }
+
+    .footer-description {
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
+        text-align: left;
+    }
+
+    .footer-logo img {
+        height: 30px;
+    }
+
+    .contact-info {
+        gap: 0.5rem;
+    }
+
+    .contact-item {
+        padding: 0.45rem 0.6rem;
+        gap: 0.6rem;
+        border-left-width: 3px;
+    }
+
+    .contact-item i {
+        font-size: 0.95rem;
+        min-width: 16px;
+    }
+
+    .contact-item div {
+        font-size: 0.78rem;
+        line-height: 1.4;
+    }
+
     .footer-bottom {
-        padding: 1.5rem 0 2rem 0;
+        padding: 0.75rem 0 1rem 0;
     }
 
     .footer-bottom-content {
         flex-direction: column;
         text-align: center;
-        gap: 1.5rem;
+        gap: 0.75rem;
     }
     
     .footer-bottom p {
-        font-size: 0.75rem;
-        line-height: 1.5;
+        font-size: 0.72rem;
+        line-height: 1.4;
         max-width: 90%;
         margin: 0 auto;
     }
 
     .footer-links {
-        gap: 1.5rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
         justify-content: center;
     }
     
     .social-link {
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
+        font-size: 0.78rem;
+        padding: 0.35rem 0.75rem;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 20px;
         transition: all 0.3s ease;
@@ -506,38 +548,58 @@ div#logo a img {
         background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
     }
-
-    .contact-item {
-        padding: 0.8rem;
-    }
-
-    .footer-description {
-        text-align: left;
-    }
 }
 
 /* Mobile específico (pantallas pequeñas) */
 @media (max-width: 480px) {
+    .footer-content {
+        gap: 1rem;
+        padding: 1rem 0 0.75rem 0;
+    }
+
+    .footer-title {
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .footer-description {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .contact-info {
+        gap: 0.4rem;
+    }
+
+    .contact-item {
+        padding: 0.35rem 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .contact-item div {
+        font-size: 0.73rem;
+    }
+
     .footer-bottom {
-        padding: 1rem 0 1.5rem 0;
+        padding: 0.6rem 0 0.9rem 0;
     }
     
     .footer-bottom-content {
-        gap: 1rem;
+        gap: 0.6rem;
     }
     
     .footer-bottom p {
-        font-size: 0.7rem;
-        line-height: 1.4;
+        font-size: 0.68rem;
+        line-height: 1.35;
     }
     
     .footer-links {
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
     
     .social-link {
-        font-size: 0.75rem;
-        padding: 0.4rem 0.8rem;
+        font-size: 0.72rem;
+        padding: 0.3rem 0.65rem;
     }
 }
 

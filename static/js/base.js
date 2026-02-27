@@ -65,6 +65,16 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+
+            // Si existe la sección "empresas-section" en esta página, hacer scroll en lugar de abrir el dropdown
+            const empresasSection = document.getElementById('empresas-section');
+            if (empresasSection) {
+                const navbarHeight = document.querySelector('.navbar').offsetHeight || 0;
+                const offsetPosition = empresasSection.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                return; // No abrir el dropdown
+            }
+
             dropdown.classList.toggle('active');
         });
 
