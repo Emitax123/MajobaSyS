@@ -179,6 +179,7 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
 SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')  # Para errores del servidor
+EMAIL_TIMEOUT = 10  # Segundos — evita bloqueos indefinidos en send_mail()
 ADMINS = []  # Se configurará en production.py si es necesario
 
 # Logging Configuration

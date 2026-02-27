@@ -275,14 +275,18 @@ else:
     
     if EMAIL_HOST:
         # SMTP configurado
+        # Puerto 465 + SSL en lugar de 587 + STARTTLS:
+        # Railway bloquea el puerto 587 (STARTTLS), pero permite el 465 (SSL directo).
         EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-        EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-        EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-        EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+        EMAIL_PORT = config('EMAIL_PORT', default=465, cast=int)
+        EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+        EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
         EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
         EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
         DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@majobacore.com')
         SERVER_EMAIL = config('SERVER_EMAIL', default='admin@majobacore.com')
+        # Timeout para evitar que Gunicorn mate al worker si el SMTP no responde
+        EMAIL_TIMEOUT = 10
         
         # Administradores que reciben emails de errores
         ADMINS = [
