@@ -74,18 +74,21 @@ def create_project_view(request):
             project = form.save(commit=False)
             project.user = request.user
 
-            # Creación de cliente al vuelo si se suministra un nombre nuevo
-            new_client_name = request.POST.get('new_client_name', '').strip()
+            new_client_name = form.cleaned_data.get('new_client_name', '').strip()
+            new_client_phone = form.cleaned_data.get('new_client_phone', '').strip()
+
             if new_client_name:
                 new_client = Client.objects.create(
                     name=new_client_name,
-                    phone=request.POST.get('new_client_phone', '').strip(),
+                    phone=new_client_phone,
                     user=request.user,
                 )
                 project.client = new_client
                 logger.info(
                     f"Cliente '{new_client.name}' creado al vuelo por {request.user.username}"
                 )
+            else:
+                project.client = form.cleaned_data.get('client')
 
             project.save()
             logger.info(f"Nuevo proyecto '{project.name}' creado por {request.user.username}")

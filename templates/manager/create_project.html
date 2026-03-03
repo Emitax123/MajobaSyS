@@ -75,24 +75,18 @@
         <div class="new-client-fields" id="newClientFields" aria-hidden="true">
           <div class="new-client-grid">
             <div class="field-group field-group--nested">
-              <label for="id_new_client_name">Nombre del cliente *</label>
-              <input
-                type="text"
-                id="id_new_client_name"
-                name="new_client_name"
-                placeholder="Nombre del cliente"
-                autocomplete="off"
-              >
+              <label for="{{ form.new_client_name.id_for_label }}">Nombre del cliente *</label>
+              {{ form.new_client_name }}
+              {% if form.new_client_name.errors %}
+                <span class="field-error-msg">{{ form.new_client_name.errors|join:", " }}</span>
+              {% endif %}
             </div>
             <div class="field-group field-group--nested">
-              <label for="id_new_client_phone">Teléfono</label>
-              <input
-                type="text"
-                id="id_new_client_phone"
-                name="new_client_phone"
-                placeholder="Ej: +54 9 11 1234-5678"
-                autocomplete="off"
-              >
+              <label for="{{ form.new_client_phone.id_for_label }}">Teléfono</label>
+              {{ form.new_client_phone }}
+              {% if form.new_client_phone.errors %}
+                <span class="field-error-msg">{{ form.new_client_phone.errors|join:", " }}</span>
+              {% endif %}
             </div>
           </div>
           <button
@@ -128,6 +122,7 @@
       padding: 2em;
       background-color: #ffffff;
       border-radius: 8px;
+      border-top: 5px solid #d81d26;
     }
 
     .create-project-container .title {

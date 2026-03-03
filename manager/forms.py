@@ -29,6 +29,7 @@ class ProjectForm(forms.ModelForm):
     Formulario para crear o modificar un proyecto.
     Acepta el kwarg ``user`` para filtrar el selector de clientes
     mostrando solo los clientes que pertenecen al usuario autenticado.
+    También expone campos auxiliares para crear un cliente al vuelo.
     """
     start_date = forms.DateField(
         input_formats=['%d-%m-%Y', '%Y-%m-%d'],
@@ -41,9 +42,31 @@ class ProjectForm(forms.ModelForm):
     )
     client = forms.ModelChoiceField(
         queryset=Client.objects.none(),
-        required=True,
+        required=False,
         empty_label='— Seleccionar cliente —',
         label='Cliente',
+    )
+    new_client_name = forms.CharField(
+        required=False,
+        label='Nombre del nuevo cliente',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Nombre del cliente',
+                'id': 'id_new_client_name',
+                'autocomplete': 'off',
+            }
+        )
+    )
+    new_client_phone = forms.CharField(
+        required=False,
+        label='Teléfono del nuevo cliente',
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Ej: +54 9 11 1234-5678',
+                'id': 'id_new_client_phone',
+                'autocomplete': 'off',
+            }
+        )
     )
 
     class Meta:
@@ -73,3 +96,16 @@ class ProjectForm(forms.ModelForm):
         self.fields['start_date'].widget.attrs.update({'placeholder': 'Fecha de inicio'})
         self.fields['end_date'].widget.attrs.update({'placeholder': 'Fecha de fin (opcional)'})
         self.fields['is_active'].label = '¿Está activo?'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        client = cleaned_data.get('client')
+        new_client_name = (cleaned_data.get('new_client_name') or '').strip()
+        new_client_phone = (cleaned_data.get('new_client_phone') or '').strip()
+        cleaned_data['new_client_name'] = new_client_name
+        cleaned_data['new_client_phone'] = new_client_phone
+
+        if not client and not new_client_name:
+            self.add_error('client', 'Debes seleccionar un cliente existente o crear uno nuevo.')
+
+        return cleaned_data
