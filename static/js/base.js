@@ -66,7 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
 
-            // Si existe la sección "empresas-section" en esta página, hacer scroll en lugar de abrir el dropdown
+            // En resoluciones móviles, siempre abrir el dropdown — nunca hacer scroll
+            const isMobileViewport = window.matchMedia('(max-width: 991px)').matches;
+            if (isMobileViewport) {
+                dropdown.classList.toggle('active');
+                return;
+            }
+
+            // En desktop: si existe la sección "empresas-section", hacer scroll en lugar de abrir el dropdown
             const empresasSection = document.getElementById('empresas-section');
             if (empresasSection) {
                 const navbarHeight = document.querySelector('.navbar').offsetHeight || 0;
