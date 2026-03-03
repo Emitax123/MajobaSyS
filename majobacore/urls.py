@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from .views import (
-    index, 
-    majoba_view, 
-    hormicons_view, 
-    constructora_view, 
+    index,
+    majoba_view,
+    hormicons_view,
+    constructora_view,
     budget_view,
+    coming_soon_view,
     health_check,
     liveness_check,
     readiness_check,
@@ -39,6 +40,7 @@ urlpatterns = [
     path('hormicons/', hormicons_view, name='hormicons'),
     path('constructora/', constructora_view, name='constructora'),
     path('budget/', budget_view, name='budget'),
+    path('herramientas/', coming_soon_view, name='herramientas'),
     
     # Health check endpoints para Railway
     path('health/', health_check, name='health_check'),
@@ -50,3 +52,12 @@ if settings.DEBUG:
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
+
+# Handlers de error personalizados
+# Django los usa automáticamente cuando DEBUG=False.
+# Declararlos explícitamente en el ROOT URLconf garantiza que Django
+# resuelva los templates personalizados (400.html, 403.html, 404.html, 500.html).
+handler400 = 'django.views.defaults.bad_request'
+handler403 = 'django.views.defaults.permission_denied'
+handler404 = 'django.views.defaults.page_not_found'
+handler500 = 'django.views.defaults.server_error'

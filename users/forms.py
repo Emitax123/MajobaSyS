@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 from django.contrib.auth import authenticate
-from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+
 from .models import CustomUser
 import logging
 
@@ -117,61 +116,10 @@ class CustomUserCreationForm(UserCreationForm):
             'placeholder': 'Confirmar contraseña'
         })
     
-    # Personalizar mensajes de error del UserCreationForm
+    # Mensajes de error en español — UserCreationForm los usa internamente
     error_messages = {
         'password_mismatch': 'Las contraseñas no coinciden. Por favor, verifica que ambas sean iguales.',
     }
-    
-    def clean_password1(self):
-        """Validar la primera contraseña con los validadores de Django"""
-        password1 = self.cleaned_data.get('password1')
-        if password1:
-            try:
-                validate_password(password1, self.instance)
-            except ValidationError as error:
-                # Personalizar mensajes de validación de contraseña
-                custom_messages = []
-                for message in error.messages:
-                    if 'This password is too short' in message:
-                        custom_messages.append('La contraseña debe tener al menos 8 caracteres.')
-                    elif 'This field is required' in message:
-                        custom_messages.append('Este campo es obligatorio.')
-                    elif 'This password is too common' in message:
-                        custom_messages.append('Esta contraseña es muy común. Usa una más segura.')
-                    elif 'This password is entirely numeric' in message:
-                        custom_messages.append('La contraseña no puede ser completamente numérica.')
-                    elif 'The password is too similar to the' in message:
-                        custom_messages.append('La contraseña es muy similar a tu información personal.')
-                    else:
-                        custom_messages.append(message)
-                raise forms.ValidationError(custom_messages)
-        return password1
-    
-    def clean_password2(self):
-        """Validar que las contraseñas coincidan"""
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        
-        if password1 and password2:
-            if password1 != password2:
-                raise forms.ValidationError("Las contraseñas no coinciden. Por favor, verifica que ambas sean iguales.")
-        elif password2 and not password1:
-            raise forms.ValidationError("Debes ingresar la primera contraseña.")
-        
-        return password2
-    
-    def clean(self):
-        """Validación adicional para el formulario completo"""
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
-        
-        # Verificar que ambas contraseñas estén presentes
-        if password1 and password2:
-            if password1 != password2:
-                raise forms.ValidationError("Las contraseñas no coinciden. Por favor, verifica que ambas sean iguales.")
-        
-        return cleaned_data
     
     def save(self, commit=True):
         user = super().save(commit=False)

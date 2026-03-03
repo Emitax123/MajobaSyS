@@ -41,6 +41,11 @@ def constructora_view(request):
     return render(request, 'constructora_template.html')
 
 
+def coming_soon_view(request):
+    """Página de sección en construcción (Herramientas)."""
+    return render(request, 'coming_soon.html')
+
+
 def budget_view(request):
     """
     Formulario de solicitud de presupuesto.

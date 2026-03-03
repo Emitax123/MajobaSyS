@@ -1,0 +1,314 @@
+/* ============================================================
+   login.css — Formulario de Login
+   MajobaSyS · Tema oscuro/rojo · Mobile-first
+   ============================================================ */
+
+/* ---------- Layout wrapper ---------- */
+.login-wrapper {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* ---------- Card ---------- */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 2px solid rgba(216, 29, 38, 0.1);
+    padding: 2.5rem 2rem 2.25rem;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+/* ---------- Header ---------- */
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid rgba(216, 29, 38, 0.15);
+}
+
+.login-logo {
+    margin-bottom: 1rem;
+}
+
+.login-logo img {
+    height: 48px;
+    width: auto;
+}
+
+.login-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #333333;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+}
+
+.login-subtitle {
+    font-size: 0.875rem;
+    color: #666666;
+    margin: 0;
+}
+
+/* ---------- Mensajes Django ---------- */
+.login-messages {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.login-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    animation: fadeInDown 0.25s ease forwards;
+}
+
+.login-alert--error {
+    background-color: rgba(216, 29, 38, 0.08);
+    border: 1.5px solid #d81d26;
+    border-left-width: 4px;
+    color: #d81d26;
+}
+
+.login-alert--success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border: 1.5px solid #28a745;
+    border-left-width: 4px;
+    color: #28a745;
+}
+
+/* ---------- Grupo de campo ---------- */
+.login-form .form-group {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+/* ---------- Labels ---------- */
+.login-form .form-label {
+    display: block;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 0.4rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+}
+
+/* ---------- Inputs ---------- */
+.login-form .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    color: #333333;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-form .form-control::placeholder {
+    color: #aaaaaa;
+}
+
+.login-form .form-control:focus {
+    outline: none;
+    border-color: #d81d26;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.1);
+}
+
+.login-form .form-control.error {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* ---------- Wrapper contraseña ---------- */
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-container .form-control {
+    padding-right: 2.75rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    line-height: 1;
+    border-radius: 4px;
+    
+    color: #666666;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.password-toggle:hover {
+    opacity: 1;
+    color: #d81d26;
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid #d81d26;
+    outline-offset: 2px;
+    opacity: 1;
+}
+
+.password-toggle__icon {
+    pointer-events: none;
+    /* Sin filter: el SVG oscuro (#1C274C) contrasta bien sobre fondo claro */
+}
+
+/* ---------- Opciones del formulario ---------- */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.75rem;
+    gap: 1rem;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check-input {
+    width: 16px;
+    height: 16px;
+    accent-color: #d81d26;
+    margin: 0;
+    cursor: pointer;
+}
+
+.form-check-label {
+    font-size: 0.875rem;
+    color: #666666;
+    cursor: pointer;
+}
+
+.forgot-password {
+    font-size: 0.875rem;
+    color: #d81d26;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+
+.forgot-password:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+
+/* ---------- Botón submit ---------- */
+.btn-login {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(216, 29, 38, 0.35);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.btn-login:focus-visible {
+    outline: 3px solid var(--color-primary, #d81d26);
+    outline-offset: 3px;
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- Accesibilidad: sin animaciones ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .login-card,
+    .login-alert {
+        animation: none;
+    }
+
+    .password-toggle,
+    .forgot-password,
+    .btn-login,
+    .login-form .form-control {
+        transition: none;
+    }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 1rem 0.75rem 3rem;
+        align-items: flex-start;
+    }
+
+    .login-card {
+        padding: 1.75rem 1.25rem 2rem;
+        border-radius: 8px;
+    }
+
+    .login-title {
+        font-size: 1.35rem;
+    }
+
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+}

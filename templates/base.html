@@ -8,8 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon-16x16.png' %}" />
-    <link rel="" href="" />
     <title>Majoba S.A.</title>
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
     <nav class="navbar">
@@ -25,7 +25,7 @@
             <a href="{% url 'index' %}" class="nav-link">Inicio</a>
           </li>
           <li>
-            <a href="#" class="nav-link">Herramientas</a>
+            <a href="{% url 'herramientas' %}" class="nav-link">Herramientas</a>
           </li>
           <li class="dropdown">
             <a id="empresas" href="#" class="nav-link dropdown-toggle">Empresas</a>
@@ -152,5 +152,6 @@
     </footer>
 
     <script src="{% static 'js/base.js' %}"></script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

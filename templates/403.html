@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+  <div class="e403-page">
+
+    <div class="e403-card">
+
+      <!-- Icono animado: candado -->
+      <div class="e403-icon-wrap">
+        <div class="e403-icon-ring"></div>
+        <div class="e403-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <!-- Cuerpo del candado -->
+            <rect x="14" y="30" width="36" height="26" rx="4"
+                  stroke="#d81d26" stroke-width="3" stroke-linecap="round"/>
+            <!-- Arco del candado -->
+            <path d="M20 30 L20 22 C20 14.3 44 14.3 44 22 L44 30"
+                  stroke="#d81d26" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <!-- Ojo de la cerradura -->
+            <circle cx="32" cy="43" r="4" stroke="#d81d26" stroke-width="2.5"/>
+            <line x1="32" y1="47" x2="32" y2="52" stroke="#d81d26" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Badge y textos -->
+      <div class="e403-badge">403</div>
+      <h1 class="e403-title">Acceso no permitido</h1>
+      <p class="e403-subtitle">
+        No tenés permiso para acceder<br>a esta sección.
+      </p>
+
+      <!-- Separador decorativo -->
+      <div class="e403-divider">
+        <span></span><span></span><span></span>
+      </div>
+
+      <!-- Mensaje secundario -->
+      <p class="e403-message">
+        Si creés que esto es un error, contactanos a
+        <a href="mailto:majobacastelli1999@gmail.com">majobacastelli1999@gmail.com</a>
+      </p>
+
+      <!-- Botones de acción -->
+      <div class="e403-actions">
+        <a href="/" class="red-btn e403-btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          Volver al Inicio
+        </a>
+        <a href="/users/login/" class="e403-btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Ir al Login
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <style>
+    .e403-page {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3em 1.5em;
+    }
+
+    .e403-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 3.5em 3em;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      border-top: 5px solid #d81d26;
+      animation: e403-fadein 0.5s ease both;
+    }
+
+    @keyframes e403-fadein {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Icono */
+    .e403-icon-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.8em;
+    }
+
+    .e403-icon-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid rgba(216, 29, 38, 0.15);
+      animation: e403-pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes e403-pulse {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%       { transform: scale(1.12); opacity: 0.5; }
+    }
+
+    .e403-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .e403-icon svg {
+      width: 64px;
+      height: 64px;
+      /* Animación del candado: ligero sacudón al inicio */
+      animation: e403-shake 0.6s ease 0.5s both;
+    }
+
+    @keyframes e403-shake {
+      0%   { transform: rotate(0deg); }
+      20%  { transform: rotate(-8deg); }
+      40%  { transform: rotate(8deg); }
+      60%  { transform: rotate(-5deg); }
+      80%  { transform: rotate(5deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    /* Badge */
+    .e403-badge {
+      display: inline-block;
+      background: rgba(216, 29, 38, 0.08);
+      color: #d81d26;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35em 1em;
+      border-radius: 20px;
+      border: 1px solid rgba(216, 29, 38, 0.2);
+      margin-bottom: 0.9em;
+    }
+
+    /* Título */
+    .e403-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5em;
+      letter-spacing: -0.02em;
+    }
+
+    .e403-subtitle {
+      color: #666;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 1.8em;
+    }
+
+    /* Separador de puntos */
+    .e403-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 1.8em;
+    }
+
+    .e403-divider span {
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d81d26;
+      opacity: 0.35;
+    }
+
+    .e403-divider span:nth-child(2) {
+      opacity: 0.65;
+      width: 8px;
+      height: 8px;
+    }
+
+    /* Mensaje con email */
+    .e403-message {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 2em;
+    }
+
+    .e403-message a {
+      color: #d81d26;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .e403-message a:hover {
+      color: #a8141b;
+    }
+
+    /* Botones */
+    .e403-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75em;
+      flex-wrap: wrap;
+    }
+
+    .e403-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.75em 1.8em;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .e403-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(216, 29, 38, 0.35);
+    }
+
+    .e403-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.75em 1.8em;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      background: transparent;
+      border: 2px solid #d81d26;
+      color: #d81d26;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .e403-btn-secondary:hover {
+      transform: translateY(-2px);
+      background: rgba(216, 29, 38, 0.06);
+      color: #a8141b;
+      border-color: #a8141b;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .e403-card {
+        padding: 2.5em 1.5em;
+      }
+
+      .e403-title {
+        font-size: 1.9rem;
+      }
+
+      .e403-subtitle {
+        font-size: 1rem;
+      }
+
+      .e403-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .e403-btn-primary,
+      .e403-btn-secondary {
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .e403-card     { animation: none; }
+      .e403-icon-ring  { animation: none; }
+      .e403-icon svg   { animation: none; }
+      .e403-btn-primary:hover,
+      .e403-btn-secondary:hover { transform: none; }
+    }
+  </style>
+
+{% endblock %}

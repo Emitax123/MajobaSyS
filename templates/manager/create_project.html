@@ -5,10 +5,119 @@
     <span class="title">Crear Nuevo Proyecto</span>
     <form autocomplete="off" method="post">
       {% csrf_token %}
-      {{ form.as_p }}
+
+      <!-- Nombre del proyecto -->
+      <div class="field-group">
+        <label for="{{ form.name.id_for_label }}">{{ form.name.label }} *</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+          <span class="field-error-msg">{{ form.name.errors|join:", " }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Descripción -->
+      <div class="field-group">
+        <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+          <span class="field-error-msg">{{ form.description.errors|join:", " }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Ubicación -->
+      <div class="field-group">
+        <label for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
+        {{ form.location }}
+        {% if form.location.errors %}
+          <span class="field-error-msg">{{ form.location.errors|join:", " }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Fecha de inicio -->
+      <div class="field-group">
+        <label for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }} *</label>
+        {{ form.start_date }}
+        {% if form.start_date.errors %}
+          <span class="field-error-msg">{{ form.start_date.errors|join:", " }}</span>
+        {% endif %}
+      </div>
+
+      <!-- Fecha de fin -->
+      <div class="field-group">
+        <label for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}</label>
+        {{ form.end_date }}
+        {% if form.end_date.errors %}
+          <span class="field-error-msg">{{ form.end_date.errors|join:", " }}</span>
+        {% endif %}
+      </div>
+
+      <!-- ── SECCIÓN CLIENTE ── -->
+      <div class="field-group client-section">
+        <label for="{{ form.client.id_for_label }}">Cliente *</label>
+
+        <!-- Select de cliente existente -->
+        <div class="client-select-row">
+          {{ form.client }}
+          <button
+            type="button"
+            class="btn-new-client"
+            id="toggleNewClient"
+            aria-expanded="false"
+            aria-controls="newClientFields"
+          >＋ Nuevo cliente</button>
+        </div>
+
+        {% if form.client.errors %}
+          <span class="field-error-msg">{{ form.client.errors|join:", " }}</span>
+        {% endif %}
+
+        <!-- Campos de nuevo cliente (ocultos por defecto) -->
+        <div class="new-client-fields" id="newClientFields" aria-hidden="true">
+          <div class="new-client-grid">
+            <div class="field-group field-group--nested">
+              <label for="id_new_client_name">Nombre del cliente *</label>
+              <input
+                type="text"
+                id="id_new_client_name"
+                name="new_client_name"
+                placeholder="Nombre del cliente"
+                autocomplete="off"
+              >
+            </div>
+            <div class="field-group field-group--nested">
+              <label for="id_new_client_phone">Teléfono</label>
+              <input
+                type="text"
+                id="id_new_client_phone"
+                name="new_client_phone"
+                placeholder="Ej: +54 9 11 1234-5678"
+                autocomplete="off"
+              >
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn-cancel-new-client"
+            id="cancelNewClient"
+          >✕ Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Activo -->
+      <div class="field-group field-group--checkbox">
+        <label class="checkbox-label">
+          {{ form.is_active }}
+          {{ form.is_active.label }}
+        </label>
+        {% if form.is_active.errors %}
+          <span class="field-error-msg">{{ form.is_active.errors|join:", " }}</span>
+        {% endif %}
+      </div>
+
       <button class="red-btn" type="submit">Crear Proyecto</button>
     </form>
   </div>
+
   <style>
     .create-project-container {
       display: flex;
@@ -20,6 +129,7 @@
       background-color: #ffffff;
       border-radius: 8px;
     }
+
     .create-project-container .title {
       display: flex;
       justify-content: center;
@@ -30,54 +140,261 @@
       color: #333;
       border-bottom: 2px solid #d81d26;
     }
+
     form {
       display: flex;
       flex-flow: column;
       gap: 1em;
     }
-    form p:last-of-type {
+
+    /* ── Field group ── */
+    .field-group {
       display: flex;
-      flex-flow: row;
-      gap: 0.5em;
-      align-items: center;
-      margin: ;
+      flex-direction: column;
+      gap: 0.35rem;
     }
-    form p:last-of-type label {
-      margin: 0;
-    }
-    form label {
+
+    .field-group label {
       display: block;
       font-weight: 500;
       color: #555;
-      margin-bottom: 0.5rem;
       font-size: 0.9rem;
     }
-    
+
+    /* Checkbox row */
+    .field-group--checkbox {
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
     form input[type='checkbox'] {
       width: 18px;
       height: 18px;
-      margin-right: 8px;
       cursor: pointer;
       accent-color: #d81d26;
+      flex-shrink: 0;
     }
-    
-    form input[type='checkbox']:checked {
-      background-color: #d81d26;
+
+    /* ── Field error ── */
+    .field-error-msg {
+      font-size: 0.8rem;
+      color: #c0111a;
+      font-weight: 500;
     }
-    
-    form label:has(input[type='checkbox']) {
+
+    /* ── CLIENT SECTION ── */
+    .client-section {
+      background: #fafafa;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      gap: 0.6rem;
+    }
+
+    .client-section > label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
+    }
+
+    /* Row: select + toggle button side by side */
+    .client-select-row {
       display: flex;
-      align-items: center;
-      cursor: pointer;
-      margin-bottom: s 8px;
-      font-size: 1rem;
+      gap: 0.6rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
     }
-    
+
+    .client-select-row select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* "＋ Nuevo cliente" toggle button */
+    .btn-new-client {
+      flex-shrink: 0;
+      padding: 0.55rem 0.9rem;
+      background: transparent;
+      color: #d81d26;
+      border: 1.5px solid #d81d26;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .btn-new-client:hover,
+    .btn-new-client[aria-expanded="true"] {
+      background-color: #d81d26;
+      color: #fff;
+    }
+
+    .btn-new-client:focus-visible {
+      outline: 2px solid #d81d26;
+      outline-offset: 2px;
+    }
+
+    /* Hidden panel for new client inputs */
+    .new-client-fields {
+      display: none;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid #e0e0e0;
+      margin-top: 0.2rem;
+      animation: slideDown 0.2s ease forwards;
+    }
+
+    .new-client-fields.is-open {
+      display: flex;
+    }
+
+    .new-client-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 480px) {
+      .new-client-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Nested field groups inside client panel */
+    .field-group--nested {
+      gap: 0.3rem;
+      margin: 0;
+    }
+
+    .field-group--nested label {
+      font-size: 0.83rem;
+      color: #555;
+      font-weight: 500;
+    }
+
+    /* "✕ Cancelar" button */
+    .btn-cancel-new-client {
+      align-self: flex-start;
+      padding: 0.3rem 0.7rem;
+      background: transparent;
+      color: #888;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-cancel-new-client:hover {
+      color: #555;
+      border-color: #999;
+    }
+
+    .btn-cancel-new-client:focus-visible {
+      outline: 2px solid #d81d26;
+      outline-offset: 2px;
+    }
+
+    /* Submit button */
     .red-btn {
       display: flex;
       place-self: center;
-      padding: 0.5em;
+      padding: 0.5em 1.5em;
       font-weight: 500;
+      margin-top: 0.25em;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .new-client-fields {
+        animation: none;
+      }
+      .btn-new-client,
+      .btn-cancel-new-client {
+        transition: none;
+      }
     }
   </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    'use strict';
+
+    const toggleBtn    = document.getElementById('toggleNewClient');
+    const cancelBtn    = document.getElementById('cancelNewClient');
+    const panel        = document.getElementById('newClientFields');
+    const clientSelect = document.getElementById('{{ form.client.id_for_label }}');
+    const nameInput    = document.getElementById('id_new_client_name');
+    const phoneInput   = document.getElementById('id_new_client_phone');
+
+    function openPanel() {
+      panel.classList.add('is-open');
+      panel.setAttribute('aria-hidden', 'false');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+
+      // Disable the select so the backend knows to use new_client_* fields
+      clientSelect.disabled = true;
+      clientSelect.value    = '';
+
+      nameInput.focus();
+    }
+
+    function closePanel() {
+      panel.classList.remove('is-open');
+      panel.setAttribute('aria-hidden', 'true');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+
+      // Re-enable the select and clear the inline inputs
+      clientSelect.disabled = false;
+      nameInput.value       = '';
+      phoneInput.value      = '';
+    }
+
+    toggleBtn.addEventListener('click', function () {
+      if (panel.classList.contains('is-open')) {
+        closePanel();
+      } else {
+        openPanel();
+      }
+    });
+
+    cancelBtn.addEventListener('click', closePanel);
+
+    // Allow closing panel with Escape key
+    panel.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closePanel();
+        toggleBtn.focus();
+      }
+    });
+  })();
+</script>
 {% endblock %}

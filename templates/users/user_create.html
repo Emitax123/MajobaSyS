@@ -1,93 +1,279 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
+
+{% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/create_user.css' %}" />
-  <div class="user-form-container">
-    <span>Crear Usuario</span>
-    <form method="post">
-      {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+  <main class="user-form-wrapper">
+    <div class="user-form-container">
+
+      <header class="form-header">
+        <h1 class="form-title">Crear Usuario</h1>
+      </header>
 
       {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-          {% for error in form.non_field_errors %}
-            <div class="error-message">{{ error }}</div>
-          {% endfor %}
+        <div class="non-field-errors" role="alert" aria-live="assertive">
+          <span class="non-field-errors__icon" aria-hidden="true">⚠</span>
+          <div class="non-field-errors__messages">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
         </div>
       {% endif %}
 
-      <div class="input-cont">
-        <label for="form.username.id_for_label" class="form-label">Nombre de Usuario</label>
-        {{ form.username }}
-        {% if form.username.errors %}
-          <div class="error-message">{{ form.username.errors }}</div>
-        {% endif %}
-      </div>
+      <form method="post" novalidate>
+        {% csrf_token %}
 
-      <div class="input-cont">
-        <label for="form.first_name.id_for_label" class="form-label">Nombre</label>
-        {{ form.first_name }}
-        {% if form.first_name.errors %}
-          <div class="error-message">{{ form.first_name.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.last_name.id_for_label" class="form-label">Apellido</label>
-        {{ form.last_name }}
-        {% if form.last_name.errors %}
-          <div class="error-message">{{ form.last_name.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.email.id_for_label" class="form-label">Email</label>
-        {{ form.email }}
-        {% if form.email.errors %}
-          <div class="error-message">{{ form.email.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.phone.id_for_label" class="form-label">Teléfono</label>
-        {{ form.phone }}
-        {% if form.phone.errors %}
-          <div class="error-message">{{ form.phone.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.profession.id_for_label" class="form-label">Profesión</label>
-        {{ form.profession }}
-        {% if form.profession.errors %}
-          <div class="error-message">{{ form.profession.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.is_staff.id_for_label" class="form-label">Es Staff</label>
-        {{ form.is_staff }}
-        {% if form.is_staff.errors %}
-          <div class="error-message">{{ form.is_staff.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.direction.id_for_label" class="form-label">Dirección</label>
-        {{ form.direction }}
-        {% if form.direction.errors %}
-          <div class="error-message">{{ form.direction.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.password1.id_for_label" class="form-label">Contraseña</label>
-        {{ form.password1 }}
-        {% if form.password1.errors %}
-          <div class="error-message">{{ form.password1.errors }}</div>
-        {% endif %}
-      </div>
-      <div class="input-cont">
-        <label for="form.password2.id_for_label" class="form-label">Confirmar Contraseña</label>
-        {{ form.password2 }}
-        {% if form.password2.errors %}
-          <div class="error-message">{{ form.password2.errors }}</div>
-        {% endif %}
-      </div>
+        <!-- Nombre de Usuario -->
+        <div class="input-cont {% if form.username.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.username.id_for_label }}" class="form-label">
+            Nombre de Usuario
+            <span class="form-label__required" aria-hidden="true">*</span>
+          </label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.username.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
 
-      <button type="submit" class="red-btn user-btn">Guardar</button>
-    </form>
-  </div>
+        <!-- Nombre -->
+        <div class="input-cont {% if form.first_name.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.first_name.id_for_label }}" class="form-label">
+            Nombre
+            <span class="form-label__required" aria-hidden="true">*</span>
+          </label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.first_name.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Apellido -->
+        <div class="input-cont {% if form.last_name.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.last_name.id_for_label }}" class="form-label">
+            Apellido
+            <span class="form-label__required" aria-hidden="true">*</span>
+          </label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.last_name.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Email -->
+        <div class="input-cont {% if form.email.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.email.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Teléfono -->
+        <div class="input-cont {% if form.phone.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.phone.id_for_label }}" class="form-label">
+            Teléfono
+            <span class="form-label__required" aria-hidden="true">*</span>
+          </label>
+          {{ form.phone }}
+          {% if form.phone.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.phone.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Profesión -->
+        <div class="input-cont {% if form.profession.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.profession.id_for_label }}" class="form-label">Profesión</label>
+          {{ form.profession }}
+          {% if form.profession.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.profession.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Es Staff (checkbox) -->
+        <div class="input-cont input-cont--checkbox {% if form.is_staff.errors %}input-cont--error{% endif %}">
+          <div class="checkbox-wrapper">
+            {{ form.is_staff }}
+            <label for="{{ form.is_staff.id_for_label }}" class="form-label form-label--inline">
+              Es Staff
+            </label>
+          </div>
+          {% if form.is_staff.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.is_staff.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Dirección -->
+        <div class="input-cont {% if form.direction.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.direction.id_for_label }}" class="form-label">Dirección</label>
+          {{ form.direction }}
+          {% if form.direction.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.direction.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Contraseña -->
+        <div class="input-cont {% if form.password1.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.password1.id_for_label }}" class="form-label">
+            Contraseña
+            <span class="form-label__required" aria-hidden="true">*</span>
+          </label>
+          <div class="password-wrapper">
+            {{ form.password1 }}
+            <button
+              type="button"
+              class="password-toggle"
+              aria-label="Mostrar contraseña"
+              data-target="{{ form.password1.id_for_label }}"
+            >
+              <img
+                class="password-toggle__icon"
+                src="{% static 'images/eye-svgrepo-com.svg' %}"
+                data-eye-open="{% static 'images/eye-svgrepo-com.svg' %}"
+                data-eye-closed="{% static 'images/eye-closed-svgrepo-com.svg' %}"
+                alt=""
+                aria-hidden="true"
+                width="20"
+                height="20"
+              />
+            </button>
+          </div>
+          {% if form.password1.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.password1.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="input-cont {% if form.password2.errors %}input-cont--error{% endif %}">
+          <label for="{{ form.password2.id_for_label }}" class="form-label">
+            Confirmar Contraseña
+            <span class="form-label__required" aria-hidden="true">*</span>
+          </label>
+          <div class="password-wrapper">
+            {{ form.password2 }}
+            <button
+              type="button"
+              class="password-toggle"
+              aria-label="Mostrar confirmación de contraseña"
+              data-target="{{ form.password2.id_for_label }}"
+            >
+              <img
+                class="password-toggle__icon"
+                src="{% static 'images/eye-svgrepo-com.svg' %}"
+                data-eye-open="{% static 'images/eye-svgrepo-com.svg' %}"
+                data-eye-closed="{% static 'images/eye-closed-svgrepo-com.svg' %}"
+                alt=""
+                aria-hidden="true"
+                width="20"
+                height="20"
+              />
+            </button>
+          </div>
+          {% if form.password2.errors %}
+            <div class="field-errors" role="alert">
+              {% for error in form.password2.errors %}
+                <span class="field-error">
+                  <span class="field-error__icon" aria-hidden="true">✕</span>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <p class="form-required-note">
+          <span aria-hidden="true">*</span> Campos obligatorios
+        </p>
+
+        <button type="submit" class="red-btn user-btn">Guardar</button>
+      </form>
+
+    </div>
+  </main>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    // Mostrar/ocultar contraseña — alterna entre eye-open y eye-closed SVG
+    document.querySelectorAll('.password-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const targetId = btn.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (!input) return;
+
+        const isPassword = input.type === 'password';
+        const icon = btn.querySelector('.password-toggle__icon');
+
+        input.type = isPassword ? 'text' : 'password';
+        btn.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        icon.src = isPassword ? icon.dataset.eyeClosed : icon.dataset.eyeOpen;
+      });
+    });
+  </script>
 {% endblock %}

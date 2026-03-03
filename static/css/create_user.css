@@ -1,62 +1,336 @@
-.user-form-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+/* ============================================================
+   create_user.css — Formulario de Creación de Usuario
+   MajobaSyS · Tema oscuro/rojo · Mobile-first
+   ============================================================ */
 
-form {
+/* ---------- Layout wrapper ---------- */
+.user-form-wrapper {
+    min-height: calc(100vh - 80px);
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
 }
 
-.user-form-container span {
-    display: block;
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 1.5rem;
+/* ---------- Contenedor del formulario ---------- */
+.user-form-container {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+    padding: 2rem 2rem 2.25rem;
+    border-top: 5px solid #d81d26;
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+/* ---------- Cabecera ---------- */
+.form-header {
+    margin-bottom: 1.75rem;
     text-align: center;
     border-bottom: 2px solid #d81d26;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
 }
 
+.form-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.2;
+}
+
+/* ---------- form base ---------- */
+.user-form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ---------- Errores generales (non_field_errors) ---------- */
+.non-field-errors {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background-color: #fff5f5;
+    border: 1.5px solid #d81d26;
+    border-left-width: 4px;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+    animation: fadeInDown 0.25s ease forwards;
+}
+
+.non-field-errors__icon {
+    font-size: 1rem;
+    color: #d81d26;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.non-field-errors__messages {
+    flex: 1;
+}
+
+.non-field-errors__messages p {
+    font-size: 0.85rem;
+    color: #c0111a;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.non-field-errors__messages p + p {
+    margin-top: 0.3rem;
+}
+
+/* ---------- Grupo de campo ---------- */
 .input-cont {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.1rem;
+    position: relative;
 }
 
+/* Estado con error: borde rojo en el input/select/textarea dentro */
+.input-cont--error input,
+.input-cont--error select,
+.input-cont--error textarea {
+    border-color: #d81d26 !important;
+    background-color: #fff8f8;
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.1);
+}
+
+/* Anulamos el focus genérico de base.css para campos con error */
+.input-cont--error input:focus,
+.input-cont--error select:focus,
+.input-cont--error textarea:focus {
+    border-color: #d81d26 !important;
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.18);
+    background-color: #fff8f8;
+}
+
+/* ---------- Labels ---------- */
 .form-label {
     display: block;
-    font-weight: 500;
-    color: #555;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-.input-cont input[type="checkbox"]:checked {
-    background-color: #d81d26;
+    font-weight: 600;
+    color: #3a3a3a;
+    margin-bottom: 0.4rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
 }
 
+.form-label__required {
+    color: #d81d26;
+    margin-left: 2px;
+    font-size: 0.8rem;
+}
+
+/* Label inline (checkbox) */
+.form-label--inline {
+    display: inline;
+    margin-bottom: 0;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* ---------- Checkbox wrapper ---------- */
+
+.input-cont--checkbox.input-cont--error {
+    border-color: #d81d26;
+    background: #fff8f8;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Checkbox */
 .input-cont input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    margin-right: 8px;
+    flex-shrink: 0;
     cursor: pointer;
     accent-color: #d81d26;
+    margin: 0;
 }
 
+/* ---------- Wrapper de contraseña con botón toggle ---------- */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
 
+.password-wrapper input {
+    padding-right: 2.75rem !important;
+}
 
-.error-message {
-    color: #dc3545;
+.password-toggle {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+   
+    padding: 0.25rem;
+    line-height: 1;
+    border-radius: 4px;
+    transition: opacity 0.2s ease;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    opacity: 1;
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid #d81d26;
+    outline-offset: 2px;
+    opacity: 1;
+}
+
+.password-toggle__icon {
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+/* ---------- Mensajes de error de campo ---------- */
+.field-errors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-top: 0.35rem;
+}
+
+.field-error {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
     font-size: 0.8rem;
-    margin-top: 0.25rem;
+    color: #c0111a;
+    font-weight: 500;
+    line-height: 1.4;
+    animation: slideInError 0.2s ease forwards;
 }
 
+.field-error__icon {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #d81d26;
+    flex-shrink: 0;
+}
+
+/* ---------- Nota de campos obligatorios ---------- */
+.form-required-note {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-required-note span {
+    color: #d81d26;
+}
+
+/* ---------- Botón de envío ---------- */
 .user-btn {
-    padding: 0.75rem 2rem;
-    margin-top: 1rem;
+    padding: 0.75rem 2.5rem;
+    margin-top: 0.75rem;
     width: fit-content;
     place-self: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.user-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(216, 29, 38, 0.3);
+}
+
+.user-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.user-btn:focus-visible {
+    outline: 3px solid #d81d26;
+    outline-offset: 3px;
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateX(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ---------- Accesibilidad: sin animaciones ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .user-form-container,
+    .non-field-errors,
+    .field-error {
+        animation: none;
+    }
+
+    .user-btn,
+    .password-toggle,
+    .input-cont--checkbox {
+        transition: none;
+    }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 480px) {
+    .user-form-wrapper {
+        padding: 1rem 0.75rem 3rem;
+        align-items: flex-start;
+    }
+
+    .user-form-container {
+        padding: 1.5rem 1.25rem 1.75rem;
+        border-radius: 8px;
+    }
+
+    .form-title {
+        font-size: 1.4rem;
+    }
+
+    .user-btn {
+        width: 100%;
+        text-align: center;
+    }
 }

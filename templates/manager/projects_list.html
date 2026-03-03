@@ -1,96 +1,635 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div class="projects-list-section">
-    <span class="title">Lista de Proyectos</span>
-    <div class="projects-list">
-      {% for project in projects %}
-        <div class="project-card">
-          <span class="project-title">{{ project.name }}</span>
-          <p>
-            <strong>Descripción:</strong> {{ project.description }}
-          </p>
-          <p>
-            <strong>Ubicación:</strong> {{ project.location }}
-          </p>
-          <p>
-            <strong>Fecha de Inicio:</strong> {{ project.start_date }}
-          </p>
-          <p>
-            <strong>Fecha de Fin:</strong> {% if project.end_date %}
-              {{ project.end_date }}
-            {% endif %}
-          </p>
-          <a href="{% url 'modify_project' project.id %}" class="red-btn btn-details">Ver Detalles</a>
-        </div>
-      {% empty %}
-        <p>No hay proyectos disponibles.</p>
-      {% endfor %}
+<div class="pl-section">
+
+  <!-- ── HEADER ── -->
+  <div class="pl-header">
+    <span class="pl-title">Lista de Proyectos</span>
+
+    <!-- Toggle vista -->
+    <div class="pl-view-toggle" role="group" aria-label="Cambiar vista">
+      <button
+        class="pl-toggle-btn active"
+        id="btn-grid"
+        data-view="grid"
+        aria-pressed="true"
+        data-tooltip="Vista cuadrícula"
+        title="Vista cuadrícula"
+      >
+        <!-- Grid icon -->
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/>
+          <rect x="11" y="1" width="6" height="6" rx="1.5" fill="currentColor"/>
+          <rect x="1" y="11" width="6" height="6" rx="1.5" fill="currentColor"/>
+          <rect x="11" y="11" width="6" height="6" rx="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+      <button
+        class="pl-toggle-btn"
+        id="btn-list"
+        data-view="list"
+        aria-pressed="false"
+        data-tooltip="Vista lista"
+        title="Vista lista"
+      >
+        <!-- List icon -->
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <rect x="1" y="2" width="16" height="2.5" rx="1.25" fill="currentColor"/>
+          <rect x="1" y="7.75" width="16" height="2.5" rx="1.25" fill="currentColor"/>
+          <rect x="1" y="13.5" width="16" height="2.5" rx="1.25" fill="currentColor"/>
+        </svg>
+      </button>
     </div>
-    <a class="red-btn" href="{% url 'manager' %}">Volver al Panel de Administración</a>
   </div>
 
-  <style>
-    .projects-list-section {
-      background-color: #ffffff;
-      margin-top: 2em;
-      padding: 2em;
+  <!-- ── FILTER BAR ── -->
+  <form class="pl-filter-bar" method="get" action="">
+    <label for="client-filter-select" class="pl-filter-label">Filtrar por cliente:</label>
+    <select id="client-filter-select" name="client" class="pl-filter-select">
+      <option value="">Todos los clientes</option>
+      {% for client in clients %}
+        <option value="{{ client.id }}"{% if client.id == selected_client %} selected{% endif %}>
+          {{ client.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="red-btn pl-filter-btn">Filtrar</button>
+    {% if selected_client %}
+      <a href="{% url 'list_projects' %}" class="pl-clear-link">Ver todos</a>
+    {% endif %}
+  </form>
+
+  <!-- ── PROJECTS CONTAINER ── -->
+  <div class="pl-projects" id="projects-container">
+
+    {% for project in projects %}
+
+      <!-- ── CARD (grid view) ── -->
+      <article class="pl-card">
+        <div class="pl-card__top">
+          <span class="pl-card__title">{{ project.name }}</span>
+          <span class="pl-card__badge {% if project.is_active %}pl-card__badge--active{% else %}pl-card__badge--inactive{% endif %}">
+            {% if project.is_active %}Activo{% else %}Inactivo{% endif %}
+          </span>
+        </div>
+
+        <dl class="pl-card__meta">
+          <div class="pl-card__meta-row">
+            <dt>Cliente</dt>
+            <dd>
+              {% if project.client %}{{ project.client.name }}{% else %}<span class="pl-muted">Sin cliente</span>{% endif %}
+            </dd>
+          </div>
+          <div class="pl-card__meta-row">
+            <dt>Descripción</dt>
+            <dd>{{ project.description|default:"—" }}</dd>
+          </div>
+          <div class="pl-card__meta-row">
+            <dt>Ubicación</dt>
+            <dd>{{ project.location|default:"—" }}</dd>
+          </div>
+          <div class="pl-card__meta-row">
+            <dt>Inicio</dt>
+            <dd>{{ project.start_date }}</dd>
+          </div>
+          <div class="pl-card__meta-row">
+            <dt>Fin</dt>
+            <dd>{% if project.end_date %}{{ project.end_date }}{% else %}<span class="pl-muted">—</span>{% endif %}</dd>
+          </div>
+        </dl>
+
+        <a href="{% url 'modify_project' project.id %}" class="red-btn pl-card__cta">Ver Detalles</a>
+      </article>
+
+      <!-- ── ROW (list view) ── -->
+      <article class="pl-row">
+        <div class="pl-row__name">
+          <span class="pl-row__title">{{ project.name }}</span>
+          <span class="pl-row__sub">
+            {% if project.client %}{{ project.client.name }}{% else %}<span class="pl-muted">Sin cliente</span>{% endif %}
+          </span>
+        </div>
+
+        <div class="pl-row__desc">
+          {{ project.description|default:"Sin descripción"|truncatechars:60 }}
+        </div>
+
+        <div class="pl-row__dates">
+          <span>{{ project.start_date }}</span>
+          <span class="pl-row__date-sep">→</span>
+          <span>{% if project.end_date %}{{ project.end_date }}{% else %}<span class="pl-muted">En curso</span>{% endif %}</span>
+        </div>
+
+        <span class="pl-card__badge {% if project.is_active %}pl-card__badge--active{% else %}pl-card__badge--inactive{% endif %} pl-row__badge">
+          {% if project.is_active %}Activo{% else %}Inactivo{% endif %}
+        </span>
+
+        <a href="{% url 'modify_project' project.id %}" class="red-btn pl-row__cta">Ver</a>
+      </article>
+
+    {% empty %}
+      <p class="pl-empty">
+        {% if selected_client %}
+          No hay proyectos para este cliente.
+        {% else %}
+          No hay proyectos disponibles.
+        {% endif %}
+      </p>
+    {% endfor %}
+
+  </div><!-- /.pl-projects -->
+
+  <a class="red-btn pl-back-btn" href="{% url 'manager' %}">← Volver al Panel</a>
+</div>
+
+<!-- ── STYLES ── -->
+<style>
+  /* ── Root tokens ── */
+  .pl-section {
+    --pl-bg:          #ffffff;
+    --pl-card-bg:     #ffffff;
+    --pl-border:      #e0e0e0;
+    --pl-border-accent: #d81d26;
+    --pl-text:        #1a1a1a;
+    --pl-muted:       #6b6b6b;
+    --pl-primary:     #d81d26;
+    --pl-primary-h:   #b71c1c;
+    --pl-success:     #2ecc71;
+    --pl-radius-sm:   4px;
+    --pl-radius-md:   8px;
+    --pl-radius-lg:   16px;
+
+    background: var(--pl-bg);
+    color: var(--pl-text);
+    padding: 2rem;
+    min-height: 60vh;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  /* ── Header ── */
+  .pl-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .pl-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--pl-text);
+  }
+
+  /* ── View toggle ── */
+  .pl-view-toggle {
+    display: flex;
+    gap: 0;
+    border: 1.5px solid var(--pl-border);
+    border-radius: var(--pl-radius-md);
+    overflow: hidden;
+  }
+
+  .pl-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 36px;
+    background: transparent;
+    color: var(--pl-muted);
+    border: none;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+    position: relative;
+  }
+
+  .pl-toggle-btn:first-child {
+    border-right: 1.5px solid var(--pl-border);
+  }
+
+  .pl-toggle-btn:hover {
+    background: #f0f0f0;
+    color: var(--pl-text);
+  }
+
+  .pl-toggle-btn.active {
+    background: var(--pl-primary);
+    color: #fff;
+  }
+
+  .pl-toggle-btn:focus-visible {
+    outline: 2px solid var(--pl-primary);
+    outline-offset: 2px;
+  }
+
+  /* ── Filter bar ── */
+  .pl-filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1rem;
+    background: var(--pl-card-bg);
+    border: 1.5px solid var(--pl-border);
+    border-radius: var(--pl-radius-md);
+  }
+
+  .pl-filter-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--pl-muted);
+    white-space: nowrap;
+  }
+
+  .pl-filter-select {
+    flex: 1;
+    min-width: 160px;
+    max-width: 300px;
+    padding: 0.45rem 0.75rem;
+    background: #f5f5f5;
+    color: var(--pl-text);
+    border: 1.5px solid var(--pl-border);
+    border-radius: var(--pl-radius-md);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+  }
+
+  .pl-filter-select:focus {
+    outline: none;
+    border-color: var(--pl-primary);
+    box-shadow: 0 0 0 3px rgba(216, 29, 38, 0.15);
+  }
+
+  .pl-filter-btn {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.875rem;
+    border-radius: var(--pl-radius-md);
+    flex-shrink: 0;
+  }
+
+  .pl-clear-link {
+    font-size: 0.85rem;
+    color: var(--pl-muted);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .pl-clear-link:hover { color: var(--pl-text); }
+
+  /* ── Shared helpers ── */
+  .pl-muted { color: var(--pl-muted); font-style: italic; }
+
+  .pl-card__badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2em 0.65em;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+
+  .pl-card__badge--active {
+    background: rgba(46, 204, 113, 0.15);
+    color: var(--pl-success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+  }
+
+  .pl-card__badge--inactive {
+    background: rgba(160, 160, 160, 0.1);
+    color: var(--pl-muted);
+    border: 1px solid rgba(160, 160, 160, 0.2);
+  }
+
+  /* ─────────────────────────────────────────
+     GRID VIEW  (default)
+  ───────────────────────────────────────── */
+  .pl-projects {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* rows hidden in grid mode */
+  .pl-projects .pl-row   { display: none; }
+  /* cards visible in grid mode */
+  .pl-projects .pl-card  { display: flex; flex-direction: column; }
+
+  .pl-card {
+    background: var(--pl-card-bg);
+    border: 1.5px solid var(--pl-border);
+    border-radius: var(--pl-radius-lg);
+    padding: 1.25rem;
+    gap: 0.85rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .pl-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    border-color: #c0c0c0;
+  }
+
+  .pl-card__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .pl-card__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--pl-text);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .pl-card__meta {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+  }
+
+  .pl-card__meta-row {
+    display: flex;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .pl-card__meta-row dt {
+    font-weight: 600;
+    color: var(--pl-muted);
+    flex-shrink: 0;
+    min-width: 72px;
+  }
+
+  .pl-card__meta-row dt::after { content: ":"; }
+
+  .pl-card__meta-row dd {
+    color: var(--pl-text);
+    word-break: break-word;
+  }
+
+  .pl-card__cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    border-radius: var(--pl-radius-md);
+    font-weight: 600;
+    align-self: flex-start;
+    transition: background 0.2s ease;
+  }
+
+  /* ─────────────────────────────────────────
+     LIST VIEW
+  ───────────────────────────────────────── */
+  .pl-projects.view-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* cards hidden in list mode */
+  .pl-projects.view-list .pl-card { display: none; }
+  /* rows visible in list mode */
+  .pl-projects.view-list .pl-row  { display: grid; }
+
+  /* List header labels (injected by JS) */
+  .pl-list-header {
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr 90px 80px;
+    gap: 0.75rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--pl-muted);
+    border-bottom: 1.5px solid var(--pl-border);
+    margin-bottom: 0;
+    background: transparent;
+  }
+
+  .pl-row {
+    grid-template-columns: 2fr 2fr 2fr 90px 80px;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--pl-border);
+    background: var(--pl-card-bg);
+    transition: background 0.15s ease;
+    border-radius: 0;
+  }
+
+  .pl-row:first-of-type { border-radius: var(--pl-radius-md) var(--pl-radius-md) 0 0; }
+  .pl-row:last-of-type  { border-radius: 0 0 var(--pl-radius-md) var(--pl-radius-md); border-bottom: none; }
+  .pl-row:only-of-type  { border-radius: var(--pl-radius-md); border-bottom: none; }
+
+  .pl-row:hover { background: #f9f9f9; }
+
+  .pl-row__name {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .pl-row__title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--pl-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pl-row__sub {
+    font-size: 0.78rem;
+    color: var(--pl-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pl-row__desc {
+    font-size: 0.82rem;
+    color: var(--pl-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pl-row__dates {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--pl-muted);
+    white-space: nowrap;
+  }
+
+  .pl-row__date-sep {
+    color: var(--pl-border-accent);
+    font-size: 0.7rem;
+  }
+
+  .pl-row__badge { /* inherits .pl-card__badge */ }
+
+  .pl-row__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.8rem;
+    border-radius: var(--pl-radius-md);
+    font-weight: 600;
+    justify-self: end;
+    transition: background 0.2s ease;
+  }
+
+  /* ── Empty state ── */
+  .pl-empty {
+    color: var(--pl-muted);
+    font-size: 0.95rem;
+    padding: 2rem 0;
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+
+  /* ── Back button ── */
+  .pl-back-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: var(--pl-radius-md);
+    font-weight: 600;
+  }
+
+  /* ─────────────────────────────────────────
+     RESPONSIVE
+  ───────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .pl-projects {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .title {
-      font-size: 1.5em;
-      font-weight: bold;
-      margin-bottom: 1em;
-      display: block;
-    }
-    
-    .projects-list {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1.5em;
-      margin-bottom: 1.5em;
+  }
+
+  @media (max-width: 768px) {
+    .pl-section { padding: 1.25rem; }
+
+    .pl-projects {
+      grid-template-columns: 1fr;
     }
 
-    .project-card {
-      background: white;
-      border-radius: 10px;
-      padding: 1em;
-      border: 2px solid #b0b0b0ff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .pl-filter-bar {
+      flex-direction: column;
+      align-items: flex-start;
     }
 
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    .pl-filter-select { max-width: 100%; width: 100%; }
+
+    /* In list mode on mobile: switch to a stacked card layout */
+    .pl-projects.view-list .pl-row {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto auto;
+      row-gap: 0.4rem;
     }
 
-    @media (max-width: 1024px) {
-      .projects-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    .pl-list-header { display: none; }
+
+    .pl-row__name  { grid-column: 1; grid-row: 1; }
+    .pl-row__desc  { grid-column: 1 / -1; grid-row: 2; }
+    .pl-row__dates { grid-column: 1; grid-row: 3; }
+    .pl-row__badge { grid-column: 2; grid-row: 1; align-self: start; }
+    .pl-row__cta   { grid-column: 2; grid-row: 3; align-self: end; justify-self: end; }
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .pl-card,
+    .pl-toggle-btn,
+    .pl-filter-select,
+    .pl-row { transition: none; }
+  }
+</style>
+
+<!-- ── SCRIPT ── -->
+<script>
+(function () {
+  'use strict';
+
+  const STORAGE_KEY = 'pl_view';
+  const container   = document.getElementById('projects-container');
+  const btnGrid     = document.getElementById('btn-grid');
+  const btnList     = document.getElementById('btn-list');
+
+  // ── Build list-view header labels ──────────────────────────────────────
+  function buildListHeader() {
+    if (document.getElementById('pl-list-header')) return;
+    const header = document.createElement('div');
+    header.className = 'pl-list-header';
+    header.id = 'pl-list-header';
+    header.setAttribute('aria-hidden', 'true');
+    header.innerHTML =
+      '<span>Proyecto / Cliente</span>' +
+      '<span>Descripción</span>'        +
+      '<span>Fechas</span>'             +
+      '<span>Estado</span>'             +
+      '<span></span>';
+    container.insertAdjacentElement('beforebegin', header);
+  }
+
+  function removeListHeader() {
+    const h = document.getElementById('pl-list-header');
+    if (h) h.remove();
+  }
+
+  // ── Apply view ─────────────────────────────────────────────────────────
+  function applyView(view) {
+    const isGrid = view === 'grid';
+
+    container.classList.toggle('view-list', !isGrid);
+
+    btnGrid.classList.toggle('active', isGrid);
+    btnList.classList.toggle('active', !isGrid);
+    btnGrid.setAttribute('aria-pressed', String(isGrid));
+    btnList.setAttribute('aria-pressed', String(!isGrid));
+
+    if (!isGrid) {
+      buildListHeader();
+    } else {
+      removeListHeader();
     }
 
-    @media (max-width: 768px) {
-      .projects-list {
-        grid-template-columns: 1fr;
-      }
-    }
-    .project-title {
-      font-size: 1.2em;
-      font-weight: bold;
-    
-      display: block;
-    }
-    
-    .project-card p:last-of-type {
-      margin-bottom: 0.5em;
-    }
-    .btn-details {
-      padding: 0.2em;
-    }
-    
-    .red-btn {
-      padding: 0.3em;
-      font-weight: 500;
-      border-radius: 8px;
-    }
-  </style>
+    try { localStorage.setItem(STORAGE_KEY, view); } catch (_) {}
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────
+  let savedView = 'grid';
+  try { savedView = localStorage.getItem(STORAGE_KEY) || 'grid'; } catch (_) {}
+  applyView(savedView);
+
+  // ── Button listeners ───────────────────────────────────────────────────
+  btnGrid.addEventListener('click', () => applyView('grid'));
+  btnList.addEventListener('click', () => applyView('list'));
+})();
+</script>
 {% endblock %}

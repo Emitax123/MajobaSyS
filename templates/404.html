@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+  <div class="e404-page">
+
+    <div class="e404-card">
+
+      <!-- Icono animado: lupa -->
+      <div class="e404-icon-wrap">
+        <div class="e404-icon-ring"></div>
+        <div class="e404-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <!-- Círculo de la lupa -->
+            <circle cx="27" cy="27" r="16" stroke="#d81d26" stroke-width="3" stroke-linecap="round"/>
+            <!-- Cruz interna: sin resultado -->
+            <line x1="22" y1="22" x2="32" y2="32" stroke="#d81d26" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="32" y1="22" x2="22" y2="32" stroke="#d81d26" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Mango de la lupa -->
+            <line x1="38.5" y1="38.5" x2="52" y2="52" stroke="#d81d26" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Badge y textos -->
+      <div class="e404-badge">404</div>
+      <h1 class="e404-title">Página no encontrada</h1>
+      <p class="e404-subtitle">
+        La página que buscás no existe o fue movida<br>a otra dirección.
+      </p>
+
+      <!-- Separador decorativo -->
+      <div class="e404-divider">
+        <span></span><span></span><span></span>
+      </div>
+
+      <!-- Mensaje secundario -->
+      <p class="e404-message">
+        Si creés que esto es un error, contactanos a
+        <a href="mailto:majobacastelli1999@gmail.com">majobacastelli1999@gmail.com</a>
+      </p>
+
+      <!-- Botones de acción -->
+      <div class="e404-actions">
+        <a href="/" class="red-btn e404-btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          Volver al Inicio
+        </a>
+        <a href="/budget/" class="e404-btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Solicitar Presupuesto
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <style>
+    .e404-page {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3em 1.5em;
+    }
+
+    .e404-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 3.5em 3em;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      border-top: 5px solid #d81d26;
+      animation: e404-fadein 0.5s ease both;
+    }
+
+    @keyframes e404-fadein {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Icono */
+    .e404-icon-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 1.8em;
+    }
+
+    .e404-icon-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid rgba(216, 29, 38, 0.15);
+      animation: e404-pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes e404-pulse {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%       { transform: scale(1.12); opacity: 0.5; }
+    }
+
+    .e404-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .e404-icon svg {
+      width: 64px;
+      height: 64px;
+    }
+
+    /* Badge */
+    .e404-badge {
+      display: inline-block;
+      background: rgba(216, 29, 38, 0.08);
+      color: #d81d26;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35em 1em;
+      border-radius: 20px;
+      border: 1px solid rgba(216, 29, 38, 0.2);
+      margin-bottom: 0.9em;
+    }
+
+    /* Título */
+    .e404-title {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 0.5em;
+      letter-spacing: -0.02em;
+    }
+
+    .e404-subtitle {
+      color: #666;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 1.8em;
+    }
+
+    /* Separador de puntos */
+    .e404-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 1.8em;
+    }
+
+    .e404-divider span {
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d81d26;
+      opacity: 0.35;
+    }
+
+    .e404-divider span:nth-child(2) {
+      opacity: 0.65;
+      width: 8px;
+      height: 8px;
+    }
+
+    /* Mensaje con email */
+    .e404-message {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 2em;
+    }
+
+    .e404-message a {
+      color: #d81d26;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .e404-message a:hover {
+      color: #a8141b;
+    }
+
+    /* Botones */
+    .e404-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75em;
+      flex-wrap: wrap;
+    }
+
+    .e404-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.75em 1.8em;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .e404-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(216, 29, 38, 0.35);
+    }
+
+    .e404-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.75em 1.8em;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      background: transparent;
+      border: 2px solid #d81d26;
+      color: #d81d26;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .e404-btn-secondary:hover {
+      transform: translateY(-2px);
+      background: rgba(216, 29, 38, 0.06);
+      color: #a8141b;
+      border-color: #a8141b;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .e404-card {
+        padding: 2.5em 1.5em;
+      }
+
+      .e404-title {
+        font-size: 1.9rem;
+      }
+
+      .e404-subtitle {
+        font-size: 1rem;
+      }
+
+      .e404-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .e404-btn-primary,
+      .e404-btn-secondary {
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .e404-card { animation: none; }
+      .e404-icon-ring { animation: none; }
+      .e404-btn-primary:hover,
+      .e404-btn-secondary:hover { transform: none; }
+    }
+  </style>
+
+{% endblock %}

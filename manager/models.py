@@ -2,12 +2,46 @@ from django.db import models
 from users.models import CustomUser
 # Create your models here.
 
+
+class Client(models.Model):
+    """
+    Modelo que representa un cliente asociado a un usuario del sistema.
+    Cada usuario puede tener múltiples clientes, y cada cliente puede
+    estar vinculado a múltiples proyectos.
+    """
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='clients',
+        verbose_name='Usuario'
+    )
+    name = models.CharField(max_length=255, verbose_name='Nombre')
+    phone = models.CharField(max_length=20, verbose_name='Teléfono')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Project(models.Model):
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         related_name='projects',
         verbose_name='Usuario'
+    )
+    client = models.ForeignKey(
+        'Client',
+        on_delete=models.PROTECT,
+        related_name='projects',
+        verbose_name='Cliente',
+        null=True,
+        blank=True
     )
     name = models.CharField(max_length=255, verbose_name='Nombre del Proyecto')
     description = models.TextField(blank=True, verbose_name='Descripción')
@@ -134,51 +168,96 @@ class ManagerData(models.Model):
             return True
         return False
     
+    def _nivel_canonico(self):
+        """
+        Devuelve el nivel válido basado en los puntos actuales.
+        Si acc_level tiene un valor fuera de los choices, lo recalcula
+        desde los puntos en lugar de fallar silenciosamente.
+
+        Returns:
+            str: Uno de los cinco valores válidos de acc_level.
+        """
+        NIVELES_VALIDOS = {'principiante', 'intermedio', 'avanzado', 'experto', 'maestro'}
+        if self.acc_level in NIVELES_VALIDOS:
+            return self.acc_level
+        # Valor corrupto/heredado: recalcular desde puntos
+        import logging
+        logging.getLogger('manager').warning(
+            "ManagerData pk=%s tiene acc_level inválido '%s'. "
+            "Recalculando desde puntos=%s.",
+            self.pk, self.acc_level, self.points,
+        )
+        if self.points >= 10000:
+            return 'maestro'
+        elif self.points >= 5000:
+            return 'experto'
+        elif self.points >= 2000:
+            return 'avanzado'
+        elif self.points >= 500:
+            return 'intermedio'
+        return 'principiante'
+
+    @property
     def points_for_next_level(self):
-        """Calcular los puntos necesarios para el siguiente nivel"""
+        """
+        Calcula los puntos que faltan para alcanzar el siguiente nivel.
+
+        Returns:
+            int: Puntos restantes. Retorna 0 si ya es Maestro (nivel máximo).
+        """
         next_level_thresholds = {
             'principiante': 500,
             'intermedio': 2000,
             'avanzado': 5000,
             'experto': 10000,
-            'maestro': 0  # Nivel máximo, no hay siguiente nivel
+            'maestro': 0,  # Nivel máximo, no hay siguiente nivel
         }
-        threshold = next_level_thresholds.get(self.acc_level, 0)
-        
-        if threshold == 0:  # Ya está en el nivel máximo
+        threshold = next_level_thresholds[self._nivel_canonico()]
+
+        if threshold == 0:
             return 0
-        
+
         return max(0, threshold - self.points)
-    
+
+    @property
     def progress_percentage(self):
-        """Calcular el porcentaje de progreso hacia el siguiente nivel"""
+        """
+        Calcula el porcentaje de progreso dentro del nivel actual (0–100).
+
+        Returns:
+            int: Porcentaje entero entre 0 y 100.
+        """
         level_thresholds = {
             'principiante': (0, 500),
             'intermedio': (500, 2000),
             'avanzado': (2000, 5000),
             'experto': (5000, 10000),
-            'maestro': (10000, float('inf'))
+            'maestro': (10000, float('inf')),
         }
-        
-        min_points, max_points = level_thresholds.get(self.acc_level, (0, 500))
-        
+        min_points, max_points = level_thresholds[self._nivel_canonico()]
+
         if max_points == float('inf'):
             return 100  # Nivel máximo alcanzado
-        
-        # Calcular el progreso dentro del nivel actual
+
         progress = ((self.points - min_points) / (max_points - min_points)) * 100
-        return max(0, min(100, progress))  # Asegurar que esté entre 0 y 100
-    
-    def get_next_level_display(self):
-        """Obtener el nombre del siguiente nivel"""
+        return int(max(0, min(100, progress)))
+
+    @property
+    def next_level_display(self):
+        """
+        Retorna el nombre legible (capitalizado) del siguiente nivel.
+
+        Returns:
+            str: Nombre del siguiente nivel, o 'Maestro' si ya es el máximo.
+        """
         next_levels = {
-            'principiante': 'intermedio',
-            'intermedio': 'avanzado',
-            'avanzado': 'experto',
-            'experto': 'maestro',
-            'maestro': 'maestro'  # Nivel máximo
+            'principiante': 'Intermedio',
+            'intermedio': 'Avanzado',
+            'avanzado': 'Experto',
+            'experto': 'Maestro',
+            'maestro': 'Maestro',
         }
-        return next_levels.get(self.acc_level, 'principiante')
+        return next_levels[self._nivel_canonico()]
 
 
 

@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import ManagerData, Project, Notification
-from .forms import ManagerDataForm, ProjectForm
+from .models import Client, ManagerData, Project, Notification
+from .forms import ClientForm, ManagerDataForm, ProjectForm
 from users.models import CustomUser
 from django.db import models
 from django.db.models import F
@@ -62,52 +62,110 @@ def manager_view(request):
 def create_project_view(request):
     """
     Vista para crear un nuevo proyecto asociado al usuario autenticado.
+
+    Si el POST incluye ``new_client_name`` (no vacío), se crea un nuevo
+    cliente en el momento y se asigna al proyecto, ignorando el campo
+    ``client`` del formulario. En caso contrario, el cliente proviene del
+    campo ``client`` del formulario.
     """
     if request.method == 'POST':
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, user=request.user)
         if form.is_valid():
             project = form.save(commit=False)
             project.user = request.user
+
+            # Creación de cliente al vuelo si se suministra un nombre nuevo
+            new_client_name = request.POST.get('new_client_name', '').strip()
+            if new_client_name:
+                new_client = Client.objects.create(
+                    name=new_client_name,
+                    phone=request.POST.get('new_client_phone', '').strip(),
+                    user=request.user,
+                )
+                project.client = new_client
+                logger.info(
+                    f"Cliente '{new_client.name}' creado al vuelo por {request.user.username}"
+                )
+
             project.save()
             logger.info(f"Nuevo proyecto '{project.name}' creado por {request.user.username}")
             return redirect('manager')
         else:
-            logger.warning(f"Error en el formulario de creación de proyecto por {request.user.username}: {form.errors}")
+            logger.warning(
+                f"Error en el formulario de creación de proyecto por "
+                f"{request.user.username}: {form.errors}"
+            )
             return render(request, 'manager/create_project.html', {'form': form})
     else:
-        form = ProjectForm()
+        form = ProjectForm(user=request.user)
         return render(request, 'manager/create_project.html', {'form': form})
 
 def list_projects_view(request):
     """
     Vista para listar todos los proyectos del usuario autenticado.
+
+    Acepta el parámetro GET ``client`` (ID de cliente) para filtrar
+    los proyectos por cliente. Envía al contexto:
+    - ``projects``: QuerySet de proyectos (filtrado o completo).
+    - ``clients``: todos los clientes del usuario (para el selector de filtro).
+    - ``selected_client``: ID del cliente actualmente seleccionado (str o None).
     """
-    projects = Project.objects.filter(user=request.user).all().order_by('-created_at')
-    return render(request, 'manager/projects_list.html', {'projects': projects})
+    clients = Client.objects.filter(user=request.user)
+    selected_client = request.GET.get('client', '').strip() or None
+
+    projects = Project.objects.filter(user=request.user).order_by('-created_at')
+
+    if selected_client:
+        projects = projects.filter(client_id=selected_client)
+        logger.info(
+            f"Proyectos filtrados por cliente ID={selected_client} "
+            f"para {request.user.username}"
+        )
+
+    return render(request, 'manager/projects_list.html', {
+        'projects': projects,
+        'clients': clients,
+        'selected_client': selected_client,
+    })
 
 def modify_project_view(request, project_id):
     """
     Vista para modificar un proyecto existente.
+
+    Filtra el selector de clientes al usuario autenticado pasando
+    ``user=request.user`` al instanciar el formulario.
     """
-    
     try:
         project = Project.objects.get(id=project_id, user=request.user)
     except Project.DoesNotExist:
-        logger.warning(f"Proyecto con ID {project_id} no encontrado para {request.user.username}")
-        return redirect('projects_list')
-    
+        logger.warning(
+            f"Proyecto con ID {project_id} no encontrado para {request.user.username}"
+        )
+        return redirect('list_projects')
+
     if request.method == 'POST':
-        form = ProjectForm(request.POST, instance=project)
+        form = ProjectForm(request.POST, instance=project, user=request.user)
         if form.is_valid():
             form.save()
             logger.info(f"Proyecto '{project.name}' modificado por {request.user.username}")
             return redirect('list_projects')
         else:
-            logger.warning(f"Error en el formulario de modificación de proyecto por {request.user.username}: {form.errors}")
-            return render(request, 'manager/modify_project.html', {'form': form, 'project': project})
+            logger.warning(
+                f"Error en el formulario de modificación de proyecto por "
+                f"{request.user.username}: {form.errors}"
+            )
+            return render(
+                request,
+                'manager/modify_project.html',
+                {'form': form, 'project': project},
+            )
     else:
-        form = ProjectForm(instance=project)
-        return render(request, 'manager/modify_project.html', {'form': form, 'project': project})
+        form = ProjectForm(instance=project, user=request.user)
+        return render(
+            request,
+            'manager/modify_project.html',
+            {'form': form, 'project': project},
+        )
 
 @login_required
 def admin_dashboard_view(request):
@@ -275,10 +333,11 @@ def manager_modification(request, user_id):
         if request.POST.get('user-points'):
             points = int(request.POST.get('user-points', 0))
             if points > 0:
-               ManagerData.objects.filter(id=manager_info.id).update(
-                        points=F('points') + points
-                    )
-               manager_info.refresh_from_db()
+                ManagerData.objects.filter(id=manager_info.id).update(
+                    points=F('points') + points
+                )
+                manager_info.refresh_from_db()
+                manager_info.update_level()  # Sincronizar nivel con los nuevos puntos
             if request.POST.get('checkbox-option'):
                 if request.POST.get('description'):
                     create_notification(manager_info, 1, points, request.POST.get('description'))
@@ -288,14 +347,15 @@ def manager_modification(request, user_id):
             points = int(request.POST.get('user-minus-points', 0))
             if points > 0:
                 # Actualización atómica que previene puntos negativos
-                    ManagerData.objects.filter(id=manager_info.id).update(
-                        points=models.Case(
-                            models.When(points__gte=points, 
-                                      then=F('points') - points),
-                            default=0
-                        )
+                ManagerData.objects.filter(id=manager_info.id).update(
+                    points=models.Case(
+                        models.When(points__gte=points,
+                                    then=F('points') - points),
+                        default=0
                     )
-                    manager_info.refresh_from_db()
+                )
+                manager_info.refresh_from_db()
+                manager_info.update_level()  # Sincronizar nivel con los nuevos puntos
             if request.POST.get('checkbox-option'):
                 if request.POST.get('description'):
                     create_notification(manager_info, 2, points, request.POST.get('description'))

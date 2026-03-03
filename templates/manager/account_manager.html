@@ -25,12 +25,20 @@
         <div class="level-progress">
           <div class="level-info">
             <span class="current-level">Nivel {{ manager_info.get_acc_level_display }}</span>
-            <span class="next-level">Siguiente Nivel {{ manager_info.get_next_level_display }} ({{ manager_info.points_for_next_level }} pts)</span>
+            {% if manager_info.acc_level == 'maestro' %}
+              <span class="next-level">¡Nivel máximo alcanzado!</span>
+            {% else %}
+              <span class="next-level">Siguiente: {{ manager_info.next_level_display }} </span>
+            {% endif %}
           </div>
           <div class="progress-bar">
             <div class="progress-fill" style="width: {{ manager_info.progress_percentage }}%"></div>
           </div>
-          <div class="progress-text">{{ manager_info.points_for_next_level }} puntos para el siguiente nivel</div>
+          {% if manager_info.acc_level == 'maestro' %}
+            <div class="progress-text">¡Eres Maestro! Nivel máximo alcanzado.</div>
+          {% else %}
+            <div class="progress-text">{{ manager_info.points_for_next_level }} puntos para llegar a {{ manager_info.next_level_display }}</div>
+          {% endif %}
         </div>
 
         <!-- Acciones de Puntos -->
@@ -45,38 +53,85 @@
       <div class="levels-card">
         <span class="title">Niveles</span>
         <div class="levels-list">
-          <div class="level-item completed">
+          {% with level=manager_info.acc_level %}
+
+          {# --- Principiante --- #}
+          <div class="level-item {% if level == 'principiante' %}current{% else %}completed{% endif %}">
             <div class="level-badge">1</div>
             <div class="level-details">
               <span class="level-name">Principiante</span>
-              <span class="level-points">0 - 500 pts</span>
+              <span class="level-points">0 - 499 pts</span>
             </div>
-            <i class="fas fa-check-circle level-status"></i>
+            {% if level == 'principiante' %}
+              <i class="fas fa-star level-status"></i>
+            {% else %}
+              <i class="fas fa-check-circle level-status"></i>
+            {% endif %}
           </div>
-          <div class="level-item completed">
+
+          {# --- Intermedio --- #}
+          <div class="level-item {% if level == 'intermedio' %}current{% elif level == 'avanzado' or level == 'experto' or level == 'maestro' %}completed{% else %}locked{% endif %}">
             <div class="level-badge">2</div>
             <div class="level-details">
               <span class="level-name">Intermedio</span>
-              <span class="level-points">501 - 1,500 pts</span>
+              <span class="level-points">500 - 1,999 pts</span>
             </div>
-            <i class="fas fa-check-circle level-status"></i>
+            {% if level == 'intermedio' %}
+              <i class="fas fa-star level-status"></i>
+            {% elif level == 'avanzado' or level == 'experto' or level == 'maestro' %}
+              <i class="fas fa-check-circle level-status"></i>
+            {% else %}
+              <i class="fas fa-lock level-status"></i>
+            {% endif %}
           </div>
-          <div class="level-item current">
+
+          {# --- Avanzado --- #}
+          <div class="level-item {% if level == 'avanzado' %}current{% elif level == 'experto' or level == 'maestro' %}completed{% else %}locked{% endif %}">
             <div class="level-badge">3</div>
             <div class="level-details">
-              <span class="level-name">Profesional</span>
-              <span class="level-points">1,501 - 3,000 pts</span>
+              <span class="level-name">Avanzado</span>
+              <span class="level-points">2,000 - 4,999 pts</span>
             </div>
-            <i class="fas fa-star level-status"></i>
+            {% if level == 'avanzado' %}
+              <i class="fas fa-star level-status"></i>
+            {% elif level == 'experto' or level == 'maestro' %}
+              <i class="fas fa-check-circle level-status"></i>
+            {% else %}
+              <i class="fas fa-lock level-status"></i>
+            {% endif %}
           </div>
-          <div class="level-item locked">
+
+          {# --- Experto --- #}
+          <div class="level-item {% if level == 'experto' %}current{% elif level == 'maestro' %}completed{% else %}locked{% endif %}">
             <div class="level-badge">4</div>
             <div class="level-details">
               <span class="level-name">Experto</span>
-              <span class="level-points">3,001 - 5,000 pts</span>
+              <span class="level-points">5,000 - 9,999 pts</span>
             </div>
-            <i class="fas fa-lock level-status"></i>
+            {% if level == 'experto' %}
+              <i class="fas fa-star level-status"></i>
+            {% elif level == 'maestro' %}
+              <i class="fas fa-check-circle level-status"></i>
+            {% else %}
+              <i class="fas fa-lock level-status"></i>
+            {% endif %}
           </div>
+
+          {# --- Maestro --- #}
+          <div class="level-item {% if level == 'maestro' %}current{% else %}locked{% endif %}">
+            <div class="level-badge">5</div>
+            <div class="level-details">
+              <span class="level-name">Maestro</span>
+              <span class="level-points">10,000+ pts</span>
+            </div>
+            {% if level == 'maestro' %}
+              <i class="fas fa-crown level-status"></i>
+            {% else %}
+              <i class="fas fa-lock level-status"></i>
+            {% endif %}
+          </div>
+
+          {% endwith %}
         </div>
       </div>
     </div>
@@ -100,9 +155,7 @@
               </span>
             </div>
             <div class="project-details">
-              <p>
-                <strong>Descripción</strong>: {{ project.description }}
-              </p>
+             
               <p>
                 <strong>Fecha inicio</strong>: {{ project.start_date }}
               </p>
@@ -189,13 +242,13 @@
     .levels-card {
       display: flex;
       flex-direction: column;
-    
+      border-top: 5px solid #d81d26;
       background: white;
       width: 100%;
       border-radius: 10px;
       padding: 2em;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      border: 2px solid #f8f9fa;
+      
     }
     
     .points-header {
@@ -310,18 +363,29 @@
     }
     
     .level-item.completed {
-      background: rgba(220, 53, 69, 0.1);
+      background: rgba(220, 53, 69, 0.08);
       border-left: 4px solid #dc3545;
     }
-    
+
     .level-item.current {
-      background: rgba(220, 53, 69, 0.1);
+      background: rgba(220, 53, 69, 0.18);
       border-left: 4px solid #dc3545;
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
     }
-    
+
     .level-item.locked {
-      background: rgba(220, 53, 69, 0.1);
-      border-left: 4px solid #dc3545;
+      background: rgba(0, 0, 0, 0.04);
+      border-left: 4px solid #ccc;
+      opacity: 0.6;
+    }
+
+    .level-item.locked .level-badge {
+      background: #aaa;
+    }
+
+    .level-item.locked .level-name,
+    .level-item.locked .level-points {
+      color: #999;
     }
     
     .level-badge {
@@ -362,6 +426,7 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
       padding: 1em;
       margin-bottom: 3em;
+      border-top: 5px solid #d81d26;
     }
     
     .projects-section a {
@@ -447,6 +512,7 @@
       border-radius: 15px;
       padding: 30px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border-top: 5px solid #d81d26;
     }
     
     .notifications-header {

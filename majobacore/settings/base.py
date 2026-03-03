@@ -299,3 +299,9 @@ X_FRAME_OPTIONS = 'DENY'
 # Admin URL — en producción se recomienda cambiar por una URL no predecible
 # Se puede configurar con la variable de entorno ADMIN_URL (ej: "secretpanel/")
 ADMIN_URL = config('ADMIN_URL', default='admin/')
+
+# Authentication URLs
+# Sobrescribe la URL de login por defecto de Django (/accounts/login/)
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/manager/'
+LOGOUT_REDIRECT_URL = '/users/login/'
