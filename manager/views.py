@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Client, ManagerData, Project, Notification
 from .forms import ClientForm, ManagerDataForm, ProjectForm
@@ -7,22 +7,9 @@ from users.models import CustomUser
 from django.db import models
 from django.db.models import F
 from django.db import transaction
-from django.shortcuts import redirect
+from .services import create_manager, create_notification
 import logging
 logger = logging.getLogger(__name__)
-
-def create_manager(user):
-    """
-    Función para crear un ManagerData asociado a un usuario.
-    """
-    try:
-        manager_data, created = ManagerData.objects.get_or_create(user=user)
-        if created:
-            manager_data.save()
-        return manager_data
-    except Exception as e:
-        logger.error(f"Error al crear ManagerData para {user.username}: {e}")
-        return None
 
 @login_required
 def manager_view(request):
@@ -296,7 +283,6 @@ def create_notification(manager_info, type, points, description=None):
             return None
             
         # Crear la notificación
-        print('creando noti2')
         notification = Notification.objects.create(
             user=manager_info.user,
             
@@ -310,7 +296,6 @@ def create_notification(manager_info, type, points, description=None):
         manager_info.save()
         
         logger.info(f"Notificación creada para {manager_info.user.username}: {message}")
-        print('NOfiticacion')
         return notification
         
     except Exception as e:
@@ -326,7 +311,8 @@ def manager_modification(request, user_id):
     manager_info = ManagerData.objects.filter(user_id=user_id).select_related('user').first()
     
     if not manager_info:
-        manager_info = create_manager(request.user)
+        target_user = get_object_or_404(CustomUser, id=user_id)
+        manager_info = create_manager(target_user)
         if not manager_info:
             return render(request, 'manager/account_manager.html', {
                 'error': 'No se pudo crear la información del manager.'
