@@ -263,6 +263,47 @@ def search_users_ajax(request):
     })
 
 
+def create_notification(manager_info, type, points, description=None):
+    """
+    Crear una notificación para el usuario
+    """
+    try:
+        # Determinar el mensaje según el tipo
+        if type == 1:
+            message = f"¡Felicitaciones! sumaste {points} puntos."
+            if not description:
+                description = "Se han añadido puntos a tu cuenta."
+            
+        elif type == 2:
+            message = f"Gastaste {points} puntos."
+            if not description:
+                description = "Se han restado puntos de tu cuenta."
+           
+        else:
+            return None
+            
+        # Crear la notificación
+        print('creando noti2')
+        notification = Notification.objects.create(
+            user=manager_info.user,
+            
+            message=message,
+            description=description,
+            is_read=False
+        )
+        
+        # Incrementar el contador de notificaciones en ManagerData
+        manager_info.notifications += 1
+        manager_info.save()
+        
+        logger.info(f"Notificación creada para {manager_info.user.username}: {message}")
+        print('NOfiticacion')
+        return notification
+        
+    except Exception as e:
+        logger.error(f"Error al crear notificación: {e}")
+        return None
+
 @transaction.atomic
 def manager_modification(request, user_id):
     """
