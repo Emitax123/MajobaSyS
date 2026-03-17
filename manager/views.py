@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Client, ManagerData, Project, Notification
 from .forms import ClientForm, ManagerDataForm, ProjectForm
@@ -7,7 +7,6 @@ from users.models import CustomUser
 from django.db import models
 from django.db.models import F
 from django.db import transaction
-from django.shortcuts import redirect
 import logging
 logger = logging.getLogger(__name__)
 
@@ -330,7 +329,8 @@ def manager_modification(request, user_id):
     manager_info = ManagerData.objects.filter(user_id=user_id).select_related('user').first()
     
     if not manager_info:
-        manager_info = create_manager(request.user)
+        target_user = get_object_or_404(CustomUser, pk=user_id)
+        manager_info = create_manager(target_user)
         if not manager_info:
             return render(request, 'manager/account_manager.html', {
                 'error': 'No se pudo crear la información del manager.'
