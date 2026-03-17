@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Client, ManagerData, Project, Notification
 from .forms import ClientForm, ManagerDataForm, ProjectForm
+from .services import create_manager
 from users.models import CustomUser
 from django.db import models
 from django.db.models import F
