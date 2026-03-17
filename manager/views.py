@@ -300,7 +300,6 @@ def create_notification(manager_info, type, points, description=None):
             return None
             
         # Crear la notificación
-        print('creando noti2')
         notification = Notification.objects.create(
             user=manager_info.user,
             
@@ -314,7 +313,6 @@ def create_notification(manager_info, type, points, description=None):
         manager_info.save()
         
         logger.info(f"Notificación creada para {manager_info.user.username}: {message}")
-        print('NOfiticacion')
         return notification
         
     except Exception as e:
