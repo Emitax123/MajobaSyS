@@ -112,54 +112,57 @@ class SecurityHeadersMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         
-        # Solo agregar headers a respuestas HTML/JSON
         content_type = response.get('Content-Type', '')
+        is_html_or_json = (
+            content_type.startswith('text/html')
+            or content_type.startswith('application/json')
+        )
         
-        # Content Security Policy
-        if not response.get('Content-Security-Policy'):
-            response['Content-Security-Policy'] = self.csp_directives
-        
-        # X-Content-Type-Options
+        # Headers universales — se aplican a todas las respuestas
         if not response.get('X-Content-Type-Options'):
             response['X-Content-Type-Options'] = 'nosniff'
         
-        # X-Frame-Options (previene clickjacking)
-        if not response.get('X-Frame-Options'):
-            response['X-Frame-Options'] = 'DENY'
-        
-        # X-XSS-Protection (para navegadores antiguos)
-        if not response.get('X-XSS-Protection'):
-            response['X-XSS-Protection'] = '1; mode=block'
-        
-        # Referrer-Policy
         if not response.get('Referrer-Policy'):
             response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         
-        # Permissions-Policy (antes Feature-Policy)
-        if not response.get('Permissions-Policy'):
-            permissions = [
-                'geolocation=()',
-                'microphone=()',
-                'camera=()',
-                'payment=()',
-                'usb=()',
-                'magnetometer=()',
-                'gyroscope=()',
-                'accelerometer=()',
-            ]
-            response['Permissions-Policy'] = ', '.join(permissions)
-        
-        # Cross-Origin-Embedder-Policy
-        if not response.get('Cross-Origin-Embedder-Policy'):
-            response['Cross-Origin-Embedder-Policy'] = 'require-corp'
-        
-        # Cross-Origin-Opener-Policy
-        if not response.get('Cross-Origin-Opener-Policy'):
-            response['Cross-Origin-Opener-Policy'] = 'same-origin'
-        
-        # Cross-Origin-Resource-Policy
         if not response.get('Cross-Origin-Resource-Policy'):
             response['Cross-Origin-Resource-Policy'] = 'same-origin'
+        
+        # Headers específicos para HTML/JSON — no aplican a descargas ni recursos binarios
+        if is_html_or_json:
+            # Content Security Policy
+            if not response.get('Content-Security-Policy'):
+                response['Content-Security-Policy'] = self.csp_directives
+            
+            # X-Frame-Options (previene clickjacking)
+            if not response.get('X-Frame-Options'):
+                response['X-Frame-Options'] = 'DENY'
+            
+            # X-XSS-Protection (para navegadores antiguos)
+            if not response.get('X-XSS-Protection'):
+                response['X-XSS-Protection'] = '1; mode=block'
+            
+            # Permissions-Policy (antes Feature-Policy)
+            if not response.get('Permissions-Policy'):
+                permissions = [
+                    'geolocation=()',
+                    'microphone=()',
+                    'camera=()',
+                    'payment=()',
+                    'usb=()',
+                    'magnetometer=()',
+                    'gyroscope=()',
+                    'accelerometer=()',
+                ]
+                response['Permissions-Policy'] = ', '.join(permissions)
+            
+            # Cross-Origin-Embedder-Policy
+            if not response.get('Cross-Origin-Embedder-Policy'):
+                response['Cross-Origin-Embedder-Policy'] = 'require-corp'
+            
+            # Cross-Origin-Opener-Policy
+            if not response.get('Cross-Origin-Opener-Policy'):
+                response['Cross-Origin-Opener-Policy'] = 'same-origin'
         
         return response
 
