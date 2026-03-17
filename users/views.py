@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.urls import reverse
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
-from manager.views import create_manager
+from manager.services import create_manager
 from django.contrib.auth.decorators import login_required
 import logging
 logger = logging.getLogger(__name__)
