@@ -81,6 +81,7 @@ for _domain in _railway_domains:
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Excluir health checks del redirect — Railway los hace por HTTP interno
+# Nota: /api/ NO se excluye porque los clientes móviles deben usar HTTPS
 SECURE_REDIRECT_EXEMPT = [r'^health/']
 
 # HSTS (HTTP Strict Transport Security)
@@ -398,6 +399,15 @@ if SENTRY_DSN:
         attach_stacktrace=True,
         before_send=lambda event, hint: event if event.get('level') != 'info' else None,
     )
+
+# ============================================================================
+# REST FRAMEWORK (Production overrides)
+# ============================================================================
+REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
+    'anon': '20/minute',
+    'user': '60/minute',
+    'login': '5/minute',
+}
 
 # ============================================================================
 # CORS (si se necesita para API)

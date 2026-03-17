@@ -170,7 +170,11 @@ __pypackages__/
 # SageMath
 *.sage.py
 
-# Markdown documentation files
+# Markdown documentation files (excluir por defecto, pero permitir los esenciales)
 *.md
+!AGENTS.md
+!README.md
+!mobile/PLAN.md
+!mobile/AGENTS.md
 majobacore/settings/SECURITY_NOTES.md
 DEPLOYMENT.md
