@@ -330,7 +330,12 @@ def manager_modification(request, user_id):
     manager_info = ManagerData.objects.filter(user_id=user_id).select_related('user').first()
     
     if not manager_info:
-        manager_info = create_manager(request.user)
+        target_user = CustomUser.objects.filter(pk=user_id).first()
+        if not target_user:
+            return render(request, 'manager/account_manager.html', {
+                'error': 'Usuario no encontrado.'
+            })
+        manager_info = create_manager(target_user)
         if not manager_info:
             return render(request, 'manager/account_manager.html', {
                 'error': 'No se pudo crear la información del manager.'
