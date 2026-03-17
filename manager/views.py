@@ -272,12 +272,12 @@ def create_notification(manager_info, type, points, description=None):
         if type == 1:
             message = f"¡Felicitaciones! sumaste {points} puntos."
             if not description:
-                description = "Se han añadido puntos a tu cuenta."
+                description = f"Se han añadido puntos a tu cuenta."
             
         elif type == 2:
             message = f"Gastaste {points} puntos."
             if not description:
-                description = "Se han restado puntos de tu cuenta."
+                description = f"Se han restado puntos de tu cuenta."
            
         else:
             return None
