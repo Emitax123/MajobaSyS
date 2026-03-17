@@ -70,33 +70,3 @@ LOGGING['loggers']['manager']['level'] = 'WARNING'
 
 # Static files configuration for development
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-# ============================================================================
-# REST FRAMEWORK (Development overrides)
-# ============================================================================
-REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
-    'rest_framework.renderers.JSONRenderer',
-    'rest_framework.renderers.BrowsableAPIRenderer',
-]
-REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
-    'anon': '100/minute',
-    'user': '500/minute',
-    'login': '20/minute',
-}
-
-# CORS para desarrollo local de la app móvil
-CORS_ALLOW_ALL_ORIGINS = True  # Solo en desarrollo
-INSTALLED_APPS += ['corsheaders']
-MIDDLEWARE.insert(2, 'corsheaders.middleware.CorsMiddleware')
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]

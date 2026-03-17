@@ -7,17 +7,3 @@ healthcheckPath = "/health/live/"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
-watchPatterns = [
-    "majobacore/**",
-    "manager/**",
-    "users/**",
-    "api/**",
-    "requirements/**",
-    "templates/**",
-    "static/**",
-    "manage.py",
-    "Procfile",
-    "railway.toml",
-    "runtime.txt",
-    "requirements.txt",
-]
