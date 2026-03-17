@@ -113,6 +113,7 @@ class SecurityHeadersMiddleware:
         response = self.get_response(request)
         
         content_type = response.get('Content-Type', '')
+<<<<<<< copilot/sub-pr-2-please-work
         is_html_or_json = (
             content_type.startswith('text/html')
             or content_type.startswith('application/json')
@@ -129,10 +130,24 @@ class SecurityHeadersMiddleware:
             response['Cross-Origin-Resource-Policy'] = 'same-origin'
         
         # Headers específicos para HTML/JSON — no aplican a descargas ni recursos binarios
+=======
+        is_html_or_json = 'text/html' in content_type or 'application/json' in content_type
+
+        # X-Content-Type-Options: aplica a todas las respuestas
+        if not response.get('X-Content-Type-Options'):
+            response['X-Content-Type-Options'] = 'nosniff'
+
+        # Cross-Origin-Resource-Policy: aplica a todas las respuestas
+        if not response.get('Cross-Origin-Resource-Policy'):
+            response['Cross-Origin-Resource-Policy'] = 'same-origin'
+
+        # Los siguientes headers solo aplican a respuestas HTML/JSON
+>>>>>>> revert-1-feature/api-rest
         if is_html_or_json:
             # Content Security Policy
             if not response.get('Content-Security-Policy'):
                 response['Content-Security-Policy'] = self.csp_directives
+<<<<<<< copilot/sub-pr-2-please-work
             
             # X-Frame-Options (previene clickjacking)
             if not response.get('X-Frame-Options'):
@@ -142,6 +157,21 @@ class SecurityHeadersMiddleware:
             if not response.get('X-XSS-Protection'):
                 response['X-XSS-Protection'] = '1; mode=block'
             
+=======
+
+            # X-Frame-Options (previene clickjacking)
+            if not response.get('X-Frame-Options'):
+                response['X-Frame-Options'] = 'DENY'
+
+            # X-XSS-Protection (para navegadores antiguos)
+            if not response.get('X-XSS-Protection'):
+                response['X-XSS-Protection'] = '1; mode=block'
+
+            # Referrer-Policy
+            if not response.get('Referrer-Policy'):
+                response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+
+>>>>>>> revert-1-feature/api-rest
             # Permissions-Policy (antes Feature-Policy)
             if not response.get('Permissions-Policy'):
                 permissions = [
@@ -155,6 +185,7 @@ class SecurityHeadersMiddleware:
                     'accelerometer=()',
                 ]
                 response['Permissions-Policy'] = ', '.join(permissions)
+<<<<<<< copilot/sub-pr-2-please-work
             
             # Cross-Origin-Embedder-Policy
             if not response.get('Cross-Origin-Embedder-Policy'):
@@ -164,6 +195,17 @@ class SecurityHeadersMiddleware:
             if not response.get('Cross-Origin-Opener-Policy'):
                 response['Cross-Origin-Opener-Policy'] = 'same-origin'
         
+=======
+
+            # Cross-Origin-Embedder-Policy
+            if not response.get('Cross-Origin-Embedder-Policy'):
+                response['Cross-Origin-Embedder-Policy'] = 'require-corp'
+
+            # Cross-Origin-Opener-Policy
+            if not response.get('Cross-Origin-Opener-Policy'):
+                response['Cross-Origin-Opener-Policy'] = 'same-origin'
+
+>>>>>>> revert-1-feature/api-rest
         return response
 
 
