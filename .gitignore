@@ -171,6 +171,7 @@ __pypackages__/
 *.sage.py
 
 # Markdown documentation files
+# Ignora todos los .md excepto los archivos de proyecto esenciales
 *.md
-majobacore/settings/SECURITY_NOTES.md
-DEPLOYMENT.md
+!README.md
+!AGENTS.md
