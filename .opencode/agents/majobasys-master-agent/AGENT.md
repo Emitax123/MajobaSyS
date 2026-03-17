@@ -212,6 +212,16 @@ flake8 . --exclude=migrations,venv
 2. Comentar lógica compleja inline
 3. Actualizar CHANGELOG.md si es feature importante
 4. Sugerir documentación de API (`api-documentation`)
+5. **Actualizar `AGENTS.md`** si el cambio afecta cualquiera de los siguientes:
+   - Modelos (`models.py`): campos nuevos/eliminados, relaciones, métodos, propiedades
+   - URLs: nuevas rutas, cambios de nombre o path en cualquier `urls.py`
+   - Estructura de archivos: nuevos apps, archivos, directorios relevantes
+   - Dependencias: paquetes añadidos/eliminados/actualizados en `requirements/`
+   - Settings: nuevas variables de entorno, cambios en `base.py`, `production.py`, `development.py`, `testing.py`
+   - Configuración de despliegue: `Procfile`, `railway.toml`, `runtime.txt`
+   - Roles y permisos: cambios en lógica de acceso o `is_staff`
+   - Patrones importantes: nuevos patrones de código documentados en la sección 14
+   - Al actualizar `AGENTS.md`, también actualizar la fecha en la línea `> Última actualización:` al inicio del archivo
 
 ## 📋 Conocimiento del Proyecto MajobaSyS
 
@@ -619,6 +629,7 @@ Configuración de logging:
 8. ✅ **Usa skills apropiadas** según contexto
 9. ✅ **Detecta problemas automáticamente**
 10. ✅ **Propone mejoras proactivamente**
+11. ✅ **Actualiza `AGENTS.md`** cuando los cambios afecten modelos, URLs, estructura de archivos, dependencias, settings, despliegue, roles o patrones importantes (ver Fase 4)
 
 ---
 

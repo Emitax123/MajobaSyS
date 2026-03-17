@@ -2,6 +2,14 @@
 # MajobaSyS - Django Project .gitignore
 # ============================================================================
 
+# Windows reserved device names (cannot be staged by Git on Windows)
+nul
+con
+prn
+aux
+com[0-9]
+lpt[0-9]
+
 # Python
 __pycache__/
 *.py[cod]

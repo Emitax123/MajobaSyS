@@ -116,7 +116,13 @@ def list_projects_view(request):
     clients = Client.objects.filter(user=request.user)
     selected_client = request.GET.get('client', '').strip() or None
 
-    projects = Project.objects.filter(user=request.user).order_by('-created_at')
+    projects = (
+        Project.objects
+        .filter(user=request.user)
+        .select_related('client')
+        .only('id', 'name', 'location', 'start_date', 'end_date', 'is_active', 'client_id')
+        .order_by('-created_at')
+    )
 
     if selected_client:
         projects = projects.filter(client_id=selected_client)

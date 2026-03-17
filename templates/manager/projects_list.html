@@ -81,10 +81,6 @@
             </dd>
           </div>
           <div class="pl-card__meta-row">
-            <dt>Descripción</dt>
-            <dd>{{ project.description|default:"—" }}</dd>
-          </div>
-          <div class="pl-card__meta-row">
             <dt>Ubicación</dt>
             <dd>{{ project.location|default:"—" }}</dd>
           </div>
@@ -108,10 +104,6 @@
           <span class="pl-row__sub">
             {% if project.client %}{{ project.client.name }}{% else %}<span class="pl-muted">Sin cliente</span>{% endif %}
           </span>
-        </div>
-
-        <div class="pl-row__desc">
-          {{ project.description|default:"Sin descripción"|truncatechars:60 }}
         </div>
 
         <div class="pl-row__dates">
@@ -414,7 +406,7 @@
   /* List header labels (injected by JS) */
   .pl-list-header {
     display: grid;
-    grid-template-columns: 2fr 2fr 2fr 90px 80px;
+    grid-template-columns: 2fr 2fr 90px 70px;
     gap: 0.75rem;
     padding: 0.5rem 1.25rem;
     font-size: 0.72rem;
@@ -425,10 +417,15 @@
     border-bottom: 1.5px solid var(--pl-border);
     margin-bottom: 0;
     background: transparent;
+    max-width: 760px;
+  }
+
+  .pl-projects.view-list {
+    max-width: 760px;
   }
 
   .pl-row {
-    grid-template-columns: 2fr 2fr 2fr 90px 80px;
+    grid-template-columns: 2fr 2fr 90px 70px;
     gap: 0.75rem;
     align-items: center;
     padding: 0.85rem 1.25rem;
@@ -549,17 +546,16 @@
     /* In list mode on mobile: switch to a stacked card layout */
     .pl-projects.view-list .pl-row {
       grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto auto;
+      grid-template-rows: auto auto;
       row-gap: 0.4rem;
     }
 
     .pl-list-header { display: none; }
 
     .pl-row__name  { grid-column: 1; grid-row: 1; }
-    .pl-row__desc  { grid-column: 1 / -1; grid-row: 2; }
-    .pl-row__dates { grid-column: 1; grid-row: 3; }
+    .pl-row__dates { grid-column: 1; grid-row: 2; }
     .pl-row__badge { grid-column: 2; grid-row: 1; align-self: start; }
-    .pl-row__cta   { grid-column: 2; grid-row: 3; align-self: end; justify-self: end; }
+    .pl-row__cta   { grid-column: 2; grid-row: 2; align-self: end; justify-self: end; }
   }
 
   /* ── Reduced motion ── */
@@ -590,7 +586,6 @@
     header.setAttribute('aria-hidden', 'true');
     header.innerHTML =
       '<span>Proyecto / Cliente</span>' +
-      '<span>Descripción</span>'        +
       '<span>Fechas</span>'             +
       '<span>Estado</span>'             +
       '<span></span>';

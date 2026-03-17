@@ -28,23 +28,25 @@
 
                 <form method="post" action="">
                 {% csrf_token %}
-                <label for="name">Nombre Completo:</label>
+                <label for="name">Nombre Completo: <span class="required-mark" aria-hidden="true">*</span></label>
                 <input type="text" id="name" name="name"
                        value="{{ form_data.name|default:'' }}" required />
 
-                <label for="phone">Número de Teléfono:</label>
+                <label for="phone">Número de Teléfono: <span class="required-mark" aria-hidden="true">*</span></label>
                 <input type="tel" id="phone" name="phone"
                        value="{{ form_data.phone|default:'' }}" required />
 
-                <label for="email">Correo Electrónico:</label>
+                <label for="email">Correo Electrónico: <span class="required-mark" aria-hidden="true">*</span></label>
                 <input type="email" id="email" name="email"
                        value="{{ form_data.email|default:'' }}" required />
 
-                <label for="project-details">Detalles del Proyecto:</label>
+                <label for="project-details">Detalles del Proyecto: <span class="required-mark" aria-hidden="true">*</span></label>
                 <textarea id="project-details" name="project_details" rows="4" required>{{ form_data.project_details|default:'' }}</textarea>
-
+                  <p class="required-note"><span class="required-mark" aria-hidden="true">*</span> Campos obligatorios.</p>   
                 <button type="submit" class="submit-btn">Enviar Solicitud</button>
                 </form>
+
+               
             {% endif %}
         </div>
         </section>
@@ -85,6 +87,18 @@
         .budget-alert p {
             margin: 0;
         }
+        .required-mark {
+            color: #d81d26;
+            font-weight: 700;
+            margin-left: 2px;
+        }
+        .required-note {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #888;
+            text-align: left;
+        }
+        
     </style>
 
 {% endblock %}

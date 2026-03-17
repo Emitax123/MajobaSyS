@@ -9,6 +9,7 @@
 .budget-form-section {
     width: 100%;
     max-width: 500px;
+    border-top: 5px solid #d81d26;
 }
 
 .budget-form-container {

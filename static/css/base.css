@@ -64,6 +64,17 @@ textarea:focus {
     align-items: center;
 }
 
+/* ---------- info-bar styles ---------- */
+.info-bar {
+    width: 100%;
+    background-color: #d81d26;
+    height: 2rem;
+    color: white;
+    text-align: center;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
