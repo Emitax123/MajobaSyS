@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Client, ManagerData, Project, Notification
 from .forms import ClientForm, ManagerDataForm, ProjectForm
+from .services import create_manager
 from users.models import CustomUser
 from django.db import models
 from django.db.models import F
@@ -10,19 +11,6 @@ from django.db import transaction
 from django.shortcuts import redirect
 import logging
 logger = logging.getLogger(__name__)
-
-def create_manager(user):
-    """
-    Función para crear un ManagerData asociado a un usuario.
-    """
-    try:
-        manager_data, created = ManagerData.objects.get_or_create(user=user)
-        if created:
-            manager_data.save()
-        return manager_data
-    except Exception as e:
-        logger.error(f"Error al crear ManagerData para {user.username}: {e}")
-        return None
 
 @login_required
 def manager_view(request):
