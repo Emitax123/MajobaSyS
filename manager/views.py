@@ -276,20 +276,20 @@ def search_users_ajax(request):
     })
 
 
-def create_notification(manager_info, type, points, description=None):
+def create_notification(manager_info, notification_type, points, description=None):
     """
     Crear una notificación para el usuario
     """
     try:
         # Determinar el mensaje según el tipo
-        if type == 1:
+        if notification_type == 1:
             message = f"¡Felicitaciones! sumaste {points} puntos."
             if description:
                 description = description
             else:
                 description = f"Se han añadido puntos a tu cuenta."
             
-        elif type == 2:
+        elif notification_type == 2:
             message = f"Gastaste {points} puntos."
             if description:
                 description = description
