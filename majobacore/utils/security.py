@@ -109,27 +109,40 @@ class SecurityHeadersMiddleware:
         
         return "; ".join(csp_parts)
 
+    def _is_api_request(self, request):
+        """
+        Determina si el request es para la API REST.
+        Las rutas /api/ necesitan headers más permisivos para
+        permitir requests cross-origin desde la app móvil.
+        """
+        return request.path.startswith('/api/')
+
     def __call__(self, request):
         response = self.get_response(request)
         
-        content_type = response.get('Content-Type', '')
-        is_html_or_json = (
-            content_type.startswith('text/html')
-            or content_type.startswith('application/json')
-        )
+        is_api = self._is_api_request(request)
         
-        # Headers universales — se aplican a todas las respuestas
+        # X-Content-Type-Options (aplica a todos)
         if not response.get('X-Content-Type-Options'):
             response['X-Content-Type-Options'] = 'nosniff'
         
+        # X-XSS-Protection (aplica a todos)
+        if not response.get('X-XSS-Protection'):
+            response['X-XSS-Protection'] = '1; mode=block'
+        
+        # Referrer-Policy (aplica a todos)
         if not response.get('Referrer-Policy'):
             response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         
-        if not response.get('Cross-Origin-Resource-Policy'):
-            response['Cross-Origin-Resource-Policy'] = 'same-origin'
-        
-        # Headers específicos para HTML/JSON — no aplican a descargas ni recursos binarios
-        if is_html_or_json:
+        if is_api:
+            # Headers permisivos para endpoints de API
+            # CORS se maneja por django-cors-headers middleware
+            if not response.get('Cross-Origin-Resource-Policy'):
+                response['Cross-Origin-Resource-Policy'] = 'cross-origin'
+            # No aplicar CSP, COEP, COOP, X-Frame-Options a la API
+            # ya que las apps móviles nativas no usan estos headers
+        else:
+            # Headers restrictivos para la web tradicional
             # Content Security Policy
             if not response.get('Content-Security-Policy'):
                 response['Content-Security-Policy'] = self.csp_directives
@@ -137,10 +150,6 @@ class SecurityHeadersMiddleware:
             # X-Frame-Options (previene clickjacking)
             if not response.get('X-Frame-Options'):
                 response['X-Frame-Options'] = 'DENY'
-            
-            # X-XSS-Protection (para navegadores antiguos)
-            if not response.get('X-XSS-Protection'):
-                response['X-XSS-Protection'] = '1; mode=block'
             
             # Permissions-Policy (antes Feature-Policy)
             if not response.get('Permissions-Policy'):
@@ -163,6 +172,10 @@ class SecurityHeadersMiddleware:
             # Cross-Origin-Opener-Policy
             if not response.get('Cross-Origin-Opener-Policy'):
                 response['Cross-Origin-Opener-Policy'] = 'same-origin'
+            
+            # Cross-Origin-Resource-Policy
+            if not response.get('Cross-Origin-Resource-Policy'):
+                response['Cross-Origin-Resource-Policy'] = 'same-origin'
         
         return response
 
