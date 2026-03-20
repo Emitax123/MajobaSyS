@@ -267,6 +267,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'api': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
 

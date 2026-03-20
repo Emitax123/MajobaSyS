@@ -38,14 +38,18 @@ class LoginSerializer(serializers.Serializer):
         )
 
         if user is None:
-            logger.warning(f"Intento de login API fallido para usuario: {username}")
+            request = self.context.get('request')
+            ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'desconocida')) if request else 'desconocida'
+            logger.warning(f"Login API fallido | usuario={username} | ip={ip}")
             raise serializers.ValidationError(
                 'Credenciales inválidas.',
                 code='invalid_credentials',
             )
 
         if not user.is_active:
-            logger.warning(f"Intento de login API con cuenta desactivada: {username}")
+            request = self.context.get('request')
+            ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'desconocida')) if request else 'desconocida'
+            logger.warning(f"Login API cuenta desactivada | usuario={username} | ip={ip}")
             raise serializers.ValidationError(
                 'Esta cuenta está desactivada.',
                 code='inactive_account',
