@@ -7,6 +7,7 @@ from .models import CustomUser
 from manager.services import create_manager
 from django.contrib.auth.decorators import login_required
 import logging
+from majobacore.utils.http import get_client_ip
 logger = logging.getLogger(__name__)
 
 
@@ -52,7 +53,7 @@ def custom_login_view(request):
             remember_me = request.POST.get('remember_me')
             user = authenticate(request, username=username, password=password)
             
-            ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'desconocida'))
+            ip = get_client_ip(request)
             if user is not None:
                 if user.is_active:
                     login(request, user)

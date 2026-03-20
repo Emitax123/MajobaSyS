@@ -51,8 +51,13 @@ class CustomUser(AbstractUser):
     
     def save(self, *args, **kwargs):
         """Override save para logging."""
+        update_fields = kwargs.get('update_fields')
         if self.pk:
-            logger.info(f"Actualizando usuario: {self.username}")
+            # Bajar a DEBUG si solo se actualiza last_login (ej: update_last_login de JWT)
+            if update_fields is not None and set(update_fields) == {'last_login'}:
+                logger.debug(f"Actualizando last_login del usuario: {self.username}")
+            else:
+                logger.info(f"Actualizando usuario: {self.username}")
         else:
             logger.info(f"Creando nuevo usuario: {self.username}")
         super().save(*args, **kwargs)

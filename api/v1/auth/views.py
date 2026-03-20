@@ -13,6 +13,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 
 from api.permissions import IsStaffUser
 from api.throttling import LoginRateThrottle
+from majobacore.utils.http import get_client_ip
 from manager.services import create_manager
 from .serializers import (
     ChangePasswordSerializer,
@@ -51,7 +52,7 @@ class LoginView(APIView):
         # Actualizar last_login (Django no lo hace automáticamente con JWT)
         update_last_login(None, user)
 
-        ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'desconocida'))
+        ip = get_client_ip(request)
         logger.info(f"Login API exitoso | usuario={user.username} | ip={ip}")
 
         return Response(

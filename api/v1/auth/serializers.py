@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from majobacore.utils.http import get_client_ip
 from users.models import CustomUser
 from manager.services import create_manager
 
@@ -37,9 +38,9 @@ class LoginSerializer(serializers.Serializer):
             password=password,
         )
 
+        ip = get_client_ip(self.context.get('request'))
+
         if user is None:
-            request = self.context.get('request')
-            ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'desconocida')) if request else 'desconocida'
             logger.warning(f"Login API fallido | usuario={username} | ip={ip}")
             raise serializers.ValidationError(
                 'Credenciales inválidas.',
@@ -47,8 +48,6 @@ class LoginSerializer(serializers.Serializer):
             )
 
         if not user.is_active:
-            request = self.context.get('request')
-            ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'desconocida')) if request else 'desconocida'
             logger.warning(f"Login API cuenta desactivada | usuario={username} | ip={ip}")
             raise serializers.ValidationError(
                 'Esta cuenta está desactivada.',
