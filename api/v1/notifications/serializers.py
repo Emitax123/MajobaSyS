@@ -10,7 +10,11 @@ class NotificationSerializer(serializers.ModelSerializer):
     """
     Serializer de notificación con tiempo transcurrido computado.
     """
-    time_elapsed = serializers.CharField(read_only=True)
+    time_elapsed = serializers.SerializerMethodField()
+
+    def get_time_elapsed(self, obj):
+        """Devuelve el tiempo transcurrido formateado desde el modelo."""
+        return obj.time_elapsed()
 
     class Meta:
         model = Notification

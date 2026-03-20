@@ -124,11 +124,21 @@ class ProjectCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        """Valida que se proporcione un cliente existente o uno nuevo."""
-        client = attrs.get('client')
+        """Valida que se proporcione un cliente existente o uno nuevo.
+
+        En actualizaciones, si no se envía el campo client, se toma el
+        cliente ya asociado al proyecto, permitiendo PATCH parciales sin
+        tener que reenviar el cliente.
+        """
+        client = attrs.get('client', serializers.empty)
         new_client_name = (attrs.get('new_client_name') or '').strip()
 
-        if not client and not new_client_name:
+        if client is serializers.empty:
+            effective_client = getattr(self.instance, 'client', None)
+        else:
+            effective_client = client
+
+        if not effective_client and not new_client_name:
             raise serializers.ValidationError(
                 {'client': 'Debes seleccionar un cliente existente o crear uno nuevo.'}
             )
