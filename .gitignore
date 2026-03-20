@@ -170,8 +170,10 @@ __pypackages__/
 # SageMath
 *.sage.py
 
-# Markdown documentation files
-# Ignora todos los .md excepto los archivos de proyecto esenciales
+# Markdown documentation files (excluir por defecto, pero permitir los esenciales)
 *.md
 !README.md
 !AGENTS.md
+!mobile/AGENTS.md
+majobacore/settings/SECURITY_NOTES.md
+DEPLOYMENT.md

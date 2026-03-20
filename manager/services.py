@@ -1,3 +1,9 @@
+"""
+Servicios de lógica de negocio para la app manager.
+
+Este módulo centraliza funciones reutilizables que encapsulan
+lógica de negocio compartida entre vistas web y endpoints de API.
+"""
 import logging
 from django.db.models import F
 from .models import ManagerData, Notification
@@ -7,7 +13,13 @@ logger = logging.getLogger('manager')
 
 def create_manager(user):
     """
-    Función para crear un ManagerData asociado a un usuario.
+    Crea o recupera un ManagerData asociado a un usuario.
+
+    Args:
+        user: Instancia de CustomUser.
+
+    Returns:
+        ManagerData | None: El perfil creado/existente, o None si hubo error.
     """
     try:
         manager_data, created = ManagerData.objects.get_or_create(user=user)
@@ -19,7 +31,16 @@ def create_manager(user):
 
 def create_notification(manager_info, notification_type, points, description=None):
     """
-    Crear una notificación para el usuario.
+    Crea una notificación para el usuario e incrementa su contador.
+
+    Args:
+        manager_info: Instancia de ManagerData del usuario.
+        notification_type (int): Tipo de notificación (1 = sumar puntos, 2 = gastar puntos).
+        points (int): Cantidad de puntos involucrados.
+        description (str | None): Descripción personalizada (opcional).
+
+    Returns:
+        Notification | None: La notificación creada, o None si hubo error.
     """
     try:
         if notification_type == 1:
