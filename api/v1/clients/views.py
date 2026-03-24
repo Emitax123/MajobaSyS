@@ -3,7 +3,7 @@ Vistas de clientes para la API REST de MajobaSyS.
 """
 import logging
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -34,7 +34,12 @@ class ClientViewSet(ModelViewSet):
         """Filtra clientes al usuario autenticado y anota conteo de proyectos."""
         return (
             Client.objects.filter(user=self.request.user)
-            .annotate(projects_count=Count('projects'))
+            .annotate(
+                projects_count=Count(
+                    'projects',
+                    filter=Q(projects__user=self.request.user),
+                ),
+            )
             .order_by('name')
         )
 
