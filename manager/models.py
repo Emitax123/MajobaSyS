@@ -16,7 +16,7 @@ class Client(models.Model):
         verbose_name='Usuario'
     )
     name = models.CharField(max_length=255, verbose_name='Nombre')
-    phone = models.CharField(max_length=20, verbose_name='Teléfono')
+    phone = models.CharField(max_length=20, verbose_name='Teléfono', blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

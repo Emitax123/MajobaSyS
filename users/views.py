@@ -7,6 +7,7 @@ from .models import CustomUser
 from manager.services import create_manager
 from django.contrib.auth.decorators import login_required
 import logging
+from majobacore.utils.http import get_client_ip
 logger = logging.getLogger(__name__)
 
 
@@ -52,15 +53,16 @@ def custom_login_view(request):
             remember_me = request.POST.get('remember_me')
             user = authenticate(request, username=username, password=password)
             
+            ip = get_client_ip(request)
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    logger.info(f"Usuario {username} ha iniciado sesión exitosamente")
-                    
+                    logger.info(f"Login web exitoso | usuario={username} | ip={ip}")
+
                     # Crear ManagerData si no existe
                     if not hasattr(user, 'manager_user'):
                         create_manager(user)
-                    
+
                     # Manejar "Recordarme"
                     if remember_me:
                         # Sesión persistente: no expira al cerrar el navegador
@@ -69,15 +71,15 @@ def custom_login_view(request):
                     else:
                         # Sesión de navegador: expira al cerrar el navegador
                         request.session.set_expiry(0)
-                    
+
                     # Redireccionar según el tipo de usuario
                     return redirect_after_login(request)
                 else:
                     messages.error(request, 'Tu cuenta está desactivada. Contacta al administrador.')
-                    logger.warning(f"Intento de login con cuenta desactivada: {username}")
+                    logger.warning(f"Login web cuenta desactivada | usuario={username} | ip={ip}")
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos.')
-                logger.warning(f"Intento de login fallido para usuario: {username}")
+                logger.warning(f"Login web fallido | usuario={username} | ip={ip}")
         else:
             messages.error(request, 'Por favor, completa todos los campos.')
     

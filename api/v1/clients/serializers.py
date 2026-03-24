@@ -28,6 +28,7 @@ class ClientCreateUpdateSerializer(serializers.ModelSerializer):
     """
     Serializer para crear y actualizar clientes.
     """
+    phone = serializers.CharField(required=False, allow_blank=True, default='')
 
     class Meta:
         model = Client

@@ -3,6 +3,7 @@ Vistas de autenticación para la API REST de MajobaSyS.
 """
 import logging
 
+from django.contrib.auth.models import update_last_login
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 
 from api.permissions import IsStaffUser
 from api.throttling import LoginRateThrottle
+from majobacore.utils.http import get_client_ip
 from manager.services import create_manager
 from .serializers import (
     ChangePasswordSerializer,
@@ -47,7 +49,11 @@ class LoginView(APIView):
         # Generar tokens JWT
         refresh = RefreshToken.for_user(user)
 
-        logger.info(f"Login API exitoso para usuario: {user.username}")
+        # Actualizar last_login (Django no lo hace automáticamente con JWT)
+        update_last_login(None, user)
+
+        ip = get_client_ip(request)
+        logger.info(f"Login API exitoso | usuario={user.username} | ip={ip}")
 
         return Response(
             {
