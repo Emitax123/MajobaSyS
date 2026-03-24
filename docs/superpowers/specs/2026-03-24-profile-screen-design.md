@@ -6,7 +6,7 @@
 
 ## Overview
 
-Replace the placeholder `src/app/(app)/profile.tsx` with a fully implemented profile screen. The screen is already registered in the tab bar as the 4th tab ("Perfil", icon `person-outline`) and requires no navigation changes.
+Replace the placeholder `src/app/(app)/profile.tsx` with a fully implemented profile screen. The screen is already registered in the tab bar as the 4th `<Tabs.Screen>` entry (3rd visible tab: Inicio → Clientes → Perfil) and requires no navigation changes.
 
 ---
 
@@ -26,13 +26,18 @@ Replace the placeholder `src/app/(app)/profile.tsx` with a fully implemented pro
 ## Architecture
 
 ### Data Source
-User data is read directly from `useAuthStore((s) => s.user)` — no network call required. The store is populated on login and persists in memory for the session.
+User data is read from `useAuthStore((s) => s.user)` — no network call required. The store is populated on login and held in memory for the duration of the session.
+
+**Known limitation — cold-start hydration:** `hydrateFromStorage` restores `isAuthenticated: true` from SecureStore when `rememberMe` is enabled, but it does **not** restore the `user` object (user data is not serialized to SecureStore). This means on a cold app start the profile screen can mount with `user === null` while `isAuthenticated === true`. The screen must handle this gracefully.
+
+**Null guard requirement:** All user fields (`full_name`, `username`, `email`) must be read with a safe fallback (`user?.full_name ?? '—'`). If `user` is null, the screen renders the layout with empty/dash placeholders — no crash.
 
 ### Logout Flow
 1. User taps "Cerrar sesión"
 2. `Alert.alert` shows with "Cancelar" + "Cerrar sesión" (destructive) buttons
 3. On confirm → `authStore.logout()` is called
-4. `AppLayout` (`src/app/(app)/_layout.tsx`) already handles the redirect: when `!isAuthenticated` it renders `<Redirect href="/(auth)/login" />`
+4. While logout is in progress (`isLoading: true`), the logout row must be disabled (no double-tap)
+5. `AppLayout` (`src/app/(app)/_layout.tsx`) handles the redirect automatically: when `!isAuthenticated` it renders `<Redirect href="/(auth)/login" />`
 
 ---
 
@@ -57,6 +62,7 @@ CUENTA                          ← section label
 SESIÓN                          ← section label
 ┌──────────────────────────────┐
 │ [icon] Cerrar sesión          │ ← destructive row (Colors.primary / red)
+│                               │   disabled + opacity 0.5 while isLoading
 └──────────────────────────────┘
 ```
 
@@ -71,7 +77,7 @@ All implemented inline in `profile.tsx` — no new shared components needed.
 | `Screen` | Existing `@/components/layout/Screen` wrapper |
 | Section label | `eyebrow` text pattern from dashboard |
 | Info row | `View` with icon (`Ionicons`), label, value |
-| Logout row | `TouchableOpacity` with destructive color |
+| Logout row | `TouchableOpacity` with destructive color, `disabled` when `isLoading` |
 | Confirmation | `Alert.alert` (React Native built-in) |
 
 ---
@@ -104,6 +110,8 @@ No other files need modification.
 Manual verification:
 - [ ] Profile tab renders without error when authenticated
 - [ ] `full_name`, `username`, `email` display correctly from store
+- [ ] Screen renders with fallback dashes (`—`) when `user` is null (cold-start hydration scenario)
 - [ ] Tapping logout shows Alert with two buttons
 - [ ] Canceling Alert dismisses without action
 - [ ] Confirming logout clears session and redirects to login screen
+- [ ] Logout row is disabled (no second tap) while logout is in progress
