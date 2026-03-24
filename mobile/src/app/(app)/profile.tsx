@@ -4,6 +4,8 @@ import { Colors, Radius, Shadow, Spacing, Typography } from '@/constants/theme';
 import Screen from '@/components/layout/Screen';
 import { useAuthStore } from '@/stores/auth.store';
 
+const ICON_SIZE = 20;
+
 export default function ProfileScreen() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
@@ -49,15 +51,15 @@ export default function ProfileScreen() {
         <Text style={styles.sectionLabel}>Sesión</Text>
         <View style={styles.card}>
           <TouchableOpacity
-            style={[styles.row, isLoading && styles.rowDisabled]}
+            style={[styles.actionRow, isLoading && styles.rowDisabled]}
             onPress={handleLogout}
             disabled={isLoading}
-            activeOpacity={0.7}
+            activeOpacity={0.75}
             accessibilityRole="button"
             accessibilityLabel="Cerrar sesión"
           >
             <View style={styles.rowLeft}>
-              <Ionicons name="log-out-outline" size={20} color={Colors.primary} />
+              <Ionicons name="log-out-outline" size={ICON_SIZE} color={Colors.primary} />
               <Text style={styles.rowLabelDestructive}>Cerrar sesión</Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
@@ -76,9 +78,9 @@ interface InfoRowProps {
 
 function InfoRow({ icon, label, value }: InfoRowProps) {
   return (
-    <View style={styles.row}>
+    <View style={styles.infoRow}>
       <View style={styles.rowLeft}>
-        <Ionicons name={icon} size={20} color={Colors.textMuted} />
+        <Ionicons name={icon} size={ICON_SIZE} color={Colors.textMuted} />
         <View style={styles.rowText}>
           <Text style={styles.rowLabel}>{label}</Text>
           <Text style={styles.rowValue}>{value}</Text>
@@ -137,7 +139,13 @@ const styles = StyleSheet.create({
     ...Shadow.sm,
   },
 
-  row: {
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+  },
+  actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -173,6 +181,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: Colors.border,
-    marginLeft: Spacing.md + 20 + Spacing.md, // align with text, past icon
+    marginLeft: Spacing.md + ICON_SIZE + Spacing.md, // align with text, past icon
   },
 });
