@@ -175,5 +175,6 @@ __pypackages__/
 !README.md
 !AGENTS.md
 !mobile/AGENTS.md
+!docs/superpowers/**/*.md
 majobacore/settings/SECURITY_NOTES.md
 DEPLOYMENT.md
