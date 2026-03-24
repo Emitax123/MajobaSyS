@@ -301,6 +301,11 @@ CSRF_COOKIE_NAME = 'majobasys_csrftoken'  # Nombre personalizado
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000', cast=Csv())
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'  # Vista personalizable
 
+# Proxy Configuration
+# Activar solo cuando el deployment tenga un reverse proxy confiable (ej: Railway, Nginx)
+# que sanitice el header X-Forwarded-For antes de que llegue a Django.
+TRUSTED_PROXY_ENABLED = config('TRUSTED_PROXY_ENABLED', default=False, cast=bool)
+
 # Security Settings (base - se sobrescriben en production.py)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True

@@ -55,9 +55,9 @@ class CustomUser(AbstractUser):
         if self.pk:
             # Bajar a DEBUG si solo se actualiza last_login (ej: update_last_login de JWT)
             if update_fields is not None and set(update_fields) == {'last_login'}:
-                logger.debug(f"Actualizando last_login del usuario: {self.username}")
+                logger.debug("Actualizando last_login del usuario: %s", self.username)
             else:
-                logger.info(f"Actualizando usuario: {self.username}")
+                logger.info("Actualizando usuario: %s", self.username)
         else:
-            logger.info(f"Creando nuevo usuario: {self.username}")
+            logger.info("Creando nuevo usuario: %s", self.username)
         super().save(*args, **kwargs)
