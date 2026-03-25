@@ -40,7 +40,11 @@ export default function EditProjectScreen() {
 
   useEffect(() => {
     const projectId = Number(id);
-    if (!projectId) return;
+    if (!projectId) {
+      setFetchError('ID de proyecto inválido.');
+      setFetching(false);
+      return;
+    }
     setFetching(true);
     projectsService.get(projectId)
       .then((data) => {
