@@ -108,6 +108,7 @@ export default function ProjectsScreen() {
         if (activeQueryRef.current !== text) return; // stale guard
         setProjects(res.results);
       } catch {
+        if (activeQueryRef.current !== text) return;
         Alert.alert('Error', 'No se pudieron buscar proyectos.');
         setProjects([]);
       } finally {

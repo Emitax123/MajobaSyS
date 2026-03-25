@@ -100,10 +100,9 @@ export default function EditProjectScreen() {
         is_active: isActive,
       });
       router.back();
-    } catch (e: any) {
-      const detail = e?.response?.data?.name?.[0]
-        ?? e?.response?.data?.detail
-        ?? 'No se pudo guardar el proyecto.';
+    } catch (e: unknown) {
+      const data = (e as { response?: { data?: { name?: string[]; detail?: string } } })?.response?.data;
+      const detail = data?.name?.[0] ?? data?.detail ?? 'No se pudo guardar el proyecto.';
       Alert.alert('Error', detail);
     } finally {
       setLoading(false);
@@ -256,6 +255,7 @@ export default function EditProjectScreen() {
             disabled={loading}
             activeOpacity={0.8}
             accessibilityRole="button"
+            accessibilityLabel="Guardar cambios"
           >
             {loading
               ? <ActivityIndicator color={Colors.white} />

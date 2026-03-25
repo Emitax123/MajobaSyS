@@ -3,8 +3,7 @@ import {
   View, Text, FlatList, TextInput, StyleSheet,
   TouchableOpacity, ActivityIndicator, RefreshControl, Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { clientsService } from '@/services/clients.service';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
 import type { Client } from '@/types/models';
@@ -126,7 +125,7 @@ export default function ClientsScreen() {
         Alert.alert('Error', 'No se pudieron buscar clientes.');
         setClients([]);
       } finally {
-        setSearchLoading(false);
+        if (activeQueryRef.current === text) setSearchLoading(false);
       }
     }, 300);
   }, []);
