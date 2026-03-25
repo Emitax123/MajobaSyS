@@ -152,8 +152,9 @@ export default function ProjectDetailScreen() {
         {/* Acciones */}
         <View style={styles.actions}>
           <TouchableOpacity
-            style={styles.btnSecondary}
+            style={[styles.btnSecondary, deleting && styles.btnDisabled]}
             onPress={() => router.push(`/(app)/projects/edit/${project.id}`)}
+            disabled={deleting}
             activeOpacity={0.8}
             accessibilityRole="button"
             accessibilityLabel="Editar proyecto"
