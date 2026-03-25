@@ -56,11 +56,17 @@ export default function ProjectsScreen() {
       fetchProjects(signal).finally(() => {
         if (!signal.cancelled) setLoading(false);
       });
-      return () => { signal.cancelled = true; };
+      return () => {
+        signal.cancelled = true;
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        activeQueryRef.current = '';
+      };
     }, [fetchProjects]),
   );
 
   const onRefresh = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    activeQueryRef.current = '';
     setRefreshing(true);
     setSearchQuery('');
     fetchProjects().finally(() => setRefreshing(false));
