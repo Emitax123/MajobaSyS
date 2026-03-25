@@ -69,6 +69,10 @@ export default function ClientsScreen() {
       activeQueryRef.current = '';
       if (debounceRef.current) clearTimeout(debounceRef.current);
       load(1);
+      return () => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        activeQueryRef.current = '';
+      };
     }, [load]),
   );
 
@@ -118,10 +122,11 @@ export default function ClientsScreen() {
         if (activeQueryRef.current !== text) return;
         setClients(res.results);
       } catch {
+        if (activeQueryRef.current !== text) return;
         Alert.alert('Error', 'No se pudieron buscar clientes.');
         setClients([]);
       } finally {
-        if (activeQueryRef.current === text) setSearchLoading(false);
+        setSearchLoading(false);
       }
     }, 300);
   }, []);
