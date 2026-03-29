@@ -20,7 +20,7 @@
     width: 100%;
     height: 500px;
     overflow: hidden;
-    
+
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
@@ -226,7 +226,7 @@
     width: 100%;
     height: auto;
     overflow: visible;
-   
+
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
@@ -241,9 +241,9 @@
 
 
 .slider-text-container {
-   
+
     text-align: center;
-    
+
     padding: 1em;
 
 }
@@ -252,17 +252,18 @@
     font-size: 2em;
     font-weight: 700;
     margin-bottom: 0;
-    
+
 }
 
 /* Responsive para slider */
 @media (max-width: 768px) {
     .slider-container {
-        height: 250px!important;
+        height: 250px !important;
         border-radius: 0;
-        padding: 0!important;
-        
+        padding: 0 !important;
+
     }
+
     .slider-image {
         width: 90%;
         margin: 0 1em 0 1em;
@@ -375,73 +376,74 @@
         max-width: 800px;
         margin: 0 auto;
     }
-    
-    
+
+
 }
 
 /* Mobile: mejoras responsive */
 @media (max-width: 600px) {
+
     /* Cards en columna con padding lateral */
     .features-container {
         padding: 0 1rem;
         gap: 1rem;
     }
-    
+
     .feature-card {
-       
-        max-width:280px;
+
+        max-width: 280px;
         height: auto;
         min-height: 280px;
         padding: 1em 1em 1.5em 1em;
         margin: 0 auto;
     }
-    
+
     .feature-icon {
         margin-bottom: 0rem;
     }
-    
+
     .feature-icon img {
         width: 200px;
         height: 200px;
     }
-    
+
     .feature-description {
         font-size: 0.9rem;
         line-height: 1.4;
     }
-    
+
     /* Footer columnas apiladas */
     .footer-content {
         flex-direction: column;
         gap: 2rem;
     }
-    
+
     .footer-section {
         width: 100%;
     }
-    
+
     /* Botón navbar más compacto */
     .red-btn {
         font-size: 0.85rem;
         padding: 0.4em 0.8em;
     }
-    
+
     /* Slider subtitle más pequeño */
     .slider-subtitle {
         font-size: 1.2em;
     }
-    
+
     /* Main content padding */
     .main-content {
         margin: 1rem auto;
     }
-    
+
     /* Features grid padding */
     .features-grid {
         margin: 1.5em 0 2em 0;
         padding: 0 1rem;
     }
-    
+
     .features-grid h1 {
         font-size: 1.8rem;
         margin-bottom: 1rem;
@@ -455,17 +457,109 @@
         min-height: 240px;
         padding: 1.25rem;
     }
-    
+
     .feature-icon img {
         width: 160px;
         height: 160px;
     }
-    
+
     .feature-description {
         font-size: 0.85rem;
     }
-    
+
     .features-grid h1 {
         font-size: 1.5rem;
+    }
+}
+
+/* ========== BRANDS MARQUEE ========== */
+.brands {
+    padding: 3rem 0;
+    background: #212121;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.brands-lbl {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9a8e85;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.marquee-wrap {
+    position: relative;
+}
+
+.marquee-wrap::before,
+.marquee-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100px;
+    height: 100%;
+    z-index: 2;
+}
+
+.marquee-wrap::before {
+    left: 0;
+    background: linear-gradient(to right, #2c2c2c, transparent);
+}
+
+.marquee-wrap::after {
+    right: 0;
+    background: linear-gradient(to left, #2c2c2c, transparent);
+}
+
+.marquee-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+}
+
+.marquee-track:hover {
+    animation-play-state: paused;
+}
+
+.brand-strip {
+    height: 50px;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .brands {
+        padding: 2rem 0;
+    }
+
+    .brands-lbl {
+        font-size: 0.7rem;
+        margin-bottom: 1rem;
+    }
+
+    .brand-strip {
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand-strip {
+        height: 35px;
     }
 }

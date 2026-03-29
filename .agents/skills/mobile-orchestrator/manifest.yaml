@@ -1,0 +1,53 @@
+name: mobile-orchestrator
+kind: skill
+description: Orchestrator for MajobaSyS mobile app — analyzes tasks and dispatches specialized subagents
+preconditions:
+- check: project_initialized
+  description: Project environment is set up
+  required: true
+effects:
+- dispatches_subagents
+- routes_mobile_tasks
+domains:
+- mobile
+- react-native
+- orchestration
+cost: medium
+latency: medium
+risk_level: low
+side_effects:
+- spawns_agents
+idempotent: false
+success_signal: mobile-orchestrator skill successfully applied
+failure_signals:
+- Prerequisites not met
+- Ambiguous task
+compatibility:
+  requires: []
+  conflicts_with: []
+  composes_with:
+  - mobile-developer
+  - mobile-ui-design
+  - mobile-api-client
+  - mobile-state-management
+  - majobasys-fullstack-dev
+  enables:
+  - mobile-developer
+  - mobile-ui-design
+  - mobile-api-client
+  - mobile-state-management
+observability:
+  logs:
+  - Applying mobile-orchestrator...
+  - mobile-orchestrator completed
+  metrics:
+  - execution_time_ms
+metadata:
+  version: 1.0.0
+  created_at: '2026-03-19'
+  tags:
+  - orchestrator
+  - mobile
+  - react-native
+  - dispatch
+  examples: []
