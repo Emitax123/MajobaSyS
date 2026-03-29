@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   ActivityIndicator, ScrollView, Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { clientsService } from '@/services/clients.service';
-import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { useColors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import type { AppColors } from '@/constants/theme';
 import type { Client } from '@/types/models';
 import Screen from '@/components/layout/Screen';
 
 export default function ClientDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const Colors = useColors();
+  const styles = useMemo(() => createStyles(Colors), [Colors]);
 
   const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +23,11 @@ export default function ClientDetailScreen() {
 
   useEffect(() => {
     const clientId = Number(id);
-    if (!clientId) return;
+    if (!Number.isFinite(clientId) || clientId <= 0) {
+      setError('Cliente inválido.');
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -94,9 +101,20 @@ export default function ClientDetailScreen() {
             </Text>
           </View>
           <Text style={styles.createdAt}>
-            Desde {new Date(client.created_at).toLocaleDateString('es-AR', {
-              year: 'numeric', month: 'short', day: 'numeric',
-            })}
+            Desde {(() => {
+              const parts = client.created_at.split('-');
+              if (parts.length >= 3) {
+                const [y, m, d] = parts.map((s: string) => Number(s));
+                if (Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d)) {
+                  return new Date(y, m - 1, d).toLocaleDateString('es-AR', {
+                    year: 'numeric', month: 'short', day: 'numeric',
+                  });
+                }
+              }
+              return new Date(client.created_at).toLocaleDateString('es-AR', {
+                year: 'numeric', month: 'short', day: 'numeric',
+              });
+            })()}
           </Text>
         </View>
       </View>
@@ -160,7 +178,7 @@ export default function ClientDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: AppColors) => StyleSheet.create({
   scroll: { flex: 1 },
   content: { padding: Spacing.lg, gap: Spacing.md },
   center: {
@@ -171,22 +189,22 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     gap: Spacing.sm,
     ...Shadow.sm,
   },
   clientName: {
     fontSize: Typography.size.xxl,
     fontWeight: Typography.weight.bold,
-    color: Colors.text,
+    color: c.text,
   },
   fieldValue: {
     fontSize: Typography.size.md,
-    color: Colors.textMuted,
+    color: c.textMuted,
   },
   metaRow: {
     flexDirection: 'row',
@@ -198,21 +216,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: Radius.pill,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
   },
   projectsBadgeText: {
     fontSize: Typography.size.xs,
     fontWeight: Typography.weight.medium,
-    color: Colors.primary,
+    color: c.primary,
   },
   createdAt: {
     fontSize: Typography.size.xs,
-    color: Colors.textDisabled,
+    color: c.textDisabled,
   },
 
   actions: { gap: Spacing.sm },
   btnPrimary: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: Radius.md,
     paddingVertical: Spacing.md,
     alignItems: 'center',
@@ -220,35 +238,35 @@ const styles = StyleSheet.create({
   btnPrimaryText: {
     fontSize: Typography.size.md,
     fontWeight: Typography.weight.semibold,
-    color: Colors.white,
+    color: c.white,
   },
   btnSecondary: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: Radius.md,
     paddingVertical: Spacing.md,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   btnSecondaryText: {
     fontSize: Typography.size.md,
     fontWeight: Typography.weight.semibold,
-    color: Colors.text,
+    color: c.text,
   },
 
   retryBtn: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: Radius.md,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
-  retryText: { fontSize: Typography.size.sm, color: Colors.text },
-  errorText: { fontSize: Typography.size.md, color: Colors.error },
+  retryText: { fontSize: Typography.size.sm, color: c.text },
+  errorText: { fontSize: Typography.size.md, color: c.error },
 
   btnDanger: {
-    backgroundColor: Colors.error,
+    backgroundColor: c.error,
     borderRadius: Radius.md,
     paddingVertical: Spacing.md,
     alignItems: 'center',
@@ -257,6 +275,6 @@ const styles = StyleSheet.create({
   btnDangerText: {
     fontSize: Typography.size.md,
     fontWeight: Typography.weight.semibold,
-    color: Colors.white,
+    color: c.white,
   },
 });

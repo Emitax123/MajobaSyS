@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   View, Text, TextInput, StyleSheet, TouchableOpacity,
   ScrollView, ActivityIndicator, Platform, Modal, Switch, Alert,
@@ -7,14 +7,24 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { projectsService } from '@/services/projects.service';
-import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { useColors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import type { AppColors } from '@/constants/theme';
 import Screen from '@/components/layout/Screen';
 
 type DateField = 'start_date' | 'end_date';
 
+function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d)
+    ? new Date(y, m - 1, d)
+    : new Date(dateStr);
+}
+
 export default function EditProjectScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const Colors = useColors();
+  const styles = useMemo(() => createStyles(Colors), [Colors]);
 
   const [fetching, setFetching] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -34,7 +44,8 @@ export default function EditProjectScreen() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const toISODate = (date: Date) => date.toISOString().split('T')[0];
+  const toISODate = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const toDisplayDate = (date: Date) =>
     date.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
@@ -52,9 +63,9 @@ export default function EditProjectScreen() {
         setName(data.name);
         setDescription(data.description ?? '');
         setLocation(data.location ?? '');
-        setStartDate(data.start_date ? new Date(data.start_date) : new Date());
+        setStartDate(data.start_date ? parseLocalDate(data.start_date) : new Date());
         setHasEndDate(!!data.end_date);
-        setEndDate(data.end_date ? new Date(data.end_date) : new Date());
+        setEndDate(data.end_date ? parseLocalDate(data.end_date) : new Date());
         setIsActive(data.is_active);
       })
       .catch(() => setFetchError('No se pudo cargar el proyecto.'))
@@ -304,53 +315,53 @@ export default function EditProjectScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: AppColors) => StyleSheet.create({
   flex: { flex: 1 },
   scroll: { flex: 1 },
   content: { padding: Spacing.lg, gap: Spacing.md, paddingBottom: Spacing.xxl },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Spacing.md },
   header: { gap: Spacing.xs, marginBottom: Spacing.sm },
   backBtn: { alignSelf: 'flex-start' },
-  backText: { fontSize: Typography.size.sm, color: Colors.primary, fontWeight: Typography.weight.medium },
-  title: { fontSize: Typography.size.xxl, fontWeight: Typography.weight.bold, color: Colors.text },
+  backText: { fontSize: Typography.size.sm, color: c.primary, fontWeight: Typography.weight.medium },
+  title: { fontSize: Typography.size.xxl, fontWeight: Typography.weight.bold, color: c.text },
   clientBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: Radius.pill,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
   },
-  clientBadgeText: { fontSize: Typography.size.xs, color: Colors.primary, fontWeight: Typography.weight.medium },
+  clientBadgeText: { fontSize: Typography.size.xs, color: c.primary, fontWeight: Typography.weight.medium },
   form: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     gap: Spacing.md,
     ...Shadow.sm,
   },
   field: { gap: Spacing.xs },
-  label: { fontSize: Typography.size.sm, fontWeight: Typography.weight.medium, color: Colors.textMuted },
-  required: { color: Colors.primary },
+  label: { fontSize: Typography.size.sm, fontWeight: Typography.weight.medium, color: c.textMuted },
+  required: { color: c.primary },
   input: {
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderRadius: Radius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontSize: Typography.size.md,
-    color: Colors.text,
+    color: c.text,
   },
-  inputError: { borderColor: Colors.error },
+  inputError: { borderColor: c.error },
   textArea: { minHeight: 80, paddingTop: Spacing.sm },
-  errorText: { fontSize: Typography.size.xs, color: Colors.error },
+  errorText: { fontSize: Typography.size.xs, color: c.error },
   dateBtn: {
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderRadius: Radius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     flexDirection: 'row',
@@ -358,52 +369,52 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dateBtnMt: { marginTop: Spacing.xs },
-  dateBtnText: { fontSize: Typography.size.md, color: Colors.text },
+  dateBtnText: { fontSize: Typography.size.md, color: c.text },
   dateBtnIcon: { fontSize: Typography.size.md },
   switchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  switchHint: { fontSize: Typography.size.xs, color: Colors.textDisabled },
+  switchHint: { fontSize: Typography.size.xs, color: c.textDisabled },
   submitBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: Radius.md,
     paddingVertical: Spacing.md,
     alignItems: 'center',
     marginTop: Spacing.sm,
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitText: { fontSize: Typography.size.md, fontWeight: Typography.weight.semibold, color: Colors.white },
-  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: Colors.overlay },
+  submitText: { fontSize: Typography.size.md, fontWeight: Typography.weight.semibold, color: c.white },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: c.overlay },
   modalCard: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xl,
     borderTopWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   modalTitle: {
     fontSize: Typography.size.lg,
     fontWeight: Typography.weight.semibold,
-    color: Colors.text,
+    color: c.text,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
-  iosPicker: { backgroundColor: Colors.bgCard },
+  iosPicker: { backgroundColor: c.bgCard },
   modalBtns: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.md },
   modalBtnCancel: {
     flex: 1, paddingVertical: Spacing.md, borderRadius: Radius.md,
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border, alignItems: 'center',
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border, alignItems: 'center',
   },
-  modalBtnCancelText: { fontSize: Typography.size.md, color: Colors.text, fontWeight: Typography.weight.medium },
+  modalBtnCancelText: { fontSize: Typography.size.md, color: c.text, fontWeight: Typography.weight.medium },
   modalBtnConfirm: {
     flex: 1, paddingVertical: Spacing.md, borderRadius: Radius.md,
-    backgroundColor: Colors.primary, alignItems: 'center',
+    backgroundColor: c.primary, alignItems: 'center',
   },
-  modalBtnConfirmText: { fontSize: Typography.size.md, color: Colors.white, fontWeight: Typography.weight.semibold },
+  modalBtnConfirmText: { fontSize: Typography.size.md, color: c.white, fontWeight: Typography.weight.semibold },
   retryBtn: {
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: Radius.md,
-    backgroundColor: Colors.bgElevated, borderWidth: 1, borderColor: Colors.border,
+    backgroundColor: c.bgElevated, borderWidth: 1, borderColor: c.border,
   },
-  retryText: { fontSize: Typography.size.sm, color: Colors.text },
+  retryText: { fontSize: Typography.size.sm, color: c.text },
 });

@@ -11,12 +11,9 @@ html, body {
 
 body {
     font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
+    background-color: #252120;
     color: #333;
     line-height: 1.6;
-
-    background-color: #252120 !important;
-
 }
 
 a {

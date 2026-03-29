@@ -412,16 +412,6 @@
         line-height: 1.4;
     }
 
-    /* Footer columnas apiladas */
-    .footer-content {
-        flex-direction: column;
-        gap: 2rem;
-    }
-
-    .footer-section {
-        width: 100%;
-    }
-
     /* Botón navbar más compacto */
     .red-btn {
         font-size: 0.85rem;

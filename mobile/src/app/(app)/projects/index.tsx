@@ -1,11 +1,12 @@
-import { useState, useCallback, useRef } from 'react';
+import { useMemo, useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   ActivityIndicator, FlatList, RefreshControl, TextInput, Alert,
 } from 'react-native';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { projectsService } from '@/services/projects.service';
-import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { useColors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import type { AppColors } from '@/constants/theme';
 import type { Project } from '@/types/models';
 import Screen from '@/components/layout/Screen';
 
@@ -18,6 +19,8 @@ function parseClientId(raw: string | string[] | undefined): number | undefined {
 export default function ProjectsScreen() {
   const params = useLocalSearchParams<{ clientId?: string | string[]; clientName?: string | string[] }>();
   const router = useRouter();
+  const Colors = useColors();
+  const styles = useMemo(() => createStyles(Colors), [Colors]);
 
   const clientId = parseClientId(params.clientId);
   const clientName = Array.isArray(params.clientName) ? params.clientName[0] : params.clientName;
@@ -117,10 +120,20 @@ export default function ProjectsScreen() {
     }, 300);
   }, [baseProjects, clientId]);
 
-  const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString('es-AR', {
+  const formatDate = (dateStr: string) => {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const [y, m, d] = parts.map(Number);
+      if (Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d)) {
+        return new Date(y, m - 1, d).toLocaleDateString('es-AR', {
+          year: 'numeric', month: 'short', day: 'numeric',
+        });
+      }
+    }
+    return new Date(dateStr).toLocaleDateString('es-AR', {
       year: 'numeric', month: 'short', day: 'numeric',
     });
+  };
 
   const renderItem = useCallback(({ item }: { item: Project }) => (
     <TouchableOpacity
@@ -143,7 +156,7 @@ export default function ProjectsScreen() {
       ) : null}
       <Text style={styles.date}>Inicio: {formatDate(item.start_date)}</Text>
     </TouchableOpacity>
-  ), [router]);
+  ), [router, styles]);
 
   return (
     <Screen>
@@ -234,7 +247,7 @@ export default function ProjectsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: AppColors) => StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Spacing.md },
 
   header: {
@@ -254,25 +267,25 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: Typography.size.xl,
-    color: Colors.primary,
+    color: c.primary,
     fontWeight: Typography.weight.medium,
   },
   title: {
     fontSize: Typography.size.xl,
     fontWeight: Typography.weight.bold,
-    color: Colors.text,
+    color: c.text,
     flex: 1,
   },
   newBtn: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: Radius.md,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
   },
   newBtnText: {
     fontSize: Typography.size.sm,
     fontWeight: Typography.weight.semibold,
-    color: Colors.white,
+    color: c.white,
   },
 
   searchContainer: {
@@ -284,14 +297,14 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: Radius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     fontSize: Typography.size.md,
-    color: Colors.text,
+    color: c.text,
   },
   searchSpinner: { marginLeft: Spacing.xs },
 
@@ -303,11 +316,11 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: Colors.bgCard,
+    backgroundColor: c.bgCard,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     gap: 4,
     ...Shadow.sm,
   },
@@ -321,29 +334,29 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: Typography.size.md,
     fontWeight: Typography.weight.semibold,
-    color: Colors.text,
+    color: c.text,
   },
   badge: { paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: Radius.pill },
-  badgeActive: { backgroundColor: Colors.successLight },
-  badgeInactive: { backgroundColor: Colors.bgElevated },
+  badgeActive: { backgroundColor: c.successLight },
+  badgeInactive: { backgroundColor: c.bgElevated },
   badgeText: { fontSize: Typography.size.xs, fontWeight: Typography.weight.medium },
-  badgeTextActive: { color: Colors.success },
-  badgeTextInactive: { color: Colors.textMuted },
+  badgeTextActive: { color: c.success },
+  badgeTextInactive: { color: c.textMuted },
 
-  location: { fontSize: Typography.size.sm, color: Colors.textMuted },
-  date: { fontSize: Typography.size.xs, color: Colors.textDisabled },
+  location: { fontSize: Typography.size.sm, color: c.textMuted },
+  date: { fontSize: Typography.size.xs, color: c.textDisabled },
 
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: Spacing.xl },
-  emptyText: { fontSize: Typography.size.md, color: Colors.textMuted },
+  emptyText: { fontSize: Typography.size.md, color: c.textMuted },
 
-  errorText: { fontSize: Typography.size.md, color: Colors.error, textAlign: 'center' },
+  errorText: { fontSize: Typography.size.md, color: c.error, textAlign: 'center' },
   retryBtn: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: Radius.md,
-    backgroundColor: Colors.bgElevated,
+    backgroundColor: c.bgElevated,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
-  retryText: { fontSize: Typography.size.sm, color: Colors.text },
+  retryText: { fontSize: Typography.size.sm, color: c.text },
 });
