@@ -6,6 +6,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon-16x16.png' %}" />
     <title>Majoba S.A.</title>
@@ -44,6 +47,9 @@
           {% if request.user.is_authenticated %}
             {% if request.user.is_staff %}
               <li>
+                <a href="{% url 'order_list' %}" class="nav-link">Pedidos</a>
+              </li>
+              <li>
                 <a href="{% url 'admin_dashboard' %}" class="nav-link">Panel Admin</a>
               </li>
             {% endif %}
@@ -67,7 +73,22 @@
         </button>
       </div>
     </nav>
-     <div class="info-bar"></div>
+    <div class="accent-strip" aria-hidden="true">
+      <div class="strip-track">
+        <span>Materiales de construcción</span><span class="sep">·</span>
+        <span>Hormigón elaborado</span><span class="sep">·</span>
+        <span>Gestión de obras</span><span class="sep">·</span>
+        <span>Castelli (02245) 480-542</span><span class="sep">·</span>
+        <span>Lezama (02242) 432-327</span><span class="sep">·</span>
+        <span>Desde 1999</span><span class="sep">·</span>
+        <span>Materiales de construcción</span><span class="sep">·</span>
+        <span>Hormigón elaborado</span><span class="sep">·</span>
+        <span>Gestión de obras</span><span class="sep">·</span>
+        <span>Castelli (02245) 480-542</span><span class="sep">·</span>
+        <span>Lezama (02242) 432-327</span><span class="sep">·</span>
+        <span>Desde 1999</span><span class="sep">·</span>
+      </div>
+    </div>
     {% block content %}
     
     
@@ -76,80 +97,61 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-content">
-          <!-- Sección Nosotros -->
-          <div class="footer-section about">
-            <h3 class="footer-title">Nosotros</h3>
-            <p class="footer-description">Somos una empresa especializada en la venta de materiales para la construcción que brinda, además, soluciones constructivas para obras de variada escala y complejidad, ofreciendo un servicio integral que busca satisfacer las necesidades de nuestros clientes.</p>
+      <div class="footer-grid">
+        <!-- Nosotros -->
+        <div class="footer-about">
+          <h3 class="footer-title">Nosotros</h3>
+          <p>Somos una empresa especializada en la venta de materiales para la construcción que brinda, además, soluciones constructivas para obras de variada escala y complejidad, ofreciendo un servicio integral que busca satisfacer las necesidades de nuestros clientes.</p>
+          <div class="footer-socials">
+            <a href="https://www.facebook.com/majobacastelli?locale=es_LA" class="social-link">Facebook</a>
+            <a href="https://www.instagram.com/majobaok/" class="social-link">Instagram</a>
           </div>
+        </div>
 
-          <!-- Casa Central -->
-          <div class="footer-section contact">
-            <h3 class="footer-title">Casa Central</h3>
-            <div class="contact-info">
-              <div class="contact-item">
-                <i class="icon-location"></i>
-                <div>
-                  <strong>Dirección:</strong><br />
-                  Sarmiento 162 - Castelli (7114)
-                </div>
-              </div>
-              <div class="contact-item">
-                <i class="icon-phone"></i>
-                <div>
-                  <strong>Teléfono:</strong><br />
-                  <span>(02245) 480-542</span>
-                </div>
-              </div>
-              <div class="contact-item">
-                <i class="icon-email"></i>
-                <div>
-                  <strong>E-mail:</strong><br />
-                  <span>majobacastelli1999@gmail.com</span>
-                </div>
-              </div>
+        <!-- Casa Central -->
+        <div>
+          <h3 class="footer-title">Casa Central</h3>
+          <div class="contact-list">
+            <div class="contact-item">
+              <span class="ci-icon" aria-hidden="true">&#9906;</span>
+              <div class="ci-text"><strong>Dirección</strong><br>Sarmiento 162 - Castelli (7114)</div>
             </div>
-          </div>
-
-          <!-- Sucursal Lezama -->
-          <div class="footer-section contact">
-            <h3 class="footer-title">Sucursal Lezama</h3>
-            <div class="contact-info">
-              <div class="contact-item">
-                <i class="icon-location"></i>
-                <div>
-                  <strong>Dirección:</strong><br />
-                  San Martín 235 - Lezama (7116)
-                </div>
-              </div>
-              <div class="contact-item">
-                <i class="icon-phone"></i>
-                <div>
-                  <strong>Teléfono:</strong><br />
-                  <span>(02242) 432-327</span>
-                </div>
-              </div>
-              <div class="contact-item">
-                <i class="icon-email"></i>
-                <div>
-                  <strong>E-mail:</strong><br />
-                  <span>majobalezama@gmail.com</span>
-                </div>
-              </div>
+            <div class="contact-item">
+              <span class="ci-icon" aria-hidden="true">&#9742;</span>
+              <div class="ci-text"><strong>Teléfono</strong><br><a href="tel:02245480542">(02245) 480-542</a></div>
+            </div>
+            <div class="contact-item">
+              <span class="ci-icon" aria-hidden="true">&#9993;</span>
+              <div class="ci-text"><strong>E-mail</strong><br><a href="mailto:majobacastelli1999@gmail.com">majobacastelli1999@gmail.com</a></div>
             </div>
           </div>
         </div>
 
-        <!-- Footer Bottom -->
-        <div class="footer-bottom">
-          <div class="footer-bottom-content">
-            <p>&copy; {% now "Y" %} Majoba S.A. - Todos los derechos reservados</p>
-            <div class="footer-links social-media">
-              <a href="https://www.facebook.com/majobacastelli?locale=es_LA" class="social-link">Facebook</a>
-              <a href="https://www.instagram.com/majobaok/" class="social-link">Instagram</a>
+        <!-- Sucursal Lezama -->
+        <div>
+          <h3 class="footer-title">Sucursal Lezama</h3>
+          <div class="contact-list">
+            <div class="contact-item">
+              <span class="ci-icon" aria-hidden="true">&#9906;</span>
+              <div class="ci-text"><strong>Dirección</strong><br>San Martín 235 - Lezama (7116)</div>
+            </div>
+            <div class="contact-item">
+              <span class="ci-icon" aria-hidden="true">&#9742;</span>
+              <div class="ci-text"><strong>Teléfono</strong><br><a href="tel:02242432327">(02242) 432-327</a></div>
+            </div>
+            <div class="contact-item">
+              <span class="ci-icon" aria-hidden="true">&#9993;</span>
+              <div class="ci-text"><strong>E-mail</strong><br><a href="mailto:majobalezama@gmail.com">majobalezama@gmail.com</a></div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; {% now "Y" %} Majoba S.A. — Todos los derechos reservados</p>
+        <div class="footer-legal">
+          <span>Política de privacidad</span>
+          <span>Términos de uso</span>
         </div>
       </div>
     </footer>
